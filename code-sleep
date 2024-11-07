@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+
+import certstream
+import time
+
+# List of keywords to search in domain names
+keywords = ['kuwait', 'kw', 'kwt', 'kwi', 'q8']
+
+# Function to check if the domain contains any of the specified keywords
+def domain_contains_keywords(domain, keywords):
+    return any(keyword.lower() in domain.lower() for keyword in keywords)
+
+# Function to handle incoming certstream data
+def handle_message(message, context):
+    if message['message_type'] == 'certificate_update':
+        try:
+            # Extract the domain (CN) from the certificate
+            cert_domains = message['data']['leaf_cert']['all_domains']
+            for domain in cert_domains:
+                if domain_contains_keywords(domain, keywords):
+                    with open('filtered_domains.txt', 'a') as file:
+                        file.write(domain + '\n')
+                    print(f"Found domain: {domain}")
+        except KeyError:
+            pass
+
+# Connect to CertStream with retry and exponential backoff
+def start_certstream():
+    retry_delay = 5  # Start with a 5-second delay
+    max_delay = 300  # Maximum delay set to 5 minutes
+    print("Starting connection to CertStream...")
+    
+    while True:
+        try:
+            # Connect to CertStream
+            certstream.listen_for_events(handle_message, url='wss://certstream.calidog.io/')
+        except Exception as e:
+            print(f"Error connecting to CertStream: {e}. Retrying in {retry_delay} seconds...")
+            time.sleep(retry_delay)
+            # Increase delay (exponential backoff) up to a max limit
+            retry_delay = min(max_delay, retry_delay * 2)
+
+if __name__ == '__main__':
+    start_certstream()
