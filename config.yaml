@@ -1,0 +1,93 @@
+# KWTCyberWatch Configuration
+# Kuwait Phishing Detection & Brand Protection Suite v2.0.0
+
+certstream:
+  url: "wss://certstream.calidog.io/"
+  keywords:
+    - kuwait
+    - kw
+    - kwt
+    - kwi
+    - q8
+    - nbk
+    - kfh
+    - cbk
+    - burgan
+    - gulf-bank
+    - warba
+    - boubyan
+    - ahli-united
+    - zain-kw
+    - ooredoo-kw
+    - stc-kw
+    - moi-kw
+    - e-gov-kw
+    - paci-kw
+  retry_delay: 5
+  max_delay: 300
+  log_file: "data/certstream_domains.log"
+
+domain_analysis:
+  homoglyph_threshold: 0.85
+  levenshtein_threshold: 3
+  entropy_threshold: 3.5
+  enable_whois: true
+  enable_dns: true
+  protected_brands:
+    - nbk.com
+    - kfh.com
+    - cbk.gov.kw
+    - burgan.com
+    - e-gulfbank.com
+    - bankboubyan.com
+    - warbabank.com
+    - e.gov.kw
+    - moi.gov.kw
+    - kw.zain.com
+    - ooredoo.com.kw
+    - kuwaitairways.com
+
+api:
+  host: "0.0.0.0"
+  port: 5000
+  debug: false
+  secret_key: "change-me-in-production"
+  rate_limit: "100/hour"
+  cors_origins:
+    - "*"
+
+notifications:
+  email_enabled: false
+  email_smtp_server: ""
+  email_smtp_port: 587
+  email_username: ""
+  email_password: ""
+  email_recipients: []
+
+  slack_enabled: false
+  slack_webhook_url: ""
+  slack_channel: "#phishing-alerts"
+
+  telegram_enabled: false
+  telegram_bot_token: ""
+  telegram_chat_id: ""
+
+  webhook_enabled: false
+  webhook_url: ""
+  webhook_secret: ""
+
+threat_intel:
+  virustotal_api_key: ""
+  urlscan_api_key: ""
+  shodan_api_key: ""
+  abuseipdb_api_key: ""
+  phishtank_api_key: ""
+  openphish_enabled: true
+  google_safebrowsing_key: ""
+
+database:
+  db_type: sqlite
+  db_path: "data/kwtcyberwatch.db"
+
+log_level: INFO
+data_dir: data
