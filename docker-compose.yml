@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  kwtcyberwatch-api:
+    build: .
+    container_name: kwtcyberwatch-api
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/app/data
+      - ./config.yaml:/app/config.yaml:ro
+    environment:
+      - KCW_API_SECRET=${KCW_API_SECRET:-change-me}
+      - KCW_VT_API_KEY=${KCW_VT_API_KEY:-}
+      - KCW_SLACK_WEBHOOK=${KCW_SLACK_WEBHOOK:-}
+      - KCW_TELEGRAM_TOKEN=${KCW_TELEGRAM_TOKEN:-}
+      - KCW_TELEGRAM_CHAT=${KCW_TELEGRAM_CHAT:-}
+    command: ["api"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  kwtcyberwatch-monitor:
+    build: .
+    container_name: kwtcyberwatch-monitor
+    volumes:
+      - ./data:/app/data
+      - ./config.yaml:/app/config.yaml:ro
+    environment:
+      - KCW_SLACK_WEBHOOK=${KCW_SLACK_WEBHOOK:-}
+      - KCW_TELEGRAM_TOKEN=${KCW_TELEGRAM_TOKEN:-}
+      - KCW_TELEGRAM_CHAT=${KCW_TELEGRAM_CHAT:-}
+    command: ["monitor"]
+    restart: unless-stopped
+    depends_on:
+      kwtcyberwatch-api:
+        condition: service_healthy
