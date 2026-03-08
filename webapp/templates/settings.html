@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block page_title %}Settings{% endblock %}
+{% block page_subtitle %}Configure monitoring preferences and notifications{% endblock %}
+
+{% block content %}
+<div class="card" style="margin-bottom: 24px;">
+    <div class="card-body padded">
+        <div class="settings-section">
+            <h3>Monitoring Configuration</h3>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <h4>Real-time CertStream Monitoring</h4>
+                    <p>Watch certificate transparency logs for Kuwait-related domains</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <h4>Auto-retry on Connection Loss</h4>
+                    <p>Automatically reconnect with exponential backoff</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <h4>Domain Logging</h4>
+                    <p>Save matched domains to filtered_domains.txt</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h3>Notification Settings</h3>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <h4>Critical Alert Notifications</h4>
+                    <p>Get notified immediately for critical risk domains</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <h4>Daily Summary Report</h4>
+                    <p>Receive a daily digest of monitoring activity</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <h4>Slack Integration</h4>
+                    <p>Send alerts to a Slack channel</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="settings-section" style="margin-bottom: 0;">
+            <h3>Keyword Management</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Keywords used to filter certificate domains. Domains containing any of these keywords will trigger alerts.</p>
+            <div class="keywords-list" style="padding: 0;">
+                {% for keyword in stats.keywords_tracked %}
+                <span class="keyword-tag">{{ keyword }} &times;</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

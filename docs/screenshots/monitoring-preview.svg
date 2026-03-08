@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="380" viewBox="0 0 900 380">
+  <defs>
+    <linearGradient id="bgm" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0e1a"/>
+      <stop offset="100%" style="stop-color:#0f172a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="380" fill="url(#bgm)" rx="8"/>
+
+  <!-- Sidebar (abbreviated) -->
+  <rect x="0" y="0" width="200" height="380" fill="#111827" rx="8"/>
+  <rect x="8" y="0" width="192" height="380" fill="#111827"/>
+  <rect x="16" y="18" width="32" height="32" rx="8" fill="#3b82f6"/>
+  <text x="32" y="40" text-anchor="middle" fill="white" font-size="14">&#x1f6e1;</text>
+  <text x="58" y="32" fill="#f8fafc" font-family="Inter,sans-serif" font-size="12" font-weight="700">KWTCyberWatch</text>
+  <line x1="16" y1="62" x2="184" y2="62" stroke="#1e293b" stroke-width="1"/>
+  <text x="40" y="88" fill="#94a3b8" font-family="Inter,sans-serif" font-size="11">&#x1f4ca; Dashboard</text>
+  <text x="40" y="112" fill="#94a3b8" font-family="Inter,sans-serif" font-size="11">&#x26a0;  Alerts</text>
+  <rect x="12" y="120" width="176" height="32" rx="6" fill="rgba(59,130,246,0.1)"/>
+  <text x="40" y="141" fill="#3b82f6" font-family="Inter,sans-serif" font-size="11">&#x1f50d; Monitoring</text>
+
+  <!-- Top Bar -->
+  <rect x="200" y="0" width="700" height="52" fill="rgba(17,24,39,0.5)"/>
+  <line x1="200" y1="52" x2="900" y2="52" stroke="#1e293b" stroke-width="1"/>
+  <text x="224" y="24" fill="#f8fafc" font-family="Inter,sans-serif" font-size="15" font-weight="700">Monitoring Status</text>
+  <text x="224" y="40" fill="#64748b" font-family="Inter,sans-serif" font-size="10">CertStream connection status and keyword tracking</text>
+
+  <!-- Live Badge -->
+  <rect x="770" y="14" width="110" height="26" rx="13" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.2)" stroke-width="1"/>
+  <circle cx="786" cy="27" r="4" fill="#10b981"/>
+  <text x="796" y="31" fill="#10b981" font-family="Inter,sans-serif" font-size="10" font-weight="600">Live Monitoring</text>
+
+  <!-- Monitor Card 1 - CertStream -->
+  <rect x="216" y="68" width="210" height="140" rx="8" fill="#111827" stroke="#1e293b" stroke-width="1"/>
+  <text x="232" y="92" fill="#f8fafc" font-family="Inter,sans-serif" font-size="12" font-weight="600">&#x1f4e1; CertStream Connection</text>
+  <rect x="232" y="102" width="74" height="20" rx="4" fill="rgba(59,130,246,0.1)"/>
+  <circle cx="244" cy="112" r="3" fill="#3b82f6"/>
+  <text x="252" y="116" fill="#3b82f6" font-family="Inter,sans-serif" font-size="9">Connected</text>
+  <text x="232" y="140" fill="#64748b" font-family="Inter,sans-serif" font-size="9">Real-time CT log stream active</text>
+  <text x="232" y="164" fill="#64748b" font-family="Inter,sans-serif" font-size="9">Connection Health</text>
+  <text x="398" y="164" fill="#10b981" font-family="Inter,sans-serif" font-size="9" text-anchor="end">99.97%</text>
+  <rect x="232" y="170" width="178" height="6" rx="3" fill="#0f172a"/>
+  <rect x="232" y="170" width="177" height="6" rx="3" fill="#10b981"/>
+
+  <!-- Monitor Card 2 - Keywords -->
+  <rect x="438" y="68" width="210" height="140" rx="8" fill="#111827" stroke="#1e293b" stroke-width="1"/>
+  <text x="454" y="92" fill="#f8fafc" font-family="Inter,sans-serif" font-size="12" font-weight="600">&#x1f50d; Keyword Matching</text>
+  <text x="454" y="116" fill="#f8fafc" font-family="Inter,sans-serif" font-size="22" font-weight="700">5</text>
+  <text x="472" y="116" fill="#64748b" font-family="Inter,sans-serif" font-size="10">Active Keywords</text>
+
+  <!-- Keyword tags -->
+  <rect x="454" y="126" width="50" height="18" rx="4" fill="rgba(59,130,246,0.08)" stroke="rgba(59,130,246,0.2)" stroke-width="0.5"/>
+  <text x="479" y="139" text-anchor="middle" fill="#3b82f6" font-family="monospace" font-size="8">kuwait</text>
+  <rect x="510" y="126" width="30" height="18" rx="4" fill="rgba(59,130,246,0.08)" stroke="rgba(59,130,246,0.2)" stroke-width="0.5"/>
+  <text x="525" y="139" text-anchor="middle" fill="#3b82f6" font-family="monospace" font-size="8">kw</text>
+  <rect x="546" y="126" width="34" height="18" rx="4" fill="rgba(59,130,246,0.08)" stroke="rgba(59,130,246,0.2)" stroke-width="0.5"/>
+  <text x="563" y="139" text-anchor="middle" fill="#3b82f6" font-family="monospace" font-size="8">kwt</text>
+  <rect x="586" y="126" width="30" height="18" rx="4" fill="rgba(59,130,246,0.08)" stroke="rgba(59,130,246,0.2)" stroke-width="0.5"/>
+  <text x="601" y="139" text-anchor="middle" fill="#3b82f6" font-family="monospace" font-size="8">kwi</text>
+  <rect x="622" y="126" width="26" height="18" rx="4" fill="rgba(59,130,246,0.08)" stroke="rgba(59,130,246,0.2)" stroke-width="0.5"/>
+  <text x="635" y="139" text-anchor="middle" fill="#3b82f6" font-family="monospace" font-size="8">q8</text>
+
+  <text x="454" y="164" fill="#64748b" font-family="Inter,sans-serif" font-size="9">Match Rate</text>
+  <text x="620" y="164" fill="#3b82f6" font-family="Inter,sans-serif" font-size="9" text-anchor="end">0.15%</text>
+  <rect x="454" y="170" width="178" height="6" rx="3" fill="#0f172a"/>
+  <rect x="454" y="170" width="27" height="6" rx="3" fill="#3b82f6"/>
+
+  <!-- Monitor Card 3 - Storage -->
+  <rect x="660" y="68" width="218" height="140" rx="8" fill="#111827" stroke="#1e293b" stroke-width="1"/>
+  <text x="676" y="92" fill="#f8fafc" font-family="Inter,sans-serif" font-size="12" font-weight="600">&#x1f4be; Data Storage</text>
+  <text x="676" y="116" fill="#f8fafc" font-family="Inter,sans-serif" font-size="22" font-weight="700">189</text>
+  <text x="710" y="116" fill="#64748b" font-family="Inter,sans-serif" font-size="10">Domains Logged</text>
+  <text x="676" y="140" fill="#64748b" font-family="Inter,sans-serif" font-size="9">Saved to <tspan fill="#3b82f6" font-family="monospace">filtered_domains.txt</tspan></text>
+  <text x="676" y="164" fill="#64748b" font-family="Inter,sans-serif" font-size="9">Storage Used</text>
+  <text x="848" y="164" fill="#f59e0b" font-family="Inter,sans-serif" font-size="9" text-anchor="end">42%</text>
+  <rect x="676" y="170" width="186" height="6" rx="3" fill="#0f172a"/>
+  <rect x="676" y="170" width="78" height="6" rx="3" fill="#f59e0b"/>
+
+  <!-- System Info Card -->
+  <rect x="216" y="222" width="662" height="146" rx="8" fill="#111827" stroke="#1e293b" stroke-width="1"/>
+  <text x="232" y="248" fill="#f8fafc" font-family="Inter,sans-serif" font-size="12" font-weight="600">System Information</text>
+  <line x1="216" y1="258" x2="878" y2="258" stroke="#1e293b" stroke-width="1"/>
+
+  <!-- System rows -->
+  <text x="232" y="280" fill="#f8fafc" font-family="Inter,sans-serif" font-size="11" font-weight="500">CertStream Feed</text>
+  <text x="232" y="292" fill="#64748b" font-family="Inter,sans-serif" font-size="9">wss://certstream-server-domain/</text>
+  <rect x="810" y="272" width="52" height="18" rx="4" fill="rgba(59,130,246,0.1)"/>
+  <text x="836" y="285" text-anchor="middle" fill="#3b82f6" font-family="Inter,sans-serif" font-size="9">Active</text>
+  <line x1="232" y1="302" x2="862" y2="302" stroke="#1e293b" stroke-width="0.5"/>
+
+  <text x="232" y="320" fill="#f8fafc" font-family="Inter,sans-serif" font-size="11" font-weight="500">Retry Strategy</text>
+  <text x="232" y="332" fill="#64748b" font-family="Inter,sans-serif" font-size="9">Exponential backoff: 5s to 300s max delay</text>
+  <rect x="800" y="312" width="62" height="18" rx="4" fill="rgba(59,130,246,0.1)"/>
+  <text x="831" y="325" text-anchor="middle" fill="#3b82f6" font-family="Inter,sans-serif" font-size="9">Enabled</text>
+  <line x1="232" y1="342" x2="862" y2="342" stroke="#1e293b" stroke-width="0.5"/>
+
+  <text x="232" y="358" fill="#f8fafc" font-family="Inter,sans-serif" font-size="11" font-weight="500">System Uptime</text>
+  <text x="232" y="368" fill="#64748b" font-family="Inter,sans-serif" font-size="9">Last restart: 14 days ago</text>
+  <text x="848" y="362" fill="#10b981" font-family="Inter,sans-serif" font-size="12" font-weight="600" text-anchor="end">99.97%</text>
+</svg>

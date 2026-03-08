@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KWTCyberWatch - {% block title %}Dashboard{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-sm">&#x1f6e1;</div>
+                <div>
+                    <h2>KWTCyberWatch</h2>
+                    <span>Threat Intelligence</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                        <span class="nav-icon">&#x1f4ca;</span>
+                        Dashboard
+                    </a>
+                    <a href="{{ url_for('alerts') }}" class="nav-link {% if request.endpoint == 'alerts' %}active{% endif %}">
+                        <span class="nav-icon">&#x26a0;</span>
+                        Alerts
+                        <span class="badge">5</span>
+                    </a>
+                    <a href="{{ url_for('monitoring') }}" class="nav-link {% if request.endpoint == 'monitoring' %}active{% endif %}">
+                        <span class="nav-icon">&#x1f50d;</span>
+                        Monitoring
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">System</div>
+                    <a href="{{ url_for('settings') }}" class="nav-link {% if request.endpoint == 'settings' %}active{% endif %}">
+                        <span class="nav-icon">&#x2699;</span>
+                        Settings
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="nav-link">
+                        <span class="nav-icon">&#x23fb;</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">{{ username[0]|upper }}</div>
+                    <div class="user-details">
+                        <div class="name">{{ username }}</div>
+                        <div class="role">Administrator</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+                    <p>{% block page_subtitle %}Real-time Kuwait domain threat monitoring{% endblock %}</p>
+                </div>
+                <div class="topbar-right">
+                    <div class="status-badge live">
+                        <span class="dot"></span>
+                        Live Monitoring
+                    </div>
+                    <button class="topbar-btn">
+                        &#x1f514;
+                        <span class="notification-dot"></span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="page-content">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

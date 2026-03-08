@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block page_subtitle %}Real-time Kuwait domain threat monitoring{% endblock %}
+
+{% block content %}
+<!-- Stats Grid -->
+<div class="stats-grid">
+    <div class="stat-card blue">
+        <div class="stat-icon">&#x1f310;</div>
+        <div class="stat-value">{{ "{:,}".format(stats.total_monitored) }}</div>
+        <div class="stat-label">Certificates Monitored</div>
+        <div class="stat-change up">+2.4% today</div>
+    </div>
+    <div class="stat-card red">
+        <div class="stat-icon">&#x1f6a8;</div>
+        <div class="stat-value">{{ stats.alerts_today }}</div>
+        <div class="stat-label">Alerts Today</div>
+        <div class="stat-change up">+12% vs yesterday</div>
+    </div>
+    <div class="stat-card yellow">
+        <div class="stat-icon">&#x26a0;</div>
+        <div class="stat-value">{{ stats.critical_alerts }}</div>
+        <div class="stat-label">Critical Alerts</div>
+        <div class="stat-change down">-3 from yesterday</div>
+    </div>
+    <div class="stat-card green">
+        <div class="stat-icon">&#x1f6ab;</div>
+        <div class="stat-value">{{ stats.domains_blocked }}</div>
+        <div class="stat-label">Domains Blocked</div>
+        <div class="stat-change up">+7 this week</div>
+    </div>
+</div>
+
+<!-- Content Grid -->
+<div class="content-grid">
+    <!-- Recent Alerts Table -->
+    <div class="card">
+        <div class="card-header">
+            <h3>Recent Alerts</h3>
+            <a href="{{ url_for('alerts') }}" class="view-all">View All &rarr;</a>
+        </div>
+        <div class="card-body">
+            <table class="alert-table">
+                <thead>
+                    <tr>
+                        <th>Domain</th>
+                        <th>Risk Level</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for alert in alerts[:5] %}
+                    <tr>
+                        <td>
+                            <div class="domain-cell">
+                                <div class="domain-icon">&#x1f310;</div>
+                                <div>
+                                    <div class="domain-name">{{ alert.domain }}</div>
+                                    <div class="domain-issuer">Issued by {{ alert.issuer }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="risk-badge {{ alert.risk }}">{{ alert.risk }}</span></td>
+                        <td style="color: var(--text-secondary); font-size: 13px;">{{ alert.category }}</td>
+                        <td>
+                            <span class="status-pill {{ alert.status }}">
+                                <span class="status-dot"></span>
+                                {{ alert.status }}
+                            </span>
+                        </td>
+                        <td style="color: var(--text-muted); font-size: 12px; white-space: nowrap;">{{ alert.timestamp.split(' ')[1] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div>
+        <!-- Activity Feed -->
+        <div class="card" style="margin-bottom: 20px;">
+            <div class="card-header">
+                <h3>Live Activity</h3>
+            </div>
+            <div class="card-body">
+                <div class="activity-feed">
+                    {% for alert in alerts[:4] %}
+                    <div class="activity-item">
+                        <div class="activity-dot-wrapper">
+                            <div class="activity-dot {{ alert.risk }}"></div>
+                            {% if not loop.last %}<div class="activity-line"></div>{% endif %}
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">{{ alert.category }} - {{ alert.risk|upper }} risk</div>
+                            <div class="activity-domain">{{ alert.domain }}</div>
+                            <div class="activity-time">{{ alert.timestamp }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Tracked Keywords -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Tracked Keywords</h3>
+            </div>
+            <div class="card-body">
+                <div class="keywords-list">
+                    {% for keyword in stats.keywords_tracked %}
+                    <span class="keyword-tag">&#x1f50d; {{ keyword }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

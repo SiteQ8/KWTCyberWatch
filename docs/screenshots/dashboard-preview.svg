@@ -1,0 +1,204 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+  <defs>
+    <linearGradient id="bgd" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0e1a"/>
+      <stop offset="100%" style="stop-color:#0f172a"/>
+    </linearGradient>
+    <linearGradient id="logod" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#6366f1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="520" fill="url(#bgd)" rx="8"/>
+
+  <!-- Sidebar -->
+  <rect x="0" y="0" width="200" height="520" fill="#111827" rx="8"/>
+  <rect x="8" y="0" width="192" height="520" fill="#111827"/>
+
+  <!-- Sidebar Header -->
+  <rect x="16" y="18" width="32" height="32" rx="8" fill="url(#logod)"/>
+  <text x="32" y="40" text-anchor="middle" fill="white" font-size="14">&#x1f6e1;</text>
+  <text x="58" y="32" fill="#f8fafc" font-family="Inter,sans-serif" font-size="12" font-weight="700">KWTCyberWatch</text>
+  <text x="58" y="44" fill="#64748b" font-family="Inter,sans-serif" font-size="9">Threat Intelligence</text>
+
+  <!-- Divider -->
+  <line x1="16" y1="62" x2="184" y2="62" stroke="#1e293b" stroke-width="1"/>
+
+  <!-- Nav Section -->
+  <text x="24" y="82" fill="#64748b" font-family="Inter,sans-serif" font-size="9" font-weight="600" letter-spacing="0.5">MAIN</text>
+
+  <!-- Active Nav Item -->
+  <rect x="12" y="88" width="176" height="32" rx="6" fill="rgba(59,130,246,0.1)"/>
+  <text x="40" y="109" fill="#3b82f6" font-family="Inter,sans-serif" font-size="11">&#x1f4ca; Dashboard</text>
+
+  <text x="40" y="137" fill="#94a3b8" font-family="Inter,sans-serif" font-size="11">&#x26a0;  Alerts</text>
+  <rect x="150" y="126" width="28" height="16" rx="8" fill="#ef4444"/>
+  <text x="164" y="138" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="9" font-weight="600">5</text>
+
+  <text x="40" y="161" fill="#94a3b8" font-family="Inter,sans-serif" font-size="11">&#x1f50d; Monitoring</text>
+
+  <text x="24" y="190" fill="#64748b" font-family="Inter,sans-serif" font-size="9" font-weight="600" letter-spacing="0.5">SYSTEM</text>
+  <text x="40" y="210" fill="#94a3b8" font-family="Inter,sans-serif" font-size="11">&#x2699;  Settings</text>
+  <text x="40" y="234" fill="#94a3b8" font-family="Inter,sans-serif" font-size="11">&#x23fb;  Logout</text>
+
+  <!-- User Info -->
+  <line x1="16" y1="480" x2="184" y2="480" stroke="#1e293b" stroke-width="1"/>
+  <circle cx="36" cy="500" r="14" fill="#10b981"/>
+  <text x="36" y="505" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="10" font-weight="600">A</text>
+  <text x="58" y="497" fill="#f8fafc" font-family="Inter,sans-serif" font-size="10" font-weight="600">admin</text>
+  <text x="58" y="510" fill="#64748b" font-family="Inter,sans-serif" font-size="9">Administrator</text>
+
+  <!-- Top Bar -->
+  <rect x="200" y="0" width="700" height="52" fill="rgba(17,24,39,0.5)"/>
+  <line x1="200" y1="52" x2="900" y2="52" stroke="#1e293b" stroke-width="1"/>
+  <text x="224" y="24" fill="#f8fafc" font-family="Inter,sans-serif" font-size="15" font-weight="700">Dashboard</text>
+  <text x="224" y="40" fill="#64748b" font-family="Inter,sans-serif" font-size="10">Real-time Kuwait domain threat monitoring</text>
+
+  <!-- Live Badge -->
+  <rect x="770" y="14" width="110" height="26" rx="13" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.2)" stroke-width="1"/>
+  <circle cx="786" cy="27" r="4" fill="#10b981"/>
+  <text x="796" y="31" fill="#10b981" font-family="Inter,sans-serif" font-size="10" font-weight="600">Live Monitoring</text>
+
+  <!-- Stats Cards -->
+  <!-- Card 1 -->
+  <rect x="216" y="68" width="155" height="90" rx="8" fill="#111827" stroke="#1e293b" stroke-width="1"/>
+  <rect x="216" y="68" width="155" height="3" rx="8" fill="#3b82f6"/>
+  <rect x="228" y="80" width="30" height="30" rx="8" fill="rgba(59,130,246,0.1)"/>
+  <text x="243" y="100" text-anchor="middle" fill="#3b82f6" font-size="14">&#x1f310;</text>
+  <text x="228" y="128" fill="#f8fafc" font-family="Inter,sans-serif" font-size="20" font-weight="700">14,832</text>
+  <text x="228" y="142" fill="#64748b" font-family="Inter,sans-serif" font-size="10">Certificates Monitored</text>
+
+  <!-- Card 2 -->
+  <rect x="383" y="68" width="155" height="90" rx="8" fill="#111827" stroke="#1e293b" stroke-width="1"/>
+  <rect x="383" y="68" width="155" height="3" rx="8" fill="#ef4444"/>
+  <rect x="395" y="80" width="30" height="30" rx="8" fill="rgba(239,68,68,0.1)"/>
+  <text x="410" y="100" text-anchor="middle" fill="#ef4444" font-size="14">&#x1f6a8;</text>
+  <text x="395" y="128" fill="#f8fafc" font-family="Inter,sans-serif" font-size="20" font-weight="700">23</text>
+  <text x="395" y="142" fill="#64748b" font-family="Inter,sans-serif" font-size="10">Alerts Today</text>
+
+  <!-- Card 3 -->
+  <rect x="550" y="68" width="155" height="90" rx="8" fill="#111827" stroke="#1e293b" stroke-width="1"/>
+  <rect x="550" y="68" width="155" height="3" rx="8" fill="#f59e0b"/>
+  <rect x="562" y="80" width="30" height="30" rx="8" fill="rgba(245,158,11,0.1)"/>
+  <text x="577" y="100" text-anchor="middle" fill="#f59e0b" font-size="14">&#x26a0;</text>
+  <text x="562" y="128" fill="#f8fafc" font-family="Inter,sans-serif" font-size="20" font-weight="700">5</text>
+  <text x="562" y="142" fill="#64748b" font-family="Inter,sans-serif" font-size="10">Critical Alerts</text>
+
+  <!-- Card 4 -->
+  <rect x="717" y="68" width="155" height="90" rx="8" fill="#111827" stroke="#1e293b" stroke-width="1"/>
+  <rect x="717" y="68" width="155" height="3" rx="8" fill="#10b981"/>
+  <rect x="729" y="80" width="30" height="30" rx="8" fill="rgba(16,185,129,0.1)"/>
+  <text x="744" y="100" text-anchor="middle" fill="#10b981" font-size="14">&#x1f6ab;</text>
+  <text x="729" y="128" fill="#f8fafc" font-family="Inter,sans-serif" font-size="20" font-weight="700">189</text>
+  <text x="729" y="142" fill="#64748b" font-family="Inter,sans-serif" font-size="10">Domains Blocked</text>
+
+  <!-- Recent Alerts Table -->
+  <rect x="216" y="172" width="460" height="335" rx="8" fill="#111827" stroke="#1e293b" stroke-width="1"/>
+  <text x="232" y="196" fill="#f8fafc" font-family="Inter,sans-serif" font-size="12" font-weight="600">Recent Alerts</text>
+  <text x="640" y="196" text-anchor="end" fill="#3b82f6" font-family="Inter,sans-serif" font-size="10">View All →</text>
+  <line x1="216" y1="208" x2="676" y2="208" stroke="#1e293b" stroke-width="1"/>
+
+  <!-- Table Header -->
+  <rect x="216" y="208" width="460" height="24" fill="rgba(15,23,42,0.5)"/>
+  <text x="232" y="224" fill="#64748b" font-family="Inter,sans-serif" font-size="9" font-weight="600">DOMAIN</text>
+  <text x="430" y="224" fill="#64748b" font-family="Inter,sans-serif" font-size="9" font-weight="600">RISK</text>
+  <text x="510" y="224" fill="#64748b" font-family="Inter,sans-serif" font-size="9" font-weight="600">CATEGORY</text>
+  <text x="610" y="224" fill="#64748b" font-family="Inter,sans-serif" font-size="9" font-weight="600">STATUS</text>
+
+  <!-- Row 1 -->
+  <text x="232" y="252" fill="#f8fafc" font-family="Inter,sans-serif" font-size="10" font-weight="500">kuwait-bank-secure.com</text>
+  <text x="232" y="263" fill="#64748b" font-family="Inter,sans-serif" font-size="8">Let's Encrypt</text>
+  <rect x="425" y="242" width="50" height="18" rx="4" fill="rgba(239,68,68,0.1)"/>
+  <text x="450" y="255" text-anchor="middle" fill="#fb923c" font-family="Inter,sans-serif" font-size="9" font-weight="600">high</text>
+  <text x="510" y="255" fill="#94a3b8" font-family="Inter,sans-serif" font-size="10">Phishing</text>
+  <rect x="605" y="242" width="46" height="18" rx="4" fill="rgba(59,130,246,0.1)"/>
+  <text x="628" y="255" text-anchor="middle" fill="#3b82f6" font-family="Inter,sans-serif" font-size="9">new</text>
+  <line x1="232" y1="272" x2="660" y2="272" stroke="#1e293b" stroke-width="0.5"/>
+
+  <!-- Row 2 -->
+  <text x="232" y="290" fill="#f8fafc" font-family="Inter,sans-serif" font-size="10" font-weight="500">kw-government-portal.net</text>
+  <text x="232" y="301" fill="#64748b" font-family="Inter,sans-serif" font-size="8">Comodo</text>
+  <rect x="425" y="280" width="56" height="18" rx="4" fill="rgba(220,38,38,0.15)"/>
+  <text x="453" y="293" text-anchor="middle" fill="#f87171" font-family="Inter,sans-serif" font-size="9" font-weight="600">critical</text>
+  <text x="510" y="293" fill="#94a3b8" font-family="Inter,sans-serif" font-size="10">Impersonation</text>
+  <rect x="605" y="280" width="72" height="18" rx="4" fill="rgba(245,158,11,0.1)"/>
+  <text x="641" y="293" text-anchor="middle" fill="#f59e0b" font-family="Inter,sans-serif" font-size="9">investigating</text>
+  <line x1="232" y1="310" x2="660" y2="310" stroke="#1e293b" stroke-width="0.5"/>
+
+  <!-- Row 3 -->
+  <text x="232" y="328" fill="#f8fafc" font-family="Inter,sans-serif" font-size="10" font-weight="500">q8-shopping-deals.com</text>
+  <text x="232" y="339" fill="#64748b" font-family="Inter,sans-serif" font-size="8">Let's Encrypt</text>
+  <rect x="425" y="318" width="56" height="18" rx="4" fill="rgba(245,158,11,0.1)"/>
+  <text x="453" y="331" text-anchor="middle" fill="#f59e0b" font-family="Inter,sans-serif" font-size="9" font-weight="600">medium</text>
+  <text x="510" y="331" fill="#94a3b8" font-family="Inter,sans-serif" font-size="10">Suspicious</text>
+  <rect x="605" y="318" width="46" height="18" rx="4" fill="rgba(59,130,246,0.1)"/>
+  <text x="628" y="331" text-anchor="middle" fill="#3b82f6" font-family="Inter,sans-serif" font-size="9">new</text>
+  <line x1="232" y1="348" x2="660" y2="348" stroke="#1e293b" stroke-width="0.5"/>
+
+  <!-- Row 4 -->
+  <text x="232" y="366" fill="#f8fafc" font-family="Inter,sans-serif" font-size="10" font-weight="500">kwt-telecom-update.org</text>
+  <text x="232" y="377" fill="#64748b" font-family="Inter,sans-serif" font-size="8">DigiCert</text>
+  <rect x="425" y="356" width="50" height="18" rx="4" fill="rgba(239,68,68,0.1)"/>
+  <text x="450" y="369" text-anchor="middle" fill="#fb923c" font-family="Inter,sans-serif" font-size="9" font-weight="600">high</text>
+  <text x="510" y="369" fill="#94a3b8" font-family="Inter,sans-serif" font-size="10">Phishing</text>
+  <rect x="605" y="356" width="56" height="18" rx="4" fill="rgba(16,185,129,0.1)"/>
+  <text x="633" y="369" text-anchor="middle" fill="#10b981" font-family="Inter,sans-serif" font-size="9">resolved</text>
+  <line x1="232" y1="386" x2="660" y2="386" stroke="#1e293b" stroke-width="0.5"/>
+
+  <!-- Row 5 -->
+  <text x="232" y="404" fill="#f8fafc" font-family="Inter,sans-serif" font-size="10" font-weight="500">kuwait-airways-promo.com</text>
+  <text x="232" y="415" fill="#64748b" font-family="Inter,sans-serif" font-size="8">Let's Encrypt</text>
+  <rect x="425" y="394" width="56" height="18" rx="4" fill="rgba(220,38,38,0.15)"/>
+  <text x="453" y="407" text-anchor="middle" fill="#f87171" font-family="Inter,sans-serif" font-size="9" font-weight="600">critical</text>
+  <text x="510" y="407" fill="#94a3b8" font-family="Inter,sans-serif" font-size="10">Brand Abuse</text>
+  <rect x="605" y="394" width="46" height="18" rx="4" fill="rgba(59,130,246,0.1)"/>
+  <text x="628" y="407" text-anchor="middle" fill="#3b82f6" font-family="Inter,sans-serif" font-size="9">new</text>
+
+  <!-- Right Panel - Activity -->
+  <rect x="688" y="172" width="190" height="200" rx="8" fill="#111827" stroke="#1e293b" stroke-width="1"/>
+  <text x="704" y="196" fill="#f8fafc" font-family="Inter,sans-serif" font-size="12" font-weight="600">Live Activity</text>
+  <line x1="688" y1="208" x2="878" y2="208" stroke="#1e293b" stroke-width="1"/>
+
+  <!-- Activity Items -->
+  <circle cx="706" cy="228" r="4" fill="#ef4444"/>
+  <text x="718" y="226" fill="#f8fafc" font-family="Inter,sans-serif" font-size="9" font-weight="500">Phishing - HIGH risk</text>
+  <text x="718" y="237" fill="#3b82f6" font-family="monospace" font-size="8">kuwait-bank-secure.com</text>
+  <line x1="706" y1="233" x2="706" y2="252" stroke="#1e293b" stroke-width="1.5"/>
+
+  <circle cx="706" cy="260" r="4" fill="#dc2626"/>
+  <text x="718" y="258" fill="#f8fafc" font-family="Inter,sans-serif" font-size="9" font-weight="500">Impersonation - CRITICAL</text>
+  <text x="718" y="269" fill="#3b82f6" font-family="monospace" font-size="8">kw-government-portal.net</text>
+  <line x1="706" y1="265" x2="706" y2="284" stroke="#1e293b" stroke-width="1.5"/>
+
+  <circle cx="706" cy="292" r="4" fill="#f59e0b"/>
+  <text x="718" y="290" fill="#f8fafc" font-family="Inter,sans-serif" font-size="9" font-weight="500">Suspicious - MEDIUM</text>
+  <text x="718" y="301" fill="#3b82f6" font-family="monospace" font-size="8">q8-shopping-deals.com</text>
+  <line x1="706" y1="297" x2="706" y2="316" stroke="#1e293b" stroke-width="1.5"/>
+
+  <circle cx="706" cy="324" r="4" fill="#ef4444"/>
+  <text x="718" y="322" fill="#f8fafc" font-family="Inter,sans-serif" font-size="9" font-weight="500">Phishing - HIGH risk</text>
+  <text x="718" y="333" fill="#3b82f6" font-family="monospace" font-size="8">kwt-telecom-update.org</text>
+
+  <!-- Right Panel - Keywords -->
+  <rect x="688" y="384" width="190" height="123" rx="8" fill="#111827" stroke="#1e293b" stroke-width="1"/>
+  <text x="704" y="408" fill="#f8fafc" font-family="Inter,sans-serif" font-size="12" font-weight="600">Tracked Keywords</text>
+  <line x1="688" y1="418" x2="878" y2="418" stroke="#1e293b" stroke-width="1"/>
+
+  <!-- Keyword Tags -->
+  <rect x="700" y="428" width="62" height="24" rx="6" fill="rgba(59,130,246,0.08)" stroke="rgba(59,130,246,0.2)" stroke-width="1"/>
+  <text x="731" y="444" text-anchor="middle" fill="#3b82f6" font-family="monospace" font-size="10">kuwait</text>
+
+  <rect x="770" y="428" width="42" height="24" rx="6" fill="rgba(59,130,246,0.08)" stroke="rgba(59,130,246,0.2)" stroke-width="1"/>
+  <text x="791" y="444" text-anchor="middle" fill="#3b82f6" font-family="monospace" font-size="10">kw</text>
+
+  <rect x="820" y="428" width="46" height="24" rx="6" fill="rgba(59,130,246,0.08)" stroke="rgba(59,130,246,0.2)" stroke-width="1"/>
+  <text x="843" y="444" text-anchor="middle" fill="#3b82f6" font-family="monospace" font-size="10">kwt</text>
+
+  <rect x="700" y="460" width="42" height="24" rx="6" fill="rgba(59,130,246,0.08)" stroke="rgba(59,130,246,0.2)" stroke-width="1"/>
+  <text x="721" y="476" text-anchor="middle" fill="#3b82f6" font-family="monospace" font-size="10">kwi</text>
+
+  <rect x="750" y="460" width="38" height="24" rx="6" fill="rgba(59,130,246,0.08)" stroke="rgba(59,130,246,0.2)" stroke-width="1"/>
+  <text x="769" y="476" text-anchor="middle" fill="#3b82f6" font-family="monospace" font-size="10">q8</text>
+</svg>

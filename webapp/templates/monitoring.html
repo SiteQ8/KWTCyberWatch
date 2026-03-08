@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Monitoring{% endblock %}
+{% block page_title %}Monitoring Status{% endblock %}
+{% block page_subtitle %}CertStream connection status and keyword tracking{% endblock %}
+
+{% block content %}
+<!-- Monitor Cards -->
+<div class="monitor-grid">
+    <div class="monitor-card">
+        <h4>&#x1f4e1; CertStream Connection</h4>
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+            <span class="status-pill new"><span class="status-dot"></span> Connected</span>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted);">Real-time certificate transparency log stream active and processing.</p>
+        <div style="margin-top: 16px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">
+                <span>Connection Health</span>
+                <span style="color: var(--success);">99.97%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar green" style="width: 99.97%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="monitor-card">
+        <h4>&#x1f50d; Keyword Matching</h4>
+        <div style="margin-bottom: 12px;">
+            <span style="font-size: 28px; font-weight: 700;">{{ stats.keywords_tracked|length }}</span>
+            <span style="font-size: 13px; color: var(--text-muted); margin-left: 4px;">Active Keywords</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+            {% for kw in stats.keywords_tracked %}
+            <span class="keyword-tag" style="font-size: 12px; padding: 4px 12px;">{{ kw }}</span>
+            {% endfor %}
+        </div>
+        <div style="margin-top: 16px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">
+                <span>Match Rate</span>
+                <span style="color: var(--accent);">0.15%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar blue" style="width: 15%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="monitor-card">
+        <h4>&#x1f4be; Data Storage</h4>
+        <div style="margin-bottom: 12px;">
+            <span style="font-size: 28px; font-weight: 700;">{{ "{:,}".format(stats.domains_blocked) }}</span>
+            <span style="font-size: 13px; color: var(--text-muted); margin-left: 4px;">Domains Logged</span>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted);">Matched domains saved to <code class="font-mono" style="color: var(--accent); background: var(--primary); padding: 2px 6px; border-radius: 4px;">filtered_domains.txt</code></p>
+        <div style="margin-top: 16px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">
+                <span>Storage Used</span>
+                <span style="color: var(--warning);">42%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar yellow" style="width: 42%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Info -->
+<div class="card">
+    <div class="card-header">
+        <h3>System Information</h3>
+    </div>
+    <div class="card-body padded">
+        <div class="settings-section" style="margin-bottom: 0;">
+            <div class="setting-row">
+                <div class="setting-info">
+                    <h4>CertStream Feed</h4>
+                    <p>wss://certstream-server-domain/</p>
+                </div>
+                <span class="status-pill new"><span class="status-dot"></span> Active</span>
+            </div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <h4>Retry Strategy</h4>
+                    <p>Exponential backoff: 5s to 300s max delay</p>
+                </div>
+                <span class="status-pill new"><span class="status-dot"></span> Enabled</span>
+            </div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <h4>Monitored Certificate Types</h4>
+                    <p>certificate_update events from CT logs</p>
+                </div>
+                <span style="font-size: 13px; color: var(--text-secondary);">All CAs</span>
+            </div>
+            <div class="setting-row" style="border-bottom: none;">
+                <div class="setting-info">
+                    <h4>System Uptime</h4>
+                    <p>Last restart: 14 days ago</p>
+                </div>
+                <span style="font-size: 14px; font-weight: 600; color: var(--success);">{{ stats.uptime }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

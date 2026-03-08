@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Alerts{% endblock %}
+{% block page_title %}Alert Center{% endblock %}
+{% block page_subtitle %}All detected domain threats and suspicious certificates{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<div class="filters-bar">
+    <button class="filter-btn active">All Alerts</button>
+    <button class="filter-btn">Critical</button>
+    <button class="filter-btn">High</button>
+    <button class="filter-btn">Medium</button>
+    <button class="filter-btn">New</button>
+    <button class="filter-btn">Investigating</button>
+    <button class="filter-btn">Resolved</button>
+</div>
+
+<!-- Alerts Table -->
+<div class="card">
+    <div class="card-header">
+        <h3>All Alerts ({{ alerts|length }})</h3>
+    </div>
+    <div class="card-body">
+        <table class="alert-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Domain</th>
+                    <th>Risk Level</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Detected</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for alert in alerts %}
+                <tr>
+                    <td style="color: var(--text-muted); font-family: 'JetBrains Mono', monospace; font-size: 12px;">#{{ "%04d"|format(alert.id) }}</td>
+                    <td>
+                        <div class="domain-cell">
+                            <div class="domain-icon">&#x1f310;</div>
+                            <div>
+                                <div class="domain-name">{{ alert.domain }}</div>
+                                <div class="domain-issuer">Issued by {{ alert.issuer }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="risk-badge {{ alert.risk }}">{{ alert.risk }}</span></td>
+                    <td style="color: var(--text-secondary); font-size: 13px;">{{ alert.category }}</td>
+                    <td>
+                        <span class="status-pill {{ alert.status }}">
+                            <span class="status-dot"></span>
+                            {{ alert.status }}
+                        </span>
+                    </td>
+                    <td style="color: var(--text-muted); font-size: 12px; white-space: nowrap;">{{ alert.timestamp }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
