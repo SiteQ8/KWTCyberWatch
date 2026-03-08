@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KWTCyberWatch v2.0 — Kuwait Phishing Detection Suite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-deepest:#05080f;--bg-deep:#0a1628;--bg-card:#0f1d32;--bg-card-hover:#132544;
+  --bg-input:#0c1827;--border:#1a3050;--border-active:#00d4ff40;
+  --cyan:#00d4ff;--cyan-dim:#00d4ff80;--cyan-glow:#00d4ff30;
+  --red:#ff3355;--red-dim:#ff335580;--orange:#ff8c00;--orange-dim:#ff8c0080;
+  --yellow:#ffd600;--yellow-dim:#ffd60060;--green:#00e676;--green-dim:#00e67680;
+  --purple:#b388ff;--purple-dim:#b388ff60;
+  --text:#e8edf5;--text-dim:#8899b0;--text-muted:#556680;
+  --font-display:'Outfit',sans-serif;--font-mono:'JetBrains Mono',monospace;
+  --radius:10px;--radius-sm:6px;--radius-lg:16px;
+  --shadow:0 4px 24px #00000060;
+}
+html{font-size:14px;scroll-behavior:smooth}
+body{font-family:var(--font-display);background:var(--bg-deepest);color:var(--text);min-height:100vh;overflow-x:hidden}
+a{color:var(--cyan);text-decoration:none}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg-deep)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--cyan-dim)}
+
+/* ── Login ── */
+.login-page{display:flex;align-items:center;justify-content:center;min-height:100vh;
+  background:radial-gradient(ellipse at 30% 20%,#0a1e3d 0%,var(--bg-deepest) 70%)}
+.login-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:48px 40px;width:420px;max-width:95vw;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--cyan),var(--purple),var(--cyan))}
+.login-logo{text-align:center;margin-bottom:32px}
+.login-logo h1{font-size:1.8rem;font-weight:800;letter-spacing:-0.03em;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.login-logo p{color:var(--text-dim);font-size:.85rem;margin-top:6px;font-family:var(--font-mono)}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-size:.75rem;font-weight:600;color:var(--text-dim);
+  text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.form-group input{width:100%;padding:12px 16px;background:var(--bg-input);border:1px solid var(--border);
+  border-radius:var(--radius-sm);color:var(--text);font-family:var(--font-mono);font-size:.9rem;
+  transition:border-color .2s}
+.form-group input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-glow)}
+.login-btn{width:100%;padding:14px;border:none;border-radius:var(--radius-sm);
+  background:linear-gradient(135deg,var(--cyan),#0090ff);color:#fff;font-family:var(--font-display);
+  font-weight:700;font-size:1rem;cursor:pointer;transition:transform .15s,box-shadow .2s;
+  text-transform:uppercase;letter-spacing:.06em}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px var(--cyan-glow)}
+.login-error{color:var(--red);font-size:.8rem;text-align:center;margin-top:12px;min-height:20px}
+.login-hint{text-align:center;margin-top:20px;padding:12px;background:var(--bg-deep);
+  border-radius:var(--radius-sm);font-family:var(--font-mono);font-size:.75rem;color:var(--text-dim)}
+.login-hint code{color:var(--cyan)}
+
+/* ── App Layout ── */
+.app{display:none;min-height:100vh}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;
+  height:56px;background:var(--bg-deep);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.topbar-brand{display:flex;align-items:center;gap:10px}
+.topbar-brand h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.02em}
+.topbar-brand h1 span{color:var(--cyan)}
+.topbar-badge{font-family:var(--font-mono);font-size:.65rem;padding:3px 8px;
+  background:var(--cyan-glow);color:var(--cyan);border-radius:99px;font-weight:600}
+.topbar-right{display:flex;align-items:center;gap:16px}
+.topbar-user{font-size:.8rem;color:var(--text-dim)}
+.topbar-user strong{color:var(--text)}
+.btn-sm{padding:6px 14px;font-size:.75rem;border:1px solid var(--border);background:transparent;
+  color:var(--text-dim);border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font-display);
+  transition:all .2s}
+.btn-sm:hover{border-color:var(--red);color:var(--red)}
+
+/* ── Sidebar ── */
+.layout{display:flex}
+.sidebar{width:220px;min-height:calc(100vh - 56px);background:var(--bg-deep);
+  border-right:1px solid var(--border);padding:16px 0;flex-shrink:0}
+.sidebar-section{padding:0 16px;margin-bottom:8px}
+.sidebar-section-title{font-size:.65rem;font-weight:600;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--text-muted);margin-bottom:8px;padding-left:4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;margin:2px 8px;
+  border-radius:var(--radius-sm);cursor:pointer;color:var(--text-dim);font-size:.85rem;
+  font-weight:500;transition:all .15s;position:relative}
+.nav-item:hover{background:var(--bg-card);color:var(--text)}
+.nav-item.active{background:var(--cyan-glow);color:var(--cyan)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:20px;background:var(--cyan);border-radius:0 2px 2px 0}
+.nav-icon{width:18px;text-align:center;font-size:.9rem}
+.nav-badge{margin-left:auto;font-size:.65rem;padding:2px 7px;background:var(--red);
+  color:#fff;border-radius:99px;font-weight:700;font-family:var(--font-mono)}
+
+/* ── Main Content ── */
+.main{flex:1;padding:24px 28px;overflow-y:auto;max-height:calc(100vh - 56px)}
+.page{display:none}
+.page.active{display:block}
+.page-title{font-size:1.5rem;font-weight:700;margin-bottom:4px}
+.page-desc{color:var(--text-dim);font-size:.85rem;margin-bottom:24px}
+
+/* ── Stats Grid ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;position:relative;overflow:hidden;transition:border-color .2s}
+.stat-card:hover{border-color:var(--cyan-dim)}
+.stat-card::after{content:'';position:absolute;top:0;right:0;width:80px;height:80px;
+  border-radius:50%;filter:blur(40px);opacity:.15}
+.stat-card.cyan::after{background:var(--cyan)}
+.stat-card.red::after{background:var(--red)}
+.stat-card.orange::after{background:var(--orange)}
+.stat-card.green::after{background:var(--green)}
+.stat-card.purple::after{background:var(--purple)}
+.stat-label{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:8px}
+.stat-value{font-size:2rem;font-weight:800;font-family:var(--font-mono);letter-spacing:-0.03em}
+.stat-value.cyan{color:var(--cyan)}.stat-value.red{color:var(--red)}
+.stat-value.orange{color:var(--orange)}.stat-value.green{color:var(--green)}
+.stat-value.purple{color:var(--purple)}
+.stat-sub{font-size:.7rem;color:var(--text-muted);margin-top:4px;font-family:var(--font-mono)}
+
+/* ── Cards ── */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;margin-bottom:20px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title{font-size:1rem;font-weight:700}
+.card-title .icon{margin-right:8px}
+
+/* ── Tables ── */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+th{text-align:left;padding:10px 12px;background:var(--bg-deep);color:var(--text-dim);
+  font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;
+  border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:hover td{background:var(--bg-card-hover)}
+
+/* ── Badges ── */
+.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.7rem;
+  font-weight:600;font-family:var(--font-mono);text-transform:uppercase}
+.badge.critical{background:#ff335520;color:var(--red);border:1px solid var(--red-dim)}
+.badge.high{background:#ff8c0020;color:var(--orange);border:1px solid var(--orange-dim)}
+.badge.medium{background:#ffd60015;color:var(--yellow);border:1px solid var(--yellow-dim)}
+.badge.low{background:#00e67620;color:var(--green);border:1px solid var(--green-dim)}
+.badge.clean{background:#8899b020;color:var(--text-dim);border:1px solid var(--border)}
+.badge.info{background:var(--cyan-glow);color:var(--cyan);border:1px solid var(--cyan-dim)}
+
+/* ── Scanner ── */
+.scanner-box{display:flex;gap:12px;margin-bottom:24px}
+.scanner-input{flex:1;padding:14px 18px;background:var(--bg-input);border:1px solid var(--border);
+  border-radius:var(--radius-sm);color:var(--text);font-family:var(--font-mono);font-size:.9rem}
+.scanner-input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-glow)}
+.scan-btn{padding:14px 28px;border:none;border-radius:var(--radius-sm);
+  background:linear-gradient(135deg,var(--cyan),#0090ff);color:#fff;font-weight:700;
+  font-size:.85rem;cursor:pointer;white-space:nowrap;transition:transform .15s}
+.scan-btn:hover{transform:translateY(-1px)}
+.scan-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* ── Live Feed ── */
+.feed-container{max-height:420px;overflow-y:auto;font-family:var(--font-mono);font-size:.75rem;
+  background:var(--bg-deepest);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px}
+.feed-row{display:flex;align-items:center;gap:10px;padding:6px 10px;border-bottom:1px solid #0a1628;
+  animation:feedIn .3s ease}
+@keyframes feedIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.feed-time{color:var(--text-muted);min-width:75px}
+.feed-domain{color:var(--text);flex:1;word-break:break-all}
+.feed-score{min-width:40px;text-align:right;font-weight:600}
+.feed-keywords{color:var(--purple);font-size:.65rem;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── Scan Results ── */
+.result-panel{display:none}
+.result-panel.show{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.risk-meter{height:8px;background:var(--bg-deep);border-radius:4px;overflow:hidden;margin:12px 0}
+.risk-meter-fill{height:100%;border-radius:4px;transition:width .6s ease}
+.indicator-list{list-style:none;padding:0}
+.indicator-list li{padding:8px 12px;border-left:3px solid var(--border);margin-bottom:6px;
+  background:var(--bg-deep);border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-size:.8rem}
+.indicator-list li.high-weight{border-left-color:var(--red)}
+.indicator-list li.med-weight{border-left-color:var(--orange)}
+.indicator-list li.low-weight{border-left-color:var(--yellow)}
+
+/* ── Notification Config ── */
+.notif-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.notif-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.notif-card-title{font-size:.9rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.toggle{position:relative;width:44px;height:24px;cursor:pointer}
+.toggle input{display:none}
+.toggle-slider{position:absolute;inset:0;background:var(--bg-deep);border:1px solid var(--border);
+  border-radius:12px;transition:all .2s}
+.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:2px;top:2px;
+  background:var(--text-dim);border-radius:50%;transition:all .2s}
+.toggle input:checked+.toggle-slider{background:var(--cyan-glow);border-color:var(--cyan)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(20px);background:var(--cyan)}
+.notif-field{margin-bottom:10px}
+.notif-field label{display:block;font-size:.7rem;color:var(--text-dim);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.notif-field input{width:100%;padding:8px 10px;background:var(--bg-input);border:1px solid var(--border);
+  border-radius:var(--radius-sm);color:var(--text);font-family:var(--font-mono);font-size:.8rem}
+.notif-field input:focus{outline:none;border-color:var(--cyan)}
+
+/* ── Chart placeholders ── */
+.chart-area{height:200px;background:var(--bg-deep);border:1px solid var(--border);
+  border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:160px;padding:0 20px}
+.chart-bar{width:28px;border-radius:4px 4px 0 0;transition:height .6s ease;position:relative}
+.chart-bar:hover{opacity:.8}
+.chart-bar::after{content:attr(data-label);position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);
+  font-size:.55rem;color:var(--text-muted);white-space:nowrap}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+  .sidebar{display:none}.main{padding:16px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .scanner-box{flex-direction:column}
+}
+
+/* ── Pulse animation ── */
+.pulse{animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.glow-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;
+  animation:pulse 1.5s infinite;margin-right:6px}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ LOGIN PAGE ═══════════ -->
+<div id="loginPage" class="login-page">
+  <div class="login-box">
+    <div class="login-logo">
+      <h1>🛡️ KWTCyberWatch</h1>
+      <p>Kuwait Phishing Detection Suite v2.0</p>
+    </div>
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="loginUser" placeholder="Enter username" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="Enter password">
+    </div>
+    <button class="login-btn" onclick="doLogin()">Sign In</button>
+    <div class="login-error" id="loginError"></div>
+    <div class="login-hint">
+      Demo credentials: <code>admin</code> / <code>admin</code>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MAIN APP ═══════════ -->
+<div id="app" class="app">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-brand">
+      <h1>🛡️ KWT<span>CyberWatch</span></h1>
+      <span class="topbar-badge">v2.0.0</span>
+      <span style="display:flex;align-items:center;margin-left:12px;font-size:.75rem;color:var(--green)">
+        <span class="glow-dot"></span>System Online
+      </span>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-user">Signed in as <strong id="currentUser">admin</strong></span>
+      <button class="btn-sm" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Main</div>
+        <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard',this)">
+          <span class="nav-icon">📊</span> Dashboard
+        </div>
+        <div class="nav-item" data-page="certstream" onclick="showPage('certstream',this)">
+          <span class="nav-icon">📡</span> CertStream
+          <span class="nav-badge" id="feedCount">0</span>
+        </div>
+        <div class="nav-item" data-page="scanner" onclick="showPage('scanner',this)">
+          <span class="nav-icon">🔍</span> Domain Scanner
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Protection</div>
+        <div class="nav-item" data-page="brands" onclick="showPage('brands',this)">
+          <span class="nav-icon">🏦</span> Brand Monitor
+        </div>
+        <div class="nav-item" data-page="alerts" onclick="showPage('alerts',this)">
+          <span class="nav-icon">🚨</span> Alerts
+          <span class="nav-badge" id="alertCount">12</span>
+        </div>
+        <div class="nav-item" data-page="threatintel" onclick="showPage('threatintel',this)">
+          <span class="nav-icon">🧠</span> Threat Intel
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">System</div>
+        <div class="nav-item" data-page="notifications" onclick="showPage('notifications',this)">
+          <span class="nav-icon">🔔</span> Notifications
+        </div>
+        <div class="nav-item" data-page="analytics" onclick="showPage('analytics',this)">
+          <span class="nav-icon">📈</span> Analytics
+        </div>
+        <div class="nav-item" data-page="settings" onclick="showPage('settings',this)">
+          <span class="nav-icon">⚙️</span> Settings
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main">
+
+      <!-- ──── DASHBOARD ──── -->
+      <div id="page-dashboard" class="page active">
+        <h2 class="page-title">Dashboard</h2>
+        <p class="page-desc">Real-time phishing detection overview for Kuwait's digital ecosystem</p>
+        <div class="stats-grid">
+          <div class="stat-card cyan">
+            <div class="stat-label">Certificates Scanned</div>
+            <div class="stat-value cyan" id="statCerts">1,247,893</div>
+            <div class="stat-sub">+12,456 last hour</div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-label">Phishing Detected</div>
+            <div class="stat-value red">847</div>
+            <div class="stat-sub">+23 today</div>
+          </div>
+          <div class="stat-card orange">
+            <div class="stat-label">Active Alerts</div>
+            <div class="stat-value orange">12</div>
+            <div class="stat-sub">4 critical</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-label">Brands Protected</div>
+            <div class="stat-value green">14</div>
+            <div class="stat-sub">Kuwait financial & gov</div>
+          </div>
+          <div class="stat-card purple">
+            <div class="stat-label">Domains Watchlisted</div>
+            <div class="stat-value purple">2,341</div>
+            <div class="stat-sub">156 high-risk</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">🔴 Recent Critical Threats</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Domain</th><th>Type</th><th>Score</th><th>Time</th></tr></thead>
+                <tbody id="recentThreats"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">📊 Detection by Category</span>
+            </div>
+            <div class="chart-area">
+              <div class="chart-bars" id="categoryChart"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🗺️ Threat Geography</span>
+            <span class="badge info">Last 24 hours</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
+            <div style="background:var(--bg-deep);padding:12px;border-radius:var(--radius-sm);text-align:center">
+              <div style="font-size:1.4rem;margin-bottom:4px">🇷🇺</div>
+              <div style="font-family:var(--font-mono);font-weight:700;color:var(--red)">234</div>
+              <div style="font-size:.65rem;color:var(--text-dim)">Russia</div>
+            </div>
+            <div style="background:var(--bg-deep);padding:12px;border-radius:var(--radius-sm);text-align:center">
+              <div style="font-size:1.4rem;margin-bottom:4px">🇨🇳</div>
+              <div style="font-family:var(--font-mono);font-weight:700;color:var(--orange)">189</div>
+              <div style="font-size:.65rem;color:var(--text-dim)">China</div>
+            </div>
+            <div style="background:var(--bg-deep);padding:12px;border-radius:var(--radius-sm);text-align:center">
+              <div style="font-size:1.4rem;margin-bottom:4px">🇳🇬</div>
+              <div style="font-family:var(--font-mono);font-weight:700;color:var(--yellow)">156</div>
+              <div style="font-size:.65rem;color:var(--text-dim)">Nigeria</div>
+            </div>
+            <div style="background:var(--bg-deep);padding:12px;border-radius:var(--radius-sm);text-align:center">
+              <div style="font-size:1.4rem;margin-bottom:4px">🇮🇳</div>
+              <div style="font-family:var(--font-mono);font-weight:700;color:var(--yellow)">98</div>
+              <div style="font-size:.65rem;color:var(--text-dim)">India</div>
+            </div>
+            <div style="background:var(--bg-deep);padding:12px;border-radius:var(--radius-sm);text-align:center">
+              <div style="font-size:1.4rem;margin-bottom:4px">🇧🇷</div>
+              <div style="font-family:var(--font-mono);font-weight:700;color:var(--green)">67</div>
+              <div style="font-size:.65rem;color:var(--text-dim)">Brazil</div>
+            </div>
+            <div style="background:var(--bg-deep);padding:12px;border-radius:var(--radius-sm);text-align:center">
+              <div style="font-size:1.4rem;margin-bottom:4px">🌍</div>
+              <div style="font-family:var(--font-mono);font-weight:700;color:var(--text-dim)">103</div>
+              <div style="font-size:.65rem;color:var(--text-dim)">Others</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ──── CERTSTREAM ──── -->
+      <div id="page-certstream" class="page">
+        <h2 class="page-title">CertStream Live Feed</h2>
+        <p class="page-desc">Real-time Certificate Transparency log monitoring</p>
+        <div class="stats-grid" style="margin-bottom:16px">
+          <div class="stat-card cyan">
+            <div class="stat-label">Certs/Second</div>
+            <div class="stat-value cyan" id="certsPerSec">~45</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-label">Matched Today</div>
+            <div class="stat-value green" id="matchedToday">342</div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-label">High Risk</div>
+            <div class="stat-value red">28</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title"><span class="glow-dot"></span> Live Certificate Feed — Kuwait Keywords</span>
+            <button class="btn-sm" onclick="toggleFeed()" id="feedToggle" style="border-color:var(--green);color:var(--green)">⏸ Pause</button>
+          </div>
+          <div class="feed-container" id="liveFeed"></div>
+        </div>
+      </div>
+
+      <!-- ──── DOMAIN SCANNER ──── -->
+      <div id="page-scanner" class="page">
+        <h2 class="page-title">Domain Scanner</h2>
+        <p class="page-desc">Analyze any domain for phishing indicators, brand impersonation, and domain squatting</p>
+        <div class="scanner-box">
+          <input class="scanner-input" id="scanInput" placeholder="Enter domain to scan (e.g., nbk-secure-login.xyz)" onkeydown="if(event.key==='Enter')scanDomain()">
+          <button class="scan-btn" id="scanBtn" onclick="scanDomain()">🔍 Analyze</button>
+        </div>
+        <div class="result-panel" id="scanResult"></div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📋 Recent Scans</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Domain</th><th>Risk Score</th><th>Level</th><th>Categories</th><th>Scanned</th></tr></thead>
+              <tbody id="recentScans"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ──── BRAND MONITOR ──── -->
+      <div id="page-brands" class="page">
+        <h2 class="page-title">Brand Protection Monitor</h2>
+        <p class="page-desc">Protecting Kuwait's critical financial, telecom, and government brands</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Brand</th><th>Protected Domains</th><th>Industry</th><th>Priority</th><th>Alerts</th><th>Status</th></tr></thead>
+            <tbody id="brandTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ──── ALERTS ──── -->
+      <div id="page-alerts" class="page">
+        <h2 class="page-title">Security Alerts</h2>
+        <p class="page-desc">Active phishing and brand impersonation alerts</p>
+        <div class="stats-grid" style="margin-bottom:16px">
+          <div class="stat-card red"><div class="stat-label">Critical</div><div class="stat-value red">4</div></div>
+          <div class="stat-card orange"><div class="stat-label">High</div><div class="stat-value orange">5</div></div>
+          <div class="stat-card cyan"><div class="stat-label">Medium</div><div class="stat-value cyan">3</div></div>
+          <div class="stat-card green"><div class="stat-label">Resolved Today</div><div class="stat-value green">8</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">🚨 Active Alerts</span></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>ID</th><th>Severity</th><th>Brand</th><th>Domain</th><th>Type</th><th>Detected</th><th>Status</th></tr></thead>
+              <tbody id="alertTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ──── THREAT INTEL ──── -->
+      <div id="page-threatintel" class="page">
+        <h2 class="page-title">Threat Intelligence</h2>
+        <p class="page-desc">Integrated threat intelligence from multiple sources</p>
+        <div class="stats-grid">
+          <div class="stat-card cyan">
+            <div class="stat-label">Intel Sources</div>
+            <div class="stat-value cyan">6</div>
+            <div class="stat-sub">VT, URLScan, PhishTank, GSB, OpenPhish, Shodan</div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-label">Known Malicious</div>
+            <div class="stat-value red">1,247</div>
+          </div>
+          <div class="stat-card orange">
+            <div class="stat-label">IOCs Tracked</div>
+            <div class="stat-value orange">5,892</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">🧠 Recent Threat Intel Hits</span></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Domain</th><th>Source</th><th>Verdict</th><th>Tags</th><th>First Seen</th></tr></thead>
+              <tbody id="tiTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ──── NOTIFICATIONS ──── -->
+      <div id="page-notifications" class="page">
+        <h2 class="page-title">Notification Settings</h2>
+        <p class="page-desc">Configure alert delivery channels</p>
+        <div class="notif-grid">
+          <div class="notif-card">
+            <div class="notif-card-title">
+              📧 Email (SMTP)
+              <label class="toggle" style="margin-left:auto"><input type="checkbox"><span class="toggle-slider"></span></label>
+            </div>
+            <div class="notif-field"><label>SMTP Server</label><input placeholder="smtp.gmail.com"></div>
+            <div class="notif-field"><label>Port</label><input placeholder="587" value="587"></div>
+            <div class="notif-field"><label>Username</label><input placeholder="you@gmail.com"></div>
+            <div class="notif-field"><label>Password</label><input type="password" placeholder="••••••••"></div>
+            <div class="notif-field"><label>Recipients</label><input placeholder="soc@company.com, admin@company.com"></div>
+          </div>
+          <div class="notif-card">
+            <div class="notif-card-title">
+              💬 Slack
+              <label class="toggle" style="margin-left:auto"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            </div>
+            <div class="notif-field"><label>Webhook URL</label><input placeholder="https://hooks.slack.com/services/..." value="https://hooks.slack.com/services/T00/B00/xxxx"></div>
+            <div class="notif-field"><label>Channel</label><input placeholder="#phishing-alerts" value="#phishing-alerts"></div>
+            <div style="margin-top:12px;padding:10px;background:var(--bg-deep);border-radius:var(--radius-sm);font-size:.75rem;color:var(--green)">✅ Connected — Last alert sent 4m ago</div>
+          </div>
+          <div class="notif-card">
+            <div class="notif-card-title">
+              ✈️ Telegram
+              <label class="toggle" style="margin-left:auto"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            </div>
+            <div class="notif-field"><label>Bot Token</label><input type="password" placeholder="123456:ABC-DEF..." value="••••••••••••"></div>
+            <div class="notif-field"><label>Chat ID</label><input placeholder="-1001234567890" value="-100198765432"></div>
+            <div style="margin-top:12px;padding:10px;background:var(--bg-deep);border-radius:var(--radius-sm);font-size:.75rem;color:var(--green)">✅ Connected — Bot active</div>
+          </div>
+          <div class="notif-card">
+            <div class="notif-card-title">
+              🔗 Webhook (SIEM)
+              <label class="toggle" style="margin-left:auto"><input type="checkbox"><span class="toggle-slider"></span></label>
+            </div>
+            <div class="notif-field"><label>Endpoint URL</label><input placeholder="https://siem.company.com/api/webhook"></div>
+            <div class="notif-field"><label>HMAC Secret</label><input type="password" placeholder="webhook-signing-secret"></div>
+            <div style="margin-top:12px;padding:10px;background:var(--bg-deep);border-radius:var(--radius-sm);font-size:.75rem;color:var(--text-dim)">⚪ Not configured</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ──── ANALYTICS ──── -->
+      <div id="page-analytics" class="page">
+        <h2 class="page-title">Analytics</h2>
+        <p class="page-desc">Detection trends and performance metrics</p>
+        <div class="stats-grid">
+          <div class="stat-card cyan"><div class="stat-label">Avg Scan Time</div><div class="stat-value cyan">1.2s</div></div>
+          <div class="stat-card green"><div class="stat-label">True Positive Rate</div><div class="stat-value green">94.7%</div></div>
+          <div class="stat-card orange"><div class="stat-label">False Positive Rate</div><div class="stat-value orange">2.1%</div></div>
+          <div class="stat-card purple"><div class="stat-label">Uptime</div><div class="stat-value purple">99.8%</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div class="card">
+            <div class="card-header"><span class="card-title">📈 Weekly Detection Trend</span></div>
+            <div class="chart-area"><div class="chart-bars" id="weeklyChart"></div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">🎯 Top Targeted Brands</span></div>
+            <div class="chart-area"><div class="chart-bars" id="brandChart"></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">🕐 Detection Timeline (Last 24h)</span></div>
+          <div class="chart-area" style="height:120px"><div class="chart-bars" id="hourlyChart"></div></div>
+        </div>
+      </div>
+
+      <!-- ──── SETTINGS ──── -->
+      <div id="page-settings" class="page">
+        <h2 class="page-title">Settings</h2>
+        <p class="page-desc">System configuration and keyword management</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div class="card">
+            <div class="card-header"><span class="card-title">🔑 CertStream Keywords</span></div>
+            <div style="font-family:var(--font-mono);font-size:.8rem;line-height:2" id="keywordList"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">⚙️ Detection Thresholds</span></div>
+            <div class="notif-field"><label>Homoglyph Similarity Threshold</label><input value="0.85"></div>
+            <div class="notif-field"><label>Levenshtein Distance Max</label><input value="3"></div>
+            <div class="notif-field"><label>Entropy Threshold</label><input value="3.5"></div>
+            <div class="notif-field"><label>Minimum Risk Score for Alert</label><input value="50"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">🔌 API Configuration</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="notif-field"><label>API Host</label><input value="0.0.0.0" disabled></div>
+            <div class="notif-field"><label>API Port</label><input value="5000" disabled></div>
+            <div class="notif-field"><label>Rate Limit</label><input value="100/hour"></div>
+            <div class="notif-field"><label>CORS Origins</label><input value="*"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">🔐 Threat Intelligence API Keys</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="notif-field"><label>VirusTotal</label><input type="password" placeholder="Enter API key" value="••••••••••••"></div>
+            <div class="notif-field"><label>URLScan.io</label><input type="password" placeholder="Enter API key" value="••••••••••••"></div>
+            <div class="notif-field"><label>Shodan</label><input type="password" placeholder="Enter API key"></div>
+            <div class="notif-field"><label>Google Safe Browsing</label><input type="password" placeholder="Enter API key" value="••••••••••••"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════ DEMO DATA ═══════════
+
+const DEMO_THREATS = [
+  {domain:"nbk-secure-login.xyz",type:"Brand Impersonation",score:92,time:"2m ago",level:"critical"},
+  {domain:"kfh-verify-account.top",type:"Combo-squatting",score:88,time:"5m ago",level:"critical"},
+  {domain:"e-gov-kw-update.club",type:"Government Spoof",score:85,time:"8m ago",level:"critical"},
+  {domain:"kuwait-moi-portal.online",type:"Typosquatting",score:81,time:"12m ago",level:"high"},
+  {domain:"zain-kw-rewards.xyz",type:"Brand Impersonation",score:78,time:"15m ago",level:"high"},
+  {domain:"cbk-banking-secure.icu",type:"Homoglyph",score:76,time:"22m ago",level:"high"},
+  {domain:"burgan-online-login.tk",type:"Combo-squatting",score:73,time:"35m ago",level:"high"},
+  {domain:"boubyan-mobile-app.ga",type:"Brand Impersonation",score:70,time:"1h ago",level:"medium"},
+];
+
+const DEMO_BRANDS = [
+  {name:"National Bank of Kuwait (NBK)",domains:"nbk.com, nbk.com.kw",industry:"Banking",priority:"critical",alerts:4,status:"active"},
+  {name:"Kuwait Finance House (KFH)",domains:"kfh.com, kfh.com.kw",industry:"Banking",priority:"critical",alerts:3,status:"active"},
+  {name:"Central Bank of Kuwait (CBK)",domains:"cbk.gov.kw",industry:"Government",priority:"critical",alerts:2,status:"active"},
+  {name:"Burgan Bank",domains:"burgan.com, burgan.com.kw",industry:"Banking",priority:"high",alerts:1,status:"active"},
+  {name:"Gulf Bank",domains:"e-gulfbank.com",industry:"Banking",priority:"high",alerts:1,status:"active"},
+  {name:"Boubyan Bank",domains:"bankboubyan.com",industry:"Banking",priority:"high",alerts:1,status:"active"},
+  {name:"Warba Bank",domains:"warbabank.com",industry:"Banking",priority:"high",alerts:0,status:"active"},
+  {name:"Zain Kuwait",domains:"kw.zain.com",industry:"Telecom",priority:"high",alerts:2,status:"active"},
+  {name:"Ooredoo Kuwait",domains:"ooredoo.com.kw",industry:"Telecom",priority:"high",alerts:0,status:"active"},
+  {name:"Kuwait eGovernment",domains:"e.gov.kw",industry:"Government",priority:"critical",alerts:1,status:"active"},
+  {name:"Ministry of Interior",domains:"moi.gov.kw",industry:"Government",priority:"critical",alerts:1,status:"active"},
+  {name:"Kuwait Airways",domains:"kuwaitairways.com",industry:"Aviation",priority:"medium",alerts:0,status:"active"},
+  {name:"KNPC",domains:"knpc.com",industry:"Oil & Gas",priority:"medium",alerts:0,status:"active"},
+  {name:"KPC",domains:"kpc.com.kw",industry:"Oil & Gas",priority:"medium",alerts:0,status:"active"},
+];
+
+const DEMO_ALERTS = [
+  {id:"BA-000001",severity:"critical",brand:"NBK",domain:"nbk-secure-login.xyz",type:"domain_squat",time:"2m ago",status:"open"},
+  {id:"BA-000002",severity:"critical",brand:"KFH",domain:"kfh-verify-account.top",type:"combo-squatting",time:"5m ago",status:"open"},
+  {id:"BA-000003",severity:"critical",brand:"eGov Kuwait",domain:"e-gov-kw-update.club",type:"brand_impersonation",time:"8m ago",status:"investigating"},
+  {id:"BA-000004",severity:"critical",brand:"MOI",domain:"kuwait-moi-portal.online",type:"typosquatting",time:"12m ago",status:"open"},
+  {id:"BA-000005",severity:"high",brand:"Zain",domain:"zain-kw-rewards.xyz",type:"brand_impersonation",time:"15m ago",status:"open"},
+  {id:"BA-000006",severity:"high",brand:"CBK",domain:"cbk-banking-secure.icu",type:"homoglyph",time:"22m ago",status:"open"},
+  {id:"BA-000007",severity:"high",brand:"Burgan",domain:"burgan-online-login.tk",type:"combo-squatting",time:"35m ago",status:"investigating"},
+  {id:"BA-000008",severity:"high",brand:"NBK",domain:"nbk-account-verify.ga",type:"brand_keyword",time:"45m ago",status:"open"},
+  {id:"BA-000009",severity:"high",brand:"KFH",domain:"kfh-mobile-banking.ml",type:"brand_impersonation",time:"1h ago",status:"open"},
+  {id:"BA-000010",severity:"medium",brand:"Boubyan",domain:"boubyan-mobile-app.ga",type:"brand_keyword",time:"1h ago",status:"open"},
+  {id:"BA-000011",severity:"medium",brand:"Gulf Bank",domain:"gulfbank-login-kw.xyz",type:"combo-squatting",time:"2h ago",status:"investigating"},
+  {id:"BA-000012",severity:"medium",brand:"eGov Kuwait",domain:"egov-kw-services.top",type:"typosquatting",time:"3h ago",status:"open"},
+];
+
+const DEMO_TI = [
+  {domain:"nbk-secure-login.xyz",source:"VirusTotal",verdict:"Malicious (14/87)",tags:["phishing","brand-abuse"],seen:"2026-03-08"},
+  {domain:"kfh-verify-account.top",source:"URLScan.io",verdict:"Malicious",tags:["phishing"],seen:"2026-03-08"},
+  {domain:"e-gov-kw-update.club",source:"PhishTank",verdict:"Confirmed Phish",tags:["government-spoof"],seen:"2026-03-07"},
+  {domain:"kuwait-moi-portal.online",source:"Google SafeBrowsing",verdict:"Social Engineering",tags:["deceptive"],seen:"2026-03-07"},
+  {domain:"zain-kw-rewards.xyz",source:"VirusTotal",verdict:"Malicious (8/87)",tags:["phishing","telecom"],seen:"2026-03-07"},
+  {domain:"cbk-banking-secure.icu",source:"OpenPhish",verdict:"Active Phishing",tags:["banking","homoglyph"],seen:"2026-03-06"},
+];
+
+const CERTSTREAM_DEMO = [
+  {domain:"nbk-online-banking.xyz",score:89,kw:["nbk"],risk:"critical"},
+  {domain:"*.kuwait-visa-services.com",score:52,kw:["kuwait"],risk:"medium"},
+  {domain:"kfh-rewards-portal.top",score:85,kw:["kfh"],risk:"critical"},
+  {domain:"q8-telecom-offer.club",score:68,kw:["q8"],risk:"high"},
+  {domain:"kwt-government-portal.online",score:72,kw:["kwt"],risk:"high"},
+  {domain:"zain-kw-promo.xyz",score:77,kw:["zain","kw"],risk:"high"},
+  {domain:"nbk-verify-identity.ga",score:91,kw:["nbk"],risk:"critical"},
+  {domain:"*.kw-shopping-deals.site",score:41,kw:["kw"],risk:"medium"},
+  {domain:"cbk-gov-kw-auth.tk",score:88,kw:["cbk","kw"],risk:"critical"},
+  {domain:"kuwait-airways-booking.buzz",score:65,kw:["kuwait"],risk:"high"},
+  {domain:"e-gov-kw-renewal.icu",score:83,kw:["kw"],risk:"critical"},
+  {domain:"burgan-bank-login.ml",score:86,kw:["burgan"],risk:"critical"},
+  {domain:"moi-kw-traffic-fines.online",score:79,kw:["moi","kw"],risk:"high"},
+  {domain:"*.kwi-jobs-portal.xyz",score:38,kw:["kwi"],risk:"low"},
+  {domain:"kfh-mobile-update.cf",score:87,kw:["kfh"],risk:"critical"},
+  {domain:"q8-university-apply.com",score:25,kw:["q8"],risk:"low"},
+  {domain:"warba-bank-secure.tk",score:82,kw:["warba"],risk:"critical"},
+  {domain:"ooredoo-kw-offer.top",score:71,kw:["ooredoo","kw"],risk:"high"},
+  {domain:"paci-kw-civil-id.club",score:80,kw:["paci","kw"],risk:"high"},
+  {domain:"nbk-credit-card-apply.xyz",score:90,kw:["nbk"],risk:"critical"},
+];
+
+const SCAN_DEMO = [
+  {domain:"nbk-secure-login.xyz",score:92,level:"critical",categories:["brand_impersonation","keyword_abuse","suspicious_tld"],time:"2m ago"},
+  {domain:"kfh-verify.top",score:85,level:"critical",categories:["brand_impersonation","combo-squatting"],time:"10m ago"},
+  {domain:"e.gov.kw",score:0,level:"clean",categories:[],time:"15m ago"},
+  {domain:"kuwait-bank-promo.tk",score:72,level:"high",categories:["keyword_abuse","suspicious_tld"],time:"25m ago"},
+  {domain:"google.com",score:0,level:"clean",categories:[],time:"30m ago"},
+];
+
+const KEYWORDS = [
+  "kuwait","kw","kwt","kwi","q8","nbk","kfh","cbk","burgan",
+  "gulf-bank","warba","boubyan","ahli-united","zain-kw",
+  "ooredoo-kw","stc-kw","moi-kw","e-gov-kw","paci-kw"
+];
+
+// ═══════════ AUTH ═══════════
+function doLogin(){
+  const u=document.getElementById('loginUser').value.trim();
+  const p=document.getElementById('loginPass').value;
+  if((u==='admin'&&p==='admin')||(u==='analyst'&&p==='analyst')){
+    document.getElementById('loginPage').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('currentUser').textContent=u;
+    initApp();
+  }else{
+    document.getElementById('loginError').textContent='Invalid credentials. Try admin / admin';
+  }
+}
+function doLogout(){
+  document.getElementById('app').style.display='none';
+  document.getElementById('loginPage').style.display='flex';
+  document.getElementById('loginUser').value='';
+  document.getElementById('loginPass').value='';
+  document.getElementById('loginError').textContent='';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('loginPage').style.display!=='none')doLogin()});
+
+// ═══════════ NAVIGATION ═══════════
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(el)el.classList.add('active');
+}
+
+// ═══════════ INIT ═══════════
+function initApp(){
+  renderRecentThreats();
+  renderBrandTable();
+  renderAlertTable();
+  renderTITable();
+  renderRecentScans();
+  renderCategoryChart();
+  renderWeeklyChart();
+  renderBrandChart();
+  renderHourlyChart();
+  renderKeywords();
+  startCertStreamDemo();
+}
+
+function renderRecentThreats(){
+  const tb=document.getElementById('recentThreats');
+  tb.innerHTML=DEMO_THREATS.map(t=>`<tr>
+    <td style="font-family:var(--font-mono);font-size:.75rem">${t.domain}</td>
+    <td><span class="badge ${t.level}">${t.type}</span></td>
+    <td><span style="font-family:var(--font-mono);font-weight:700;color:${t.score>=80?'var(--red)':t.score>=60?'var(--orange)':'var(--yellow)'}">${t.score}</span></td>
+    <td style="color:var(--text-dim);font-size:.75rem">${t.time}</td>
+  </tr>`).join('');
+}
+
+function renderBrandTable(){
+  const tb=document.getElementById('brandTable');
+  tb.innerHTML=DEMO_BRANDS.map(b=>`<tr>
+    <td><strong>${b.name}</strong></td>
+    <td style="font-family:var(--font-mono);font-size:.75rem">${b.domains}</td>
+    <td>${b.industry}</td>
+    <td><span class="badge ${b.priority}">${b.priority}</span></td>
+    <td style="font-family:var(--font-mono);font-weight:700;color:${b.alerts>0?'var(--red)':'var(--green)'}">${b.alerts}</td>
+    <td><span style="color:var(--green)">● Active</span></td>
+  </tr>`).join('');
+}
+
+function renderAlertTable(){
+  const tb=document.getElementById('alertTable');
+  tb.innerHTML=DEMO_ALERTS.map(a=>`<tr>
+    <td style="font-family:var(--font-mono);font-size:.75rem;color:var(--text-dim)">${a.id}</td>
+    <td><span class="badge ${a.severity}">${a.severity}</span></td>
+    <td><strong>${a.brand}</strong></td>
+    <td style="font-family:var(--font-mono);font-size:.75rem">${a.domain}</td>
+    <td>${a.type.replace(/_/g,' ')}</td>
+    <td style="color:var(--text-dim);font-size:.75rem">${a.time}</td>
+    <td><span class="badge ${a.status==='open'?'high':a.status==='investigating'?'info':'clean'}">${a.status}</span></td>
+  </tr>`).join('');
+}
+
+function renderTITable(){
+  const tb=document.getElementById('tiTable');
+  tb.innerHTML=DEMO_TI.map(t=>`<tr>
+    <td style="font-family:var(--font-mono);font-size:.75rem">${t.domain}</td>
+    <td><span class="badge info">${t.source}</span></td>
+    <td style="color:var(--red);font-weight:600;font-size:.8rem">${t.verdict}</td>
+    <td>${t.tags.map(tg=>'<span class="badge high" style="margin-right:4px">'+tg+'</span>').join('')}</td>
+    <td style="font-family:var(--font-mono);color:var(--text-dim);font-size:.75rem">${t.seen}</td>
+  </tr>`).join('');
+}
+
+function renderRecentScans(){
+  const tb=document.getElementById('recentScans');
+  tb.innerHTML=SCAN_DEMO.map(s=>`<tr>
+    <td style="font-family:var(--font-mono);font-size:.75rem">${s.domain}</td>
+    <td><span style="font-family:var(--font-mono);font-weight:700;color:${s.score>=80?'var(--red)':s.score>=50?'var(--orange)':s.score>0?'var(--yellow)':'var(--green)'}">${s.score}/100</span></td>
+    <td><span class="badge ${s.level}">${s.level}</span></td>
+    <td>${s.categories.map(c=>'<span class="badge info" style="margin:1px 2px;font-size:.6rem">'+c+'</span>').join('')||'<span style="color:var(--green)">—</span>'}</td>
+    <td style="color:var(--text-dim);font-size:.75rem">${s.time}</td>
+  </tr>`).join('');
+}
+
+// ═══════════ CHARTS ═══════════
+function renderCategoryChart(){
+  const data=[
+    {label:'Brand\nImpersonation',val:234,color:'var(--red)'},
+    {label:'Combo\nSquat',val:189,color:'var(--orange)'},
+    {label:'Typo\nSquat',val:156,color:'var(--yellow)'},
+    {label:'Keyword\nAbuse',val:134,color:'var(--cyan)'},
+    {label:'Homoglyph',val:67,color:'var(--purple)'},
+    {label:'TLD Swap',val:45,color:'var(--green)'},
+    {label:'Subdomain\nAbuse',val:22,color:'var(--text-dim)'},
+  ];
+  renderBarChart('categoryChart',data,180);
+}
+function renderWeeklyChart(){
+  const data=[
+    {label:'Mon',val:112,color:'var(--cyan)'},{label:'Tue',val:145,color:'var(--cyan)'},
+    {label:'Wed',val:98,color:'var(--cyan)'},{label:'Thu',val:167,color:'var(--red)'},
+    {label:'Fri',val:134,color:'var(--cyan)'},{label:'Sat',val:78,color:'var(--cyan)'},
+    {label:'Sun',val:56,color:'var(--cyan)'},
+  ];
+  renderBarChart('weeklyChart',data,170);
+}
+function renderBrandChart(){
+  const data=[
+    {label:'NBK',val:234,color:'var(--red)'},{label:'KFH',val:189,color:'var(--orange)'},
+    {label:'eGov',val:145,color:'var(--yellow)'},{label:'CBK',val:98,color:'var(--cyan)'},
+    {label:'Zain',val:87,color:'var(--purple)'},{label:'Burgan',val:56,color:'var(--green)'},
+  ];
+  renderBarChart('brandChart',data,170);
+}
+function renderHourlyChart(){
+  const el=document.getElementById('hourlyChart');
+  let html='';
+  for(let i=0;i<24;i++){
+    const v=Math.floor(Math.random()*80)+10;
+    const c=v>60?'var(--red)':v>40?'var(--orange)':'var(--cyan)';
+    html+=`<div class="chart-bar" style="height:${v}%;background:${c};width:16px" data-label="${i}h"></div>`;
+  }
+  el.innerHTML=html;
+}
+function renderBarChart(id,data,maxH){
+  const el=document.getElementById(id);
+  const maxVal=Math.max(...data.map(d=>d.val));
+  el.innerHTML=data.map(d=>{
+    const h=Math.max((d.val/maxVal)*maxH,8);
+    return`<div class="chart-bar" style="height:${h}px;background:${d.color}" data-label="${d.label.split('\n')[0]}"></div>`;
+  }).join('');
+}
+
+function renderKeywords(){
+  document.getElementById('keywordList').innerHTML=KEYWORDS.map(k=>
+    `<span style="display:inline-block;padding:4px 12px;margin:3px;background:var(--cyan-glow);border:1px solid var(--cyan-dim);border-radius:99px;color:var(--cyan)">${k}</span>`
+  ).join('');
+}
+
+// ═══════════ CERTSTREAM LIVE FEED ═══════════
+let feedRunning=true;
+let feedIdx=0;
+let feedInterval;
+function startCertStreamDemo(){
+  const feed=document.getElementById('liveFeed');
+  feedInterval=setInterval(()=>{
+    if(!feedRunning)return;
+    const item=CERTSTREAM_DEMO[feedIdx%CERTSTREAM_DEMO.length];
+    feedIdx++;
+    const now=new Date();
+    const time=now.toTimeString().slice(0,8);
+    const scoreColor=item.score>=80?'var(--red)':item.score>=60?'var(--orange)':item.score>=40?'var(--yellow)':'var(--green)';
+    const row=document.createElement('div');
+    row.className='feed-row';
+    row.innerHTML=`
+      <span class="feed-time">${time}</span>
+      <span class="badge ${item.risk}" style="font-size:.6rem">${item.risk}</span>
+      <span class="feed-domain">${item.domain}</span>
+      <span class="feed-keywords">${item.kw.join(', ')}</span>
+      <span class="feed-score" style="color:${scoreColor}">${item.score}</span>
+    `;
+    feed.insertBefore(row,feed.firstChild);
+    if(feed.children.length>100)feed.removeChild(feed.lastChild);
+    document.getElementById('feedCount').textContent=feedIdx;
+    // Increment matched today
+    const mt=document.getElementById('matchedToday');
+    mt.textContent=parseInt(mt.textContent)+1;
+  },1800);
+}
+function toggleFeed(){
+  feedRunning=!feedRunning;
+  const btn=document.getElementById('feedToggle');
+  if(feedRunning){btn.textContent='⏸ Pause';btn.style.borderColor='var(--green)';btn.style.color='var(--green)'}
+  else{btn.textContent='▶ Resume';btn.style.borderColor='var(--orange)';btn.style.color='var(--orange)'}
+}
+
+// ═══════════ DOMAIN SCANNER ═══════════
+function scanDomain(){
+  const input=document.getElementById('scanInput');
+  const domain=input.value.trim();
+  if(!domain)return;
+
+  const btn=document.getElementById('scanBtn');
+  btn.disabled=true;btn.textContent='Scanning...';
+
+  setTimeout(()=>{
+    const result=analyzeDemo(domain);
+    renderScanResult(domain,result);
+    btn.disabled=false;btn.textContent='🔍 Analyze';
+
+    // Add to recent scans
+    const tb=document.getElementById('recentScans');
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td style="font-family:var(--font-mono);font-size:.75rem">${domain}</td>
+      <td><span style="font-family:var(--font-mono);font-weight:700;color:${result.score>=80?'var(--red)':result.score>=50?'var(--orange)':result.score>0?'var(--yellow)':'var(--green)'}">${result.score}/100</span></td>
+      <td><span class="badge ${result.level}">${result.level}</span></td>
+      <td>${result.categories.map(c=>'<span class="badge info" style="margin:1px 2px;font-size:.6rem">'+c+'</span>').join('')||'<span style="color:var(--green)">—</span>'}</td>
+      <td style="color:var(--text-dim);font-size:.75rem">Just now</td>
+    `;
+    tb.insertBefore(tr,tb.firstChild);
+  },1200);
+}
+
+function analyzeDemo(domain){
+  const d=domain.toLowerCase();
+  let score=0;const indicators=[];const categories=new Set();
+
+  // Keywords
+  const phishKw=['login','signin','verify','secure','update','confirm','account','password','banking'];
+  phishKw.forEach(kw=>{if(d.includes(kw)){score+=12;indicators.push({type:'phishing_keyword',detail:`Keyword '${kw}' found`,w:12});categories.add('keyword_abuse')}});
+
+  // Brand
+  const brands=['nbk','kfh','cbk','burgan','gulfbank','boubyan','warba','zain','ooredoo','e-gov','moi'];
+  brands.forEach(b=>{if(d.includes(b)){score+=20;indicators.push({type:'brand_impersonation',detail:`Brand '${b}' detected`,w:20});categories.add('brand_impersonation')}});
+
+  // TLD
+  const badTld=['.xyz','.top','.club','.online','.site','.icu','.buzz','.tk','.ml','.ga','.cf','.gq'];
+  badTld.forEach(t=>{if(d.endsWith(t)){score+=20;indicators.push({type:'suspicious_tld',detail:`High-risk TLD: ${t}`,w:20});categories.add('suspicious_tld')}});
+
+  // Hyphens
+  const hc=(d.match(/-/g)||[]).length;
+  if(hc>=3){score+=12;indicators.push({type:'excessive_hyphens',detail:`${hc} hyphens`,w:12});categories.add('structural_anomaly')}
+
+  // Length
+  const base=d.split('.')[0];
+  if(base.length>25){score+=8;indicators.push({type:'long_domain',detail:`${base.length} chars`,w:8});categories.add('structural_anomaly')}
+
+  // Subdomains
+  if(d.split('.').length>4){score+=15;indicators.push({type:'subdomain_abuse',detail:'Deep subdomain nesting',w:15});categories.add('structural_anomaly')}
+
+  score=Math.min(score,100);
+  const level=score>=80?'critical':score>=60?'high':score>=40?'medium':score>=20?'low':'clean';
+  const rec={critical:'IMMEDIATE ACTION: Block domain and issue takedown.',high:'HIGH PRIORITY: Add to blocklist and investigate.',medium:'MONITOR: Add to watchlist.',low:'LOW RISK: Log for reference.',clean:'No threats detected.'}[level];
+
+  return{score,level,indicators,categories:[...categories],recommendation:rec,isPhishing:score>=50};
+}
+
+function renderScanResult(domain,r){
+  const panel=document.getElementById('scanResult');
+  const sc=r.score>=80?'var(--red)':r.score>=60?'var(--orange)':r.score>=40?'var(--yellow)':r.score>0?'var(--text-dim)':'var(--green)';
+  panel.innerHTML=`
+    <div class="card" style="border-left:4px solid ${sc}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div>
+          <div style="font-size:.75rem;color:var(--text-dim);margin-bottom:4px">Scan Result</div>
+          <div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700">${domain}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:var(--font-mono);font-size:2.5rem;font-weight:800;color:${sc};line-height:1">${r.score}</div>
+          <div style="font-size:.7rem;color:var(--text-dim)">/100 Risk Score</div>
+        </div>
+      </div>
+      <div class="risk-meter"><div class="risk-meter-fill" style="width:${r.score}%;background:${sc}"></div></div>
+      <div style="display:flex;gap:8px;margin:12px 0">
+        <span class="badge ${r.level}" style="font-size:.8rem;padding:5px 14px">${r.level.toUpperCase()}</span>
+        ${r.isPhishing?'<span class="badge critical" style="font-size:.8rem;padding:5px 14px">⚠ PHISHING DETECTED</span>':'<span class="badge clean" style="font-size:.8rem;padding:5px 14px">✓ No Phishing</span>'}
+      </div>
+      ${r.categories.length?`<div style="margin:8px 0">${r.categories.map(c=>'<span class="badge info" style="margin:2px">'+c+'</span>').join('')}</div>`:''}
+      ${r.indicators.length?`
+        <div style="margin-top:16px">
+          <div style="font-size:.75rem;font-weight:600;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Indicators (${r.indicators.length})</div>
+          <ul class="indicator-list">
+            ${r.indicators.map(i=>`<li class="${i.w>=15?'high-weight':i.w>=10?'med-weight':'low-weight'}">
+              <strong style="color:var(--text)">${i.type}</strong>: ${i.detail}
+              <span style="float:right;font-family:var(--font-mono);font-size:.7rem;color:var(--text-muted)">weight: ${i.w}</span>
+            </li>`).join('')}
+          </ul>
+        </div>
+      `:''}
+      <div style="margin-top:16px;padding:12px;background:var(--bg-deep);border-radius:var(--radius-sm);font-size:.85rem">
+        <strong>Recommendation:</strong> ${r.recommendation}
+      </div>
+    </div>
+  `;
+  panel.classList.add('show');
+}
+
+// ═══════════ COUNTER ANIMATION ═══════════
+function animateCounter(){
+  const el=document.getElementById('statCerts');
+  if(!el)return;
+  let val=1247893;
+  setInterval(()=>{val+=Math.floor(Math.random()*12)+3;el.textContent=val.toLocaleString()},2000);
+}
+setTimeout(animateCounter,1000);
+</script>
+</body>
+</html>
