@@ -286,8 +286,6 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 **Ali AlEnezi** ([@SiteQ8](https://github.com/SiteQ8))
 - Email: Site@hotmail.com
-- Focus: Cybersecurity, Security Architecture, Offensive Security
-
 ---
 
 <p align="center">
