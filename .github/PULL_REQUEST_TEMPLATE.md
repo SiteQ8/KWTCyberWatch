@@ -10,7 +10,7 @@
 - [ ] Dependency update
 
 ## Related Issues
-<!-- Link related issues: Fixes #123, Closes #456 -->
+<!-- Link related issues: Fixes #123, Closes #457 -->
 
 ## Checklist
 - [ ] My code follows the project's style guidelines
