@@ -2,6 +2,8 @@
 """
 KWTCyberWatch - Kuwait Phishing Detection & Brand Protection Suite
 Main entry point for running all components.
+By Ali AlEnezi
+
 
 Usage:
     python main.py monitor     - Start CertStream monitoring
