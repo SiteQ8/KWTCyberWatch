@@ -39,7 +39,7 @@ In scope:
 Out of scope:
 - Denial of service attacks
 - Social engineering
-- Issues in third-party services (CertStream, VirusTotal, etc.)
+- Issues in third-party services (CertStream, VirusTotal, etc..)
 - Vulnerabilities requiring physical access
 
 ### Responsible Disclosure
