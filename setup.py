@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
 
 setup(
-    name="kwtcyberwatch",
+    name="KWTCyberWatch",
     version="2.0.0",
     author="Ali AlEnezi",
     author_email="Site@hotmail.com",
