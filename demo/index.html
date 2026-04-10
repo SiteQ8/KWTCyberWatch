@@ -218,6 +218,106 @@ tr:hover td{background:var(--bg-card-hover)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 .glow-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;
   animation:pulse 1.5s infinite;margin-right:6px}
+
+/* ── ENHANCED: Real-mode indicator ── */
+.mode-badge{font-family:var(--font-mono);font-size:.62rem;padding:3px 10px;border-radius:99px;font-weight:700;margin-left:8px;text-transform:uppercase;letter-spacing:.05em}
+.mode-badge.live{background:rgba(0,230,118,.15);color:var(--green);border:1px solid var(--green-dim)}
+.mode-badge.demo{background:rgba(179,136,255,.15);color:var(--purple);border:1px solid var(--purple-dim)}
+.mode-badge.pulse-dot::before{content:'●';margin-right:5px;animation:pulse 1.5s infinite}
+
+/* ── Real-scan loading ── */
+.scan-progress{background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-top:14px;font-family:var(--font-mono);font-size:.75rem}
+.scan-step{display:flex;align-items:center;gap:10px;padding:5px 0;color:var(--text-dim)}
+.scan-step.done{color:var(--green)}
+.scan-step.running{color:var(--cyan)}
+.scan-step.fail{color:var(--red)}
+.scan-step .step-ico{width:16px;text-align:center}
+.scan-step .step-meta{margin-left:auto;color:var(--text-muted);font-size:.68rem}
+
+/* ── Tabs ── */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:18px;overflow-x:auto}
+.tab-btn{padding:10px 18px;background:transparent;border:none;color:var(--text-dim);font-family:var(--font-display);font-weight:600;font-size:.85rem;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--cyan);border-bottom-color:var(--cyan)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* ── DNS/RDAP result panels ── */
+.kv-grid{display:grid;grid-template-columns:180px 1fr;gap:8px 16px;font-size:.8rem}
+.kv-grid dt{color:var(--text-dim);font-family:var(--font-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.kv-grid dd{color:var(--text);word-break:break-all;font-family:var(--font-mono);font-size:.75rem}
+.kv-grid dd.wrap{font-family:var(--font-display);word-break:normal}
+
+.record-list{background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-family:var(--font-mono);font-size:.72rem;color:var(--text);max-height:220px;overflow-y:auto}
+.record-line{padding:4px 0;border-bottom:1px dashed var(--border);display:flex;gap:12px}
+.record-line:last-child{border-bottom:none}
+.record-type{color:var(--cyan);font-weight:700;min-width:50px}
+.record-val{flex:1;word-break:break-all;color:var(--text-dim)}
+.record-ttl{color:var(--text-muted);font-size:.65rem}
+
+/* ── CT Log cert cards ── */
+.cert-card{background:var(--bg-deep);border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;font-size:.75rem}
+.cert-card .cert-cn{font-family:var(--font-mono);font-weight:700;color:var(--text);margin-bottom:3px;word-break:break-all}
+.cert-card .cert-meta{color:var(--text-muted);font-size:.65rem;font-family:var(--font-mono)}
+.cert-card .cert-issuer{color:var(--purple);font-size:.7rem;margin-top:3px}
+
+/* ── Bulk scanner ── */
+.bulk-textarea{width:100%;min-height:140px;padding:14px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font-mono);font-size:.78rem;resize:vertical;line-height:1.6}
+.bulk-textarea:focus{outline:none;border-color:var(--cyan)}
+
+/* ── Squat generator permutation grid ── */
+.perm-card{background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:.78rem}
+.perm-card .perm-domain{font-family:var(--font-mono);flex:1}
+.perm-card .perm-type{color:var(--text-muted);font-size:.65rem;margin:0 12px;font-family:var(--font-mono);text-transform:uppercase}
+.perm-card.registered{border-left:3px solid var(--red)}
+.perm-card.available{border-left:3px solid var(--green);opacity:.6}
+.perm-card.unknown{border-left:3px solid var(--text-muted)}
+.perm-status{font-family:var(--font-mono);font-size:.65rem;padding:2px 8px;border-radius:99px;font-weight:700;text-transform:uppercase}
+.perm-status.registered{background:rgba(255,51,85,.15);color:var(--red)}
+.perm-status.available{background:rgba(0,230,118,.15);color:var(--green)}
+.perm-status.unknown{background:rgba(85,102,128,.2);color:var(--text-muted)}
+
+/* ── Button variants ── */
+.btn{padding:10px 18px;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--cyan),#0090ff);color:#fff;font-family:var(--font-display);font-weight:700;cursor:pointer;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px var(--cyan-glow)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn.secondary{background:var(--bg-card);border:1px solid var(--border);color:var(--text)}
+.btn.secondary:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:none}
+.btn.danger{background:linear-gradient(135deg,var(--red),#cc2244);color:#fff}
+
+/* ── Empty state ── */
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-dim)}
+.empty-state .ico{font-size:2.5rem;opacity:.3;margin-bottom:10px}
+.empty-state .title{font-size:.95rem;margin-bottom:6px;color:var(--text)}
+.empty-state .sub{font-size:.75rem}
+
+/* ── Auth extras ── */
+.login-tabs{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-sm);padding:3px;margin-bottom:20px}
+.login-tab{padding:10px;text-align:center;font-size:.78rem;font-weight:600;color:var(--text-dim);cursor:pointer;border-radius:var(--radius-sm);transition:all .15s}
+.login-tab:hover{color:var(--text)}
+.login-tab.on{background:var(--bg-card);color:var(--cyan)}
+.login-divider{display:flex;align-items:center;gap:12px;margin:22px 0 18px;color:var(--text-muted);font-size:.68rem;text-transform:uppercase;letter-spacing:.1em}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.login-demo-btn{width:100%;padding:13px;background:transparent;color:var(--purple);border:1px dashed var(--purple-dim);border-radius:var(--radius-sm);font-size:.82rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;font-family:var(--font-display);text-transform:uppercase;letter-spacing:.05em;transition:all .15s}
+.login-demo-btn:hover{background:rgba(179,136,255,.08)}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:24px;right:24px;padding:14px 20px;background:var(--bg-card);border:1px solid var(--cyan);border-left:3px solid var(--cyan);border-radius:var(--radius-sm);color:var(--text);font-size:.82rem;z-index:900;box-shadow:var(--shadow);transform:translateY(140%);transition:transform .25s cubic-bezier(.4,0,.2,1);max-width:380px}
+.toast.show{transform:translateY(0)}
+.toast.crit{border-color:var(--red);border-left-color:var(--red)}
+.toast.ok{border-color:var(--green);border-left-color:var(--green)}
+
+/* ── Severity colors used inline ── */
+.sev-crit{color:var(--red);font-weight:700}
+.sev-high{color:var(--orange);font-weight:700}
+.sev-med{color:var(--yellow);font-weight:700}
+.sev-low{color:var(--cyan);font-weight:700}
+.sev-clean{color:var(--green);font-weight:700}
+
+/* ── History table ── */
+.history-row{cursor:pointer;transition:background .1s}
+.history-row:hover{background:var(--bg-card-hover)}
+
 </style>
 </head>
 <body>
@@ -227,7 +327,11 @@ tr:hover td{background:var(--bg-card-hover)}
   <div class="login-box">
     <div class="login-logo">
       <h1>🛡️ KWTCyberWatch</h1>
-      <p>Kuwait Phishing Detection Suite v2.0 By Ali AlEnezi</p>
+      <p>Phishing &amp; Brand Abuse Detection</p>
+    </div>
+    <div class="login-tabs">
+      <div class="login-tab on" data-auth-tab="signin" onclick="switchAuthTab('signin')">Sign In</div>
+      <div class="login-tab" data-auth-tab="register" onclick="switchAuthTab('register')">Create Account</div>
     </div>
     <div class="form-group">
       <label>Username</label>
@@ -235,12 +339,17 @@ tr:hover td{background:var(--bg-card-hover)}
     </div>
     <div class="form-group">
       <label>Password</label>
-      <input type="password" id="loginPass" placeholder="Enter password">
+      <input type="password" id="loginPass" placeholder="Enter password (min 4)">
     </div>
-    <button class="login-btn" onclick="doLogin()">Sign In</button>
+    <button class="login-btn" onclick="doLogin()" id="loginBtn">Sign In</button>
     <div class="login-error" id="loginError"></div>
-    <div class="login-hint">
-      Demo credentials: <code>admin</code> / <code>admin</code>
+    <div class="login-divider">or</div>
+    <button class="login-demo-btn" onclick="loginDemo()">
+      <span>👁️</span>
+      <span>Explore with Demo Account</span>
+    </button>
+    <div class="login-hint" style="margin-top:16px">
+      Real accounts perform <code>live scans</code> via crt.sh, DNS-over-HTTPS, and RDAP. Demo uses pre-seeded data.
     </div>
   </div>
 </div>
@@ -257,7 +366,7 @@ tr:hover td{background:var(--bg-card-hover)}
       </span>
     </div>
     <div class="topbar-right">
-      <span class="topbar-user">Signed in as <strong id="currentUser">admin</strong></span>
+      <span class="topbar-user">Signed in as <strong id="currentUser">admin</strong><span class="mode-badge demo pulse-dot" id="modeBadge">DEMO</span></span>
       <button class="btn-sm" onclick="doLogout()">Logout</button>
     </div>
   </div>
@@ -276,6 +385,27 @@ tr:hover td{background:var(--bg-card-hover)}
         </div>
         <div class="nav-item" data-page="scanner" onclick="showPage('scanner',this)">
           <span class="nav-icon">🔍</span> Domain Scanner
+        </div>
+        <div class="nav-item" data-page="bulk" onclick="showPage('bulk',this)">
+          <span class="nav-icon">📋</span> Bulk Scanner
+        </div>
+        <div class="nav-item" data-page="squatgen" onclick="showPage('squatgen',this)">
+          <span class="nav-icon">🧬</span> Squat Generator
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Intelligence</div>
+        <div class="nav-item" data-page="ctlog" onclick="showPage('ctlog',this)">
+          <span class="nav-icon">📜</span> CT Log Explorer
+        </div>
+        <div class="nav-item" data-page="dnslookup" onclick="showPage('dnslookup',this)">
+          <span class="nav-icon">🌐</span> DNS Lookup
+        </div>
+        <div class="nav-item" data-page="rdap" onclick="showPage('rdap',this)">
+          <span class="nav-icon">📇</span> RDAP / WHOIS
+        </div>
+        <div class="nav-item" data-page="history" onclick="showPage('history',this)">
+          <span class="nav-icon">📚</span> Scan History
         </div>
       </div>
       <div class="sidebar-section">
@@ -623,9 +753,146 @@ tr:hover td{background:var(--bg-card-hover)}
         </div>
       </div>
 
+      <!-- ──── BULK SCANNER ──── -->
+      <div id="page-bulk" class="page">
+        <h2 class="page-title">📋 Bulk Domain Scanner</h2>
+        <p class="page-desc">Paste a list of domains to scan them all against phishing heuristics. In real-user mode, live DNS and CT lookups augment each result.</p>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Input</span><span class="card-sub" id="bulkCount">0 domains</span></div>
+          <textarea class="bulk-textarea" id="bulkInput" placeholder="One domain per line&#10;nbk-secure-login.xyz&#10;kfh-verify.top&#10;zain-rewards.club" oninput="updateBulkCount()"></textarea>
+          <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+            <button class="btn" onclick="runBulkScan()" id="bulkBtn">▶ Scan All</button>
+            <button class="btn secondary" onclick="loadBulkSample()">Load Sample</button>
+            <button class="btn secondary" onclick="clearBulk()">Clear</button>
+            <button class="btn secondary" onclick="exportBulkCSV()" id="bulkExport" disabled>↧ Export CSV</button>
+            <label class="checkbox" style="display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:.8rem;margin-left:auto"><input type="checkbox" id="bulkDns" checked> Resolve DNS (live mode)</label>
+          </div>
+          <div class="scan-progress" id="bulkProgress" style="display:none"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Results</span><span class="card-sub" id="bulkResultCount">—</span></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Domain</th><th>Score</th><th>Level</th><th>Categories</th><th>DNS</th><th>Indicators</th></tr></thead>
+              <tbody id="bulkResults"><tr><td colspan="6"><div class="empty-state"><div class="ico">📋</div><div class="title">No scans yet</div><div class="sub">Paste domains above and click Scan All</div></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ──── SQUAT GENERATOR ──── -->
+      <div id="page-squatgen" class="page">
+        <h2 class="page-title">🧬 Squat Domain Generator</h2>
+        <p class="page-desc">Generate typosquat, combosquat, homoglyph and TLD-swap permutations of a brand, then check which are registered. In live mode, each candidate is resolved via DNS over HTTPS to detect active impersonation.</p>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Target Brand</span></div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:10px">
+            <input class="scanner-input" id="squatInput" placeholder="e.g., nbk.com or kfh" onkeydown="if(event.key==='Enter')runSquatGen()">
+            <button class="btn" onclick="runSquatGen()" id="squatBtn">Generate &amp; Check</button>
+          </div>
+          <div style="display:flex;gap:16px;margin-top:14px;flex-wrap:wrap">
+            <label class="checkbox" style="display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:.78rem"><input type="checkbox" id="squatCharSwap" checked> Char swap</label>
+            <label class="checkbox" style="display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:.78rem"><input type="checkbox" id="squatCharOmit" checked> Omission</label>
+            <label class="checkbox" style="display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:.78rem"><input type="checkbox" id="squatRepeat" checked> Repetition</label>
+            <label class="checkbox" style="display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:.78rem"><input type="checkbox" id="squatHomo" checked> Homoglyph</label>
+            <label class="checkbox" style="display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:.78rem"><input type="checkbox" id="squatTld" checked> TLD swap</label>
+            <label class="checkbox" style="display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:.78rem"><input type="checkbox" id="squatCombo" checked> Combosquat</label>
+          </div>
+          <div class="scan-progress" id="squatProgress" style="display:none"></div>
+        </div>
+        <div class="stats-grid" id="squatStats" style="display:none">
+          <div class="stat-card cyan"><div class="stat-label">Generated</div><div class="stat-value cyan" id="sqsGen">0</div></div>
+          <div class="stat-card red"><div class="stat-label">Registered</div><div class="stat-value red" id="sqsReg">0</div></div>
+          <div class="stat-card green"><div class="stat-label">Available</div><div class="stat-value green" id="sqsAvail">0</div></div>
+          <div class="stat-card orange"><div class="stat-label">Unknown</div><div class="stat-value orange" id="sqsUnk">0</div></div>
+        </div>
+        <div class="card" id="squatResults" style="display:none">
+          <div class="card-header"><span class="card-title">Permutations</span>
+            <div style="display:flex;gap:6px">
+              <button class="btn-sm" onclick="filterSquat('all')">All</button>
+              <button class="btn-sm" onclick="filterSquat('registered')" style="border-color:var(--red);color:var(--red)">Registered</button>
+              <button class="btn-sm" onclick="filterSquat('available')" style="border-color:var(--green);color:var(--green)">Available</button>
+            </div>
+          </div>
+          <div id="squatList"></div>
+        </div>
+      </div>
+
+      <!-- ──── CT LOG EXPLORER ──── -->
+      <div id="page-ctlog" class="page">
+        <h2 class="page-title">📜 Certificate Transparency Explorer</h2>
+        <p class="page-desc">Query public CT logs via crt.sh. Every certificate ever issued for a domain is public; this view surfaces the full history so you can find unauthorized subdomains and impersonators.</p>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Query</span></div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:10px">
+            <input class="scanner-input" id="ctInput" placeholder="e.g., nbk.com or %.nbk.com" onkeydown="if(event.key==='Enter')runCTLookup()">
+            <button class="btn" onclick="runCTLookup()" id="ctBtn">Search crt.sh</button>
+          </div>
+          <div style="margin-top:10px;font-size:.72rem;color:var(--text-muted)">
+            Tip: use <code class="mono" style="background:var(--bg-deep);padding:2px 6px;border-radius:4px;color:var(--cyan)">%.domain.com</code> for wildcard subdomain search
+          </div>
+        </div>
+        <div class="card" id="ctResultsCard" style="display:none">
+          <div class="card-header"><span class="card-title">Results</span><span class="card-sub" id="ctResultCount">—</span></div>
+          <div id="ctResults"></div>
+        </div>
+      </div>
+
+      <!-- ──── DNS LOOKUP ──── -->
+      <div id="page-dnslookup" class="page">
+        <h2 class="page-title">🌐 DNS Lookup (DoH)</h2>
+        <p class="page-desc">Full DNS resolution via Google Public DNS over HTTPS. Resolves A, AAAA, MX, NS, TXT, CNAME, SOA, CAA — useful for validating a suspected phishing domain actually resolves.</p>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Query</span></div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:10px">
+            <input class="scanner-input" id="dnsInput" placeholder="e.g., kfh.com" onkeydown="if(event.key==='Enter')runDnsLookup()">
+            <button class="btn" onclick="runDnsLookup()" id="dnsBtn">Resolve</button>
+          </div>
+        </div>
+        <div id="dnsResults"></div>
+      </div>
+
+      <!-- ──── RDAP / WHOIS ──── -->
+      <div id="page-rdap" class="page">
+        <h2 class="page-title">📇 RDAP / WHOIS Lookup</h2>
+        <p class="page-desc">Real registration data via RDAP (modern replacement for WHOIS). Shows registrar, creation/expiry dates, nameservers, and DNSSEC status directly from authoritative RDAP servers.</p>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Query</span></div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:10px">
+            <input class="scanner-input" id="rdapInput" placeholder="e.g., nbk.com" onkeydown="if(event.key==='Enter')runRdap()">
+            <button class="btn" onclick="runRdap()" id="rdapBtn">Lookup</button>
+          </div>
+        </div>
+        <div id="rdapResults"></div>
+      </div>
+
+      <!-- ──── SCAN HISTORY ──── -->
+      <div id="page-history" class="page">
+        <h2 class="page-title">📚 Scan History</h2>
+        <p class="page-desc">Every scan run by this account is stored locally in IndexedDB. Click any row to view the full result, or export the entire history.</p>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Your Scans</span>
+            <div style="display:flex;gap:8px">
+              <button class="btn-sm" onclick="exportHistoryJSON()">↧ JSON</button>
+              <button class="btn-sm" onclick="exportHistoryCSV()">↧ CSV</button>
+              <button class="btn-sm" onclick="clearHistory()" style="border-color:var(--red);color:var(--red)">Clear</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Domain</th><th>Score</th><th>Level</th><th>Mode</th><th>Categories</th><th>Time</th></tr></thead>
+              <tbody id="historyTable"><tr><td colspan="6"><div class="empty-state"><div class="ico">📚</div><div class="title">No scans yet</div><div class="sub">Run a scan to populate history</div></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script>
 // ═══════════ DEMO DATA ═══════════
@@ -719,27 +986,152 @@ const KEYWORDS = [
   "ooredoo-kw","stc-kw","moi-kw","e-gov-kw","paci-kw"
 ];
 
+// ═══════════ GLOBAL MODE ═══════════
+let LIVE_MODE = false; // false = demo mode (baked data, no network calls), true = real logged-in user
+let CURRENT_USER = null;
+let AUTH_MODE = 'signin';
+
+// ═══════════ INDEXEDDB ═══════════
+const DB_NAME = 'kwtcyberwatch_db';
+const DB_VERSION = 1;
+let _db = null;
+function openDB(){
+  return new Promise((resolve,reject)=>{
+    if(_db){resolve(_db);return}
+    const req=indexedDB.open(DB_NAME,DB_VERSION);
+    req.onerror=()=>reject(req.error);
+    req.onsuccess=()=>{_db=req.result;resolve(_db)};
+    req.onupgradeneeded=(e)=>{
+      const db=e.target.result;
+      if(!db.objectStoreNames.contains('users'))db.createObjectStore('users',{keyPath:'username'});
+      if(!db.objectStoreNames.contains('scans')){
+        const s=db.createObjectStore('scans',{keyPath:'id'});
+        s.createIndex('owner','owner',{unique:false});
+        s.createIndex('ts','ts',{unique:false});
+      }
+    };
+  });
+}
+async function dbPut(store,obj){
+  const db=await openDB();
+  return new Promise((res,rej)=>{const t=db.transaction([store],'readwrite');const r=t.objectStore(store).put(obj);r.onsuccess=()=>res(obj);r.onerror=()=>rej(r.error)});
+}
+async function dbGet(store,key){
+  const db=await openDB();
+  return new Promise((res,rej)=>{const t=db.transaction([store],'readonly');const r=t.objectStore(store).get(key);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+}
+async function dbAllBy(store,index,value){
+  const db=await openDB();
+  return new Promise((res,rej)=>{
+    const t=db.transaction([store],'readonly');
+    const src=index?t.objectStore(store).index(index):t.objectStore(store);
+    const results=[];
+    const req=value!==undefined?src.openCursor(IDBKeyRange.only(value)):src.openCursor();
+    req.onsuccess=(e)=>{const c=e.target.result;if(c){results.push(c.value);c.continue()}else res(results)};
+    req.onerror=()=>rej(req.error);
+  });
+}
+async function dbClearOwner(store,index,value){
+  const items=await dbAllBy(store,index,value);
+  const db=await openDB();
+  const t=db.transaction([store],'readwrite');
+  const s=t.objectStore(store);
+  for(const it of items)s.delete(it.id);
+  return items.length;
+}
+
+// ═══════════ PASSWORD HASHING ═══════════
+async function hashPassword(password,salt){
+  const enc=new TextEncoder();
+  const buf=await crypto.subtle.digest('SHA-256',enc.encode(password+':kwt:'+salt));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function genSalt(){
+  const a=new Uint8Array(16);crypto.getRandomValues(a);
+  return Array.from(a).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
 // ═══════════ AUTH ═══════════
-function doLogin(){
+function switchAuthTab(mode){
+  AUTH_MODE=mode;
+  document.querySelectorAll('[data-auth-tab]').forEach(el=>el.classList.toggle('on',el.dataset.authTab===mode));
+  document.getElementById('loginBtn').textContent=mode==='signin'?'Sign In':'Create Account';
+  document.getElementById('loginError').textContent='';
+}
+
+async function doLogin(){
   const u=document.getElementById('loginUser').value.trim();
   const p=document.getElementById('loginPass').value;
-  if((u==='admin'&&p==='admin')||(u==='analyst'&&p==='analyst')){
-    document.getElementById('loginPage').style.display='none';
-    document.getElementById('app').style.display='block';
-    document.getElementById('currentUser').textContent=u;
-    initApp();
-  }else{
-    document.getElementById('loginError').textContent='Invalid credentials. Try admin / admin';
+  const errEl=document.getElementById('loginError');
+  errEl.textContent='';
+  if(!u||p.length<4){errEl.textContent='Username required, password minimum 4 characters';return}
+  if(u==='demo'){errEl.textContent='Use the Demo button below to explore the demo';return}
+  try{
+    if(AUTH_MODE==='register'){
+      const existing=await dbGet('users',u);
+      if(existing){errEl.textContent='Username already exists';return}
+      const salt=genSalt();
+      const hash=await hashPassword(p,salt);
+      await dbPut('users',{username:u,salt,hash,created:new Date().toISOString()});
+      toast('Account created — signing in','ok');
+      await completeLogin(u,true);
+    }else{
+      const user=await dbGet('users',u);
+      if(!user){errEl.textContent='Account not found — create one first';return}
+      const hash=await hashPassword(p,user.salt);
+      if(hash!==user.hash){errEl.textContent='Invalid password';return}
+      await completeLogin(u,true);
+    }
+  }catch(e){
+    console.error(e);
+    errEl.textContent='Error: '+e.message;
   }
 }
+
+async function loginDemo(){
+  await completeLogin('demo',false);
+}
+
+async function completeLogin(username,liveMode){
+  CURRENT_USER=username;
+  LIVE_MODE=liveMode;
+  sessionStorage.setItem('kwt_session',JSON.stringify({username,liveMode}));
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('currentUser').textContent=username;
+  const badge=document.getElementById('modeBadge');
+  if(liveMode){
+    badge.className='mode-badge live pulse-dot';
+    badge.textContent='LIVE';
+  }else{
+    badge.className='mode-badge demo pulse-dot';
+    badge.textContent='DEMO';
+  }
+  initApp();
+}
+
 function doLogout(){
+  CURRENT_USER=null;
+  LIVE_MODE=false;
+  sessionStorage.removeItem('kwt_session');
   document.getElementById('app').style.display='none';
   document.getElementById('loginPage').style.display='flex';
   document.getElementById('loginUser').value='';
   document.getElementById('loginPass').value='';
   document.getElementById('loginError').textContent='';
+  if(feedInterval){clearInterval(feedInterval);feedInterval=null}
 }
+
+async function restoreSession(){
+  try{
+    const s=JSON.parse(sessionStorage.getItem('kwt_session')||'null');
+    if(s&&s.username){await completeLogin(s.username,s.liveMode);return true}
+  }catch(e){}
+  return false;
+}
+
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('loginPage').style.display!=='none')doLogin()});
+window.addEventListener('DOMContentLoaded',()=>{restoreSession()});
 
 // ═══════════ NAVIGATION ═══════════
 function showPage(id,el){
@@ -913,77 +1305,378 @@ function toggleFeed(){
   else{btn.textContent='▶ Resume';btn.style.borderColor='var(--orange)';btn.style.color='var(--orange)'}
 }
 
-// ═══════════ DOMAIN SCANNER ═══════════
-function scanDomain(){
-  const input=document.getElementById('scanInput');
-  const domain=input.value.trim();
-  if(!domain)return;
+// ═══════════ OPENSQUAT-STYLE DETECTION (ported from atenreiro/opensquat) ═══════════
+// Levenshtein with early exit — same approach as opensquat/validations.py
+function levenshtein(a, b, threshold){
+  const la=a.length, lb=b.length;
+  if(threshold!=null && Math.abs(la-lb)>threshold) return threshold+1;
+  if(a===b) return 0;
+  if(la===0) return lb;
+  if(lb===0) return la;
+  let v0=new Array(lb+1), v1=new Array(lb+1);
+  for(let i=0;i<=lb;i++) v0[i]=i;
+  for(let i=0;i<la;i++){
+    v1[0]=i+1;
+    let rowMin=v1[0];
+    const ci=a[i];
+    for(let j=0;j<lb;j++){
+      const cost = ci===b[j] ? 0 : 1;
+      const val = Math.min(v1[j]+1, v0[j+1]+1, v0[j]+cost);
+      v1[j+1]=val;
+      if(val<rowMin) rowMin=val;
+    }
+    if(threshold!=null && rowMin>threshold) return threshold+1;
+    [v0,v1]=[v1,v0];
+  }
+  return v0[lb];
+}
 
+// Homoglyph confusables — subset of confusable_homoglyphs dangerous chars
+const HOMOGLYPH_MAP = {
+  'а':'a','е':'e','о':'o','р':'p','с':'c','х':'x','у':'y','і':'i','ѕ':'s','ԁ':'d','Ι':'I','І':'I','Ӏ':'l',
+  'ο':'o','ρ':'p','α':'a','ϲ':'c','ԝ':'w','ɡ':'g','ʟ':'l','ɑ':'a','ɒ':'a','ɕ':'c','ɔ':'o','ʜ':'h',
+  'ı':'i','Ɩ':'I','ⅼ':'l','ⅰ':'i','ⅴ':'v','ⅹ':'x','ⲟ':'o','ⲣ':'p','ⲥ':'c','ⲭ':'x',
+  '0':'o','1':'l','3':'e','5':'s','6':'g','7':'t'
+};
+function containsHomoglyph(s){
+  for(const ch of s){
+    const code=ch.charCodeAt(0);
+    if(code>127) return true; // any non-ASCII in a domain label is suspicious
+  }
+  return false;
+}
+function homoglyphToLatin(s){
+  return [...s].map(c => HOMOGLYPH_MAP[c] || c).join('');
+}
+
+// Kuwait-focused keyword list (analogous to opensquat keywords.txt)
+const KWT_BRANDS = ['nbk','kfh','cbk','burgan','gulfbank','boubyan','warba','abk','kib','bbkonline',
+                    'zain','ooredoo','stc','vivakw','viva',
+                    'egov','moi','moe','moh','paci','kuna','kockw','kgoc','kpc','knpc','kafco',
+                    'kuwaitairways','jazeeraair','kuwait','alahli','commercial'];
+const PHISH_KEYWORDS = ['login','signin','sign-in','verify','secure','update','confirm','account','password',
+                        'banking','online','portal','support','service','wallet','pay','ebank','auth',
+                        'reset','otp','mobile','app','rewards','bonus','free','win','claim'];
+const RISKY_TLDS = ['.xyz','.top','.club','.online','.site','.icu','.buzz','.tk','.ml','.ga','.cf','.gq',
+                    '.rest','.click','.loan','.work','.win','.cam','.bar','.monster','.fit','.mom'];
+
+// Shannon entropy for domain randomness detection
+function shannonEntropy(s){
+  const f={};
+  for(const c of s) f[c]=(f[c]||0)+1;
+  let h=0;
+  const n=s.length;
+  for(const c in f){const p=f[c]/n;h-=p*Math.log2(p)}
+  return h;
+}
+
+// Core squat analyzer — ports opensquat detection + adds structural heuristics
+function analyzeDomain(domain){
+  const d = domain.toLowerCase().replace(/^https?:\/\//,'').replace(/\/.*/,'').trim();
+  const parts = d.split('.');
+  const label = parts[0];
+  const tld = parts.length>1 ? '.'+parts.slice(1).join('.') : '';
+  const indicators=[], categories=new Set();
+  let score=0;
+
+  // 1. Homoglyph check (opensquat-style)
+  if(containsHomoglyph(label)){
+    const latin = homoglyphToLatin(label);
+    score+=25;
+    indicators.push({type:'homoglyph',detail:`Non-ASCII chars detected; normalized to '${latin}'`,w:25});
+    categories.add('homoglyph');
+  }
+
+  // 2. Levenshtein against brands (opensquat confidence levels)
+  const normalizedLabel = homoglyphToLatin(label);
+  for(const brand of KWT_BRANDS){
+    if(normalizedLabel===brand) continue; // exact match = legit
+    const dist = levenshtein(brand, normalizedLabel, 3);
+    if(dist>0 && dist<=2 && normalizedLabel.length>=3){
+      const confidence = dist===1?'very high':dist===2?'high':'medium';
+      score+=22;
+      indicators.push({type:'levenshtein_squat',detail:`'${normalizedLabel}' is ${dist} edit${dist>1?'s':''} from brand '${brand}' (${confidence} confidence)`,w:22});
+      categories.add('typosquatting');
+    } else if(normalizedLabel.includes(brand) && normalizedLabel!==brand){
+      score+=20;
+      indicators.push({type:'brand_impersonation',detail:`Contains brand '${brand}' as substring`,w:20});
+      categories.add('brand_impersonation');
+    }
+  }
+
+  // 3. Phishing keywords (opensquat keyword containment)
+  const kwFound=[];
+  for(const kw of PHISH_KEYWORDS){
+    if(d.includes(kw)) kwFound.push(kw);
+  }
+  if(kwFound.length){
+    const w = Math.min(kwFound.length*8, 24);
+    score+=w;
+    indicators.push({type:'phishing_keywords',detail:`Contains: ${kwFound.join(', ')}`,w});
+    categories.add('keyword_abuse');
+  }
+
+  // 4. Suspicious TLD
+  for(const t of RISKY_TLDS){
+    if(d.endsWith(t)){
+      score+=18;
+      indicators.push({type:'suspicious_tld',detail:`High-risk TLD: ${t}`,w:18});
+      categories.add('suspicious_tld');
+      break;
+    }
+  }
+
+  // 5. Combosquat — brand + phish keyword together
+  const hasBrand = categories.has('brand_impersonation') || categories.has('typosquatting');
+  if(hasBrand && kwFound.length){
+    score+=10;
+    indicators.push({type:'combosquat',detail:'Brand name + phishing keyword together',w:10});
+    categories.add('combosquat');
+  }
+
+  // 6. Excessive hyphens
+  const hc=(label.match(/-/g)||[]).length;
+  if(hc>=3){
+    score+=10;
+    indicators.push({type:'excessive_hyphens',detail:`${hc} hyphens in label`,w:10});
+    categories.add('structural_anomaly');
+  }
+
+  // 7. Long domain label
+  if(label.length>25){
+    score+=8;
+    indicators.push({type:'long_label',detail:`Label is ${label.length} chars`,w:8});
+    categories.add('structural_anomaly');
+  }
+
+  // 8. Deep subdomain nesting
+  if(parts.length>4){
+    score+=12;
+    indicators.push({type:'subdomain_abuse',detail:`${parts.length} labels deep`,w:12});
+    categories.add('structural_anomaly');
+  }
+
+  // 9. Shannon entropy — DGA detection
+  const ent=shannonEntropy(label);
+  if(ent>3.8 && label.length>=10){
+    score+=12;
+    indicators.push({type:'high_entropy',detail:`Entropy ${ent.toFixed(2)} suggests DGA or random`,w:12});
+    categories.add('dga_like');
+  }
+
+  // 10. Digit ratio
+  const digits=(label.match(/\d/g)||[]).length;
+  if(digits>=4 || (label.length>=5 && digits/label.length>0.4)){
+    score+=6;
+    indicators.push({type:'numeric_heavy',detail:`${digits} digits in label`,w:6});
+    categories.add('structural_anomaly');
+  }
+
+  score = Math.min(score, 100);
+  const level = score>=80?'critical':score>=60?'high':score>=40?'medium':score>=20?'low':'clean';
+  const rec = {
+    critical: 'IMMEDIATE ACTION: Block at DNS/proxy and file takedown with registrar and hosting provider.',
+    high: 'HIGH PRIORITY: Add to blocklist, notify brand owner, and investigate infrastructure.',
+    medium: 'MONITOR: Add to watchlist and re-scan daily for activity changes.',
+    low: 'LOW RISK: Log for reference; review if reports surface.',
+    clean: 'No significant threats detected by static analysis.'
+  }[level];
+  return {score,level,indicators,categories:[...categories],recommendation:rec,isPhishing:score>=50};
+}
+
+// Keep old name as alias for any existing callers
+function analyzeDemo(d){return analyzeDomain(d)}
+
+// ═══════════ LIVE API CALLS (crt.sh, DNS-over-HTTPS, RDAP) ═══════════
+async function fetchCrtSh(query){
+  const url='https://crt.sh/?q='+encodeURIComponent(query)+'&output=json';
+  const r=await fetch(url,{cache:'no-store'});
+  if(!r.ok) throw new Error('crt.sh returned '+r.status);
+  const text=await r.text();
+  // crt.sh sometimes returns non-JSON; guard
+  try{return JSON.parse(text)}catch(e){throw new Error('crt.sh returned invalid JSON')}
+}
+
+async function fetchDNS(domain, type){
+  const url='https://dns.google/resolve?name='+encodeURIComponent(domain)+'&type='+encodeURIComponent(type);
+  const r=await fetch(url);
+  if(!r.ok) throw new Error('DoH returned '+r.status);
+  return r.json();
+}
+
+async function fetchDNSAll(domain){
+  const types=['A','AAAA','MX','NS','TXT','CNAME','SOA','CAA'];
+  const results={};
+  await Promise.all(types.map(async t=>{
+    try{
+      const j=await fetchDNS(domain,t);
+      results[t]=(j.Answer||[]).map(a=>({name:a.name,ttl:a.TTL,data:a.data}));
+    }catch(e){results[t]=[]}
+  }));
+  return results;
+}
+
+async function resolveQuick(domain){
+  // Returns true/false/null (null=unknown/error)
+  try{
+    const j=await fetchDNS(domain,'A');
+    if(j.Status===0 && j.Answer && j.Answer.length>0) return true;
+    if(j.Status===3) return false; // NXDOMAIN
+    return null;
+  }catch(e){return null}
+}
+
+async function fetchRDAP(domain){
+  const url='https://rdap.org/domain/'+encodeURIComponent(domain);
+  const r=await fetch(url);
+  if(r.status===404) return null;
+  if(!r.ok) throw new Error('RDAP returned '+r.status);
+  return r.json();
+}
+
+// ═══════════ DOMAIN SCANNER (ENHANCED) ═══════════
+async function scanDomain(){
+  const input=document.getElementById('scanInput');
+  const domain=input.value.trim().toLowerCase();
+  if(!domain){toast('Enter a domain','crit');return}
   const btn=document.getElementById('scanBtn');
+  const panel=document.getElementById('scanResult');
   btn.disabled=true;btn.textContent='Scanning...';
 
-  setTimeout(()=>{
-    const result=analyzeDemo(domain);
-    renderScanResult(domain,result);
-    btn.disabled=false;btn.textContent='🔍 Analyze';
+  // Immediate static analysis
+  const result=analyzeDomain(domain);
 
-    // Add to recent scans
-    const tb=document.getElementById('recentScans');
+  // Render initial result with loader for live portion
+  renderScanResult(domain,result,{pending:LIVE_MODE});
+
+  if(LIVE_MODE){
+    // Real enrichment: DNS + crt.sh + RDAP in parallel
+    const live={dns:null,certs:null,rdap:null,errors:[]};
+    const steps=[
+      {id:'dns',label:'DNS resolution via Google DoH'},
+      {id:'crt',label:'Certificate Transparency via crt.sh'},
+      {id:'rdap',label:'RDAP registration lookup'}
+    ];
+    renderLiveProgress(domain,steps);
+
+    const [dnsRes,ctRes,rdapRes]=await Promise.allSettled([
+      fetchDNSAll(domain),
+      fetchCrtSh(domain),
+      fetchRDAP(domain)
+    ]);
+
+    if(dnsRes.status==='fulfilled') live.dns=dnsRes.value; else live.errors.push('DNS: '+dnsRes.reason.message);
+    if(ctRes.status==='fulfilled') live.certs=ctRes.value; else live.errors.push('CT: '+ctRes.reason.message);
+    if(rdapRes.status==='fulfilled') live.rdap=rdapRes.value; else live.errors.push('RDAP: '+rdapRes.reason.message);
+
+    // Enrich score based on live findings
+    if(live.dns){
+      const hasA=(live.dns.A||[]).length>0;
+      if(!hasA){
+        result.indicators.push({type:'no_dns',detail:'Domain does not resolve (no A record)',w:-10});
+      }else{
+        result.indicators.push({type:'dns_live',detail:'Resolves to '+live.dns.A.map(a=>a.data).join(', '),w:0});
+      }
+    }
+    if(live.rdap){
+      const events=live.rdap.events||[];
+      const reg=events.find(e=>e.eventAction==='registration');
+      if(reg&&reg.eventDate){
+        const age=Date.now()-new Date(reg.eventDate).getTime();
+        const days=Math.floor(age/86400000);
+        if(days<30){
+          result.score=Math.min(100,result.score+15);
+          result.indicators.push({type:'newly_registered',detail:`Registered ${days} days ago`,w:15});
+          if(!result.categories.includes('newly_registered'))result.categories.push('newly_registered');
+        }else if(days<180){
+          result.score=Math.min(100,result.score+5);
+          result.indicators.push({type:'recent_registration',detail:`Registered ${days} days ago`,w:5});
+        }else{
+          result.indicators.push({type:'established_domain',detail:`Registered ${Math.floor(days/365)} years ago`,w:0});
+        }
+      }
+    }
+    if(live.certs && Array.isArray(live.certs)){
+      const ctCount=live.certs.length;
+      result.indicators.push({type:'ct_history',detail:`${ctCount} certificate(s) logged in CT`,w:0});
+    }
+
+    // Recompute level with new score
+    result.level = result.score>=80?'critical':result.score>=60?'high':result.score>=40?'medium':result.score>=20?'low':'clean';
+    result.isPhishing = result.score>=50;
+    renderScanResult(domain,result,{live});
+  }
+
+  // Save to history
+  await saveScanHistory({domain,result,live:LIVE_MODE});
+
+  // Add to recent scans table
+  const tb=document.getElementById('recentScans');
+  if(tb){
     const tr=document.createElement('tr');
-    tr.innerHTML=`
-      <td style="font-family:var(--font-mono);font-size:.75rem">${domain}</td>
-      <td><span style="font-family:var(--font-mono);font-weight:700;color:${result.score>=80?'var(--red)':result.score>=50?'var(--orange)':result.score>0?'var(--yellow)':'var(--green)'}">${result.score}/100</span></td>
-      <td><span class="badge ${result.level}">${result.level}</span></td>
-      <td>${result.categories.map(c=>'<span class="badge info" style="margin:1px 2px;font-size:.6rem">'+c+'</span>').join('')||'<span style="color:var(--green)">—</span>'}</td>
-      <td style="color:var(--text-dim);font-size:.75rem">Just now</td>
-    `;
+    tr.innerHTML=`<td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml(domain)}</td><td><span style="font-family:var(--font-mono);font-weight:700;color:${result.score>=80?'var(--red)':result.score>=50?'var(--orange)':result.score>0?'var(--yellow)':'var(--green)'}">${result.score}/100</span></td><td><span class="badge ${result.level}">${result.level}</span></td><td>${result.categories.map(c=>'<span class="badge info" style="margin:1px 2px;font-size:.6rem">'+escapeHtml(c)+'</span>').join('')||'<span style="color:var(--green)">—</span>'}</td><td style="color:var(--text-dim);font-size:.75rem">Just now</td>`;
     tb.insertBefore(tr,tb.firstChild);
-  },1200);
+  }
+
+  btn.disabled=false;btn.textContent='🔍 Analyze';
 }
 
-function analyzeDemo(domain){
-  const d=domain.toLowerCase();
-  let score=0;const indicators=[];const categories=new Set();
-
-  // Keywords
-  const phishKw=['login','signin','verify','secure','update','confirm','account','password','banking'];
-  phishKw.forEach(kw=>{if(d.includes(kw)){score+=12;indicators.push({type:'phishing_keyword',detail:`Keyword '${kw}' found`,w:12});categories.add('keyword_abuse')}});
-
-  // Brand
-  const brands=['nbk','kfh','cbk','burgan','gulfbank','boubyan','warba','zain','ooredoo','e-gov','moi'];
-  brands.forEach(b=>{if(d.includes(b)){score+=20;indicators.push({type:'brand_impersonation',detail:`Brand '${b}' detected`,w:20});categories.add('brand_impersonation')}});
-
-  // TLD
-  const badTld=['.xyz','.top','.club','.online','.site','.icu','.buzz','.tk','.ml','.ga','.cf','.gq'];
-  badTld.forEach(t=>{if(d.endsWith(t)){score+=20;indicators.push({type:'suspicious_tld',detail:`High-risk TLD: ${t}`,w:20});categories.add('suspicious_tld')}});
-
-  // Hyphens
-  const hc=(d.match(/-/g)||[]).length;
-  if(hc>=3){score+=12;indicators.push({type:'excessive_hyphens',detail:`${hc} hyphens`,w:12});categories.add('structural_anomaly')}
-
-  // Length
-  const base=d.split('.')[0];
-  if(base.length>25){score+=8;indicators.push({type:'long_domain',detail:`${base.length} chars`,w:8});categories.add('structural_anomaly')}
-
-  // Subdomains
-  if(d.split('.').length>4){score+=15;indicators.push({type:'subdomain_abuse',detail:'Deep subdomain nesting',w:15});categories.add('structural_anomaly')}
-
-  score=Math.min(score,100);
-  const level=score>=80?'critical':score>=60?'high':score>=40?'medium':score>=20?'low':'clean';
-  const rec={critical:'IMMEDIATE ACTION: Block domain and issue takedown.',high:'HIGH PRIORITY: Add to blocklist and investigate.',medium:'MONITOR: Add to watchlist.',low:'LOW RISK: Log for reference.',clean:'No threats detected.'}[level];
-
-  return{score,level,indicators,categories:[...categories],recommendation:rec,isPhishing:score>=50};
+function renderLiveProgress(domain, steps){
+  // Appended inside the scan result panel — reference ids set in renderScanResult
+  const el=document.getElementById('liveSteps');
+  if(!el) return;
+  el.innerHTML = steps.map(s=>`<div class="scan-step running" id="ls-${s.id}"><span class="step-ico">⏳</span><span>${escapeHtml(s.label)}</span><span class="step-meta">running...</span></div>`).join('');
 }
 
-function renderScanResult(domain,r){
+function renderScanResult(domain,r,opts){
+  opts=opts||{};
   const panel=document.getElementById('scanResult');
   const sc=r.score>=80?'var(--red)':r.score>=60?'var(--orange)':r.score>=40?'var(--yellow)':r.score>0?'var(--text-dim)':'var(--green)';
+  const ctHtml = opts.live && opts.live.certs && Array.isArray(opts.live.certs) && opts.live.certs.length ? `
+    <div style="margin-top:16px">
+      <div style="font-size:.75rem;font-weight:600;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">CT Certificates (${opts.live.certs.length})</div>
+      ${opts.live.certs.slice(0,5).map(c=>`<div class="cert-card"><div class="cert-cn">${escapeHtml(c.common_name||c.name_value||'(no CN)')}</div><div class="cert-meta">Logged: ${escapeHtml((c.entry_timestamp||'').slice(0,10))} · Valid: ${escapeHtml((c.not_before||'').slice(0,10))} → ${escapeHtml((c.not_after||'').slice(0,10))}</div><div class="cert-issuer">${escapeHtml(c.issuer_name||'')}</div></div>`).join('')}
+      ${opts.live.certs.length>5?`<div style="font-size:.7rem;color:var(--text-muted);margin-top:6px">+${opts.live.certs.length-5} more — see CT Log Explorer</div>`:''}
+    </div>
+  ` : '';
+  const dnsHtml = opts.live && opts.live.dns ? `
+    <div style="margin-top:16px">
+      <div style="font-size:.75rem;font-weight:600;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">DNS Records</div>
+      <div class="record-list">
+        ${Object.entries(opts.live.dns).filter(([t,recs])=>recs.length).map(([t,recs])=>recs.map(r=>`<div class="record-line"><span class="record-type">${t}</span><span class="record-val">${escapeHtml(r.data)}</span><span class="record-ttl">TTL ${r.ttl}</span></div>`).join('')).join('')||'<div style="color:var(--text-muted);font-size:.7rem">No DNS records resolved</div>'}
+      </div>
+    </div>
+  ` : '';
+  const rdapHtml = opts.live && opts.live.rdap ? (()=>{
+    const rd=opts.live.rdap;
+    const evts=rd.events||[];
+    const reg=evts.find(e=>e.eventAction==='registration');
+    const exp=evts.find(e=>e.eventAction==='expiration');
+    const changed=evts.find(e=>e.eventAction==='last changed');
+    const registrar=(rd.entities||[]).find(e=>(e.roles||[]).includes('registrar'));
+    const regName=registrar?((registrar.vcardArray||[[],[]])[1].find(v=>v[0]==='fn')||[,,,''])[3]:null;
+    const ns=(rd.nameservers||[]).map(n=>n.ldhName||n.unicodeName).filter(Boolean);
+    return `
+    <div style="margin-top:16px">
+      <div style="font-size:.75rem;font-weight:600;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Registration (RDAP)</div>
+      <dl class="kv-grid">
+        <dt>Registrar</dt><dd class="wrap">${escapeHtml(regName||'—')}</dd>
+        <dt>Created</dt><dd>${escapeHtml(reg?reg.eventDate.slice(0,10):'—')}</dd>
+        <dt>Expires</dt><dd>${escapeHtml(exp?exp.eventDate.slice(0,10):'—')}</dd>
+        <dt>Last Changed</dt><dd>${escapeHtml(changed?changed.eventDate.slice(0,10):'—')}</dd>
+        <dt>Nameservers</dt><dd>${ns.length?ns.map(n=>escapeHtml(n)).join('<br>'):'—'}</dd>
+        <dt>Status</dt><dd class="wrap">${(rd.status||[]).map(s=>'<span class="badge info" style="margin:2px">'+escapeHtml(s)+'</span>').join('')||'—'}</dd>
+      </dl>
+    </div>`;
+  })() : '';
+  const errHtml = opts.live && opts.live.errors && opts.live.errors.length ? `<div style="margin-top:12px;padding:10px;background:rgba(255,140,0,.08);border:1px solid var(--orange-dim);border-radius:var(--radius-sm);font-size:.7rem;color:var(--orange)">⚠ Partial live data: ${opts.live.errors.map(e=>escapeHtml(e)).join(' · ')}</div>` : '';
+  const pendingHtml = opts.pending ? '<div class="scan-progress" id="liveSteps"></div>' : '';
   panel.innerHTML=`
     <div class="card" style="border-left:4px solid ${sc}">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
         <div>
-          <div style="font-size:.75rem;color:var(--text-dim);margin-bottom:4px">Scan Result</div>
-          <div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700">${domain}</div>
+          <div style="font-size:.75rem;color:var(--text-dim);margin-bottom:4px">Scan Result ${LIVE_MODE?'<span class="mode-badge live">LIVE</span>':'<span class="mode-badge demo">STATIC</span>'}</div>
+          <div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700">${escapeHtml(domain)}</div>
         </div>
         <div style="text-align:right">
           <div style="font-family:var(--font-mono);font-size:2.5rem;font-weight:800;color:${sc};line-height:1">${r.score}</div>
@@ -991,29 +1684,401 @@ function renderScanResult(domain,r){
         </div>
       </div>
       <div class="risk-meter"><div class="risk-meter-fill" style="width:${r.score}%;background:${sc}"></div></div>
-      <div style="display:flex;gap:8px;margin:12px 0">
+      <div style="display:flex;gap:8px;margin:12px 0;flex-wrap:wrap">
         <span class="badge ${r.level}" style="font-size:.8rem;padding:5px 14px">${r.level.toUpperCase()}</span>
-        ${r.isPhishing?'<span class="badge critical" style="font-size:.8rem;padding:5px 14px">⚠ PHISHING DETECTED</span>':'<span class="badge clean" style="font-size:.8rem;padding:5px 14px">✓ No Phishing</span>'}
+        ${r.isPhishing?'<span class="badge critical" style="font-size:.8rem;padding:5px 14px">⚠ PHISHING LIKELY</span>':'<span class="badge clean" style="font-size:.8rem;padding:5px 14px">✓ No Strong Signal</span>'}
       </div>
-      ${r.categories.length?`<div style="margin:8px 0">${r.categories.map(c=>'<span class="badge info" style="margin:2px">'+c+'</span>').join('')}</div>`:''}
+      ${r.categories.length?`<div style="margin:8px 0">${r.categories.map(c=>'<span class="badge info" style="margin:2px">'+escapeHtml(c)+'</span>').join('')}</div>`:''}
       ${r.indicators.length?`
         <div style="margin-top:16px">
           <div style="font-size:.75rem;font-weight:600;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Indicators (${r.indicators.length})</div>
           <ul class="indicator-list">
             ${r.indicators.map(i=>`<li class="${i.w>=15?'high-weight':i.w>=10?'med-weight':'low-weight'}">
-              <strong style="color:var(--text)">${i.type}</strong>: ${i.detail}
+              <strong style="color:var(--text)">${escapeHtml(i.type)}</strong>: ${escapeHtml(i.detail)}
               <span style="float:right;font-family:var(--font-mono);font-size:.7rem;color:var(--text-muted)">weight: ${i.w}</span>
             </li>`).join('')}
           </ul>
         </div>
       `:''}
+      ${dnsHtml}${ctHtml}${rdapHtml}${errHtml}${pendingHtml}
       <div style="margin-top:16px;padding:12px;background:var(--bg-deep);border-radius:var(--radius-sm);font-size:.85rem">
-        <strong>Recommendation:</strong> ${r.recommendation}
+        <strong>Recommendation:</strong> ${escapeHtml(r.recommendation)}
       </div>
     </div>
   `;
   panel.classList.add('show');
 }
+
+function escapeHtml(s){
+  return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ═══════════ BULK SCANNER ═══════════
+let BULK_RESULTS=[];
+function updateBulkCount(){
+  const lines=document.getElementById('bulkInput').value.split('\n').map(l=>l.trim()).filter(Boolean);
+  document.getElementById('bulkCount').textContent=lines.length+' domain'+(lines.length===1?'':'s');
+}
+function loadBulkSample(){
+  document.getElementById('bulkInput').value=[
+    'nbk-secure-login.xyz','kfh-verify-account.top','zain-kw-rewards.club',
+    'burgan-online-login.tk','boubyan-mobile-app.ga','e-gov-kw-update.club',
+    'google.com','github.com','nbk.com','kfh.com'
+  ].join('\n');
+  updateBulkCount();
+}
+function clearBulk(){
+  document.getElementById('bulkInput').value='';
+  updateBulkCount();
+  document.getElementById('bulkResults').innerHTML='<tr><td colspan="6"><div class="empty-state"><div class="ico">📋</div><div class="title">No scans yet</div><div class="sub">Paste domains above and click Scan All</div></div></td></tr>';
+  document.getElementById('bulkResultCount').textContent='—';
+  document.getElementById('bulkExport').disabled=true;
+  BULK_RESULTS=[];
+}
+async function runBulkScan(){
+  const lines=document.getElementById('bulkInput').value.split('\n').map(l=>l.trim().toLowerCase()).filter(Boolean);
+  if(!lines.length){toast('Enter at least one domain','crit');return}
+  const doDns=LIVE_MODE && document.getElementById('bulkDns').checked;
+  const btn=document.getElementById('bulkBtn');
+  btn.disabled=true;btn.textContent='Scanning...';
+  const progress=document.getElementById('bulkProgress');
+  progress.style.display='block';
+  const tb=document.getElementById('bulkResults');
+  tb.innerHTML='';
+  BULK_RESULTS=[];
+  let done=0;
+  for(const d of lines){
+    progress.innerHTML=`<div class="scan-step running"><span class="step-ico">⏳</span><span>Scanning ${escapeHtml(d)}</span><span class="step-meta">${done+1}/${lines.length}</span></div>`;
+    const result=analyzeDomain(d);
+    let dnsInfo=null;
+    if(doDns){
+      dnsInfo=await resolveQuick(d);
+      if(dnsInfo===true)result.indicators.push({type:'dns_live',detail:'Resolves',w:0});
+      else if(dnsInfo===false){result.score=Math.max(0,result.score-15);result.indicators.push({type:'nxdomain',detail:'Does not resolve',w:-15})}
+    }
+    BULK_RESULTS.push({domain:d,result,dns:dnsInfo});
+    const dnsCell=dnsInfo===true?'<span class="sev-crit">● LIVE</span>':dnsInfo===false?'<span style="color:var(--text-muted)">○ NX</span>':'<span style="color:var(--text-muted)">—</span>';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml(d)}</td><td><span style="font-family:var(--font-mono);font-weight:700;color:${result.score>=80?'var(--red)':result.score>=50?'var(--orange)':result.score>0?'var(--yellow)':'var(--green)'}">${result.score}</span></td><td><span class="badge ${result.level}">${result.level}</span></td><td>${result.categories.slice(0,3).map(c=>'<span class="badge info" style="margin:1px;font-size:.6rem">'+escapeHtml(c)+'</span>').join('')}</td><td>${dnsCell}</td><td style="font-size:.7rem;color:var(--text-dim)">${result.indicators.length}</td>`;
+    tb.appendChild(tr);
+    await saveScanHistory({domain:d,result,live:LIVE_MODE});
+    done++;
+  }
+  progress.innerHTML=`<div class="scan-step done"><span class="step-ico">✓</span><span>Complete</span><span class="step-meta">${done} scanned</span></div>`;
+  setTimeout(()=>progress.style.display='none',2500);
+  document.getElementById('bulkResultCount').textContent=`${done} scanned · ${BULK_RESULTS.filter(r=>r.result.score>=60).length} high-risk`;
+  document.getElementById('bulkExport').disabled=false;
+  btn.disabled=false;btn.textContent='▶ Scan All';
+  toast(`Scanned ${done} domains`,'ok');
+}
+function exportBulkCSV(){
+  if(!BULK_RESULTS.length){toast('Nothing to export','crit');return}
+  const rows=BULK_RESULTS.map(b=>({domain:b.domain,score:b.result.score,level:b.result.level,categories:b.result.categories.join('|'),indicators:b.result.indicators.length,dns:b.dns===true?'live':b.dns===false?'nxdomain':'unknown'}));
+  downloadCSV(rows,'kwtcyberwatch_bulk_'+new Date().toISOString().slice(0,10)+'.csv');
+}
+
+// ═══════════ SQUAT GENERATOR ═══════════
+let SQUAT_RESULTS=[];
+function generateSquats(brand,opts){
+  const out=[];
+  const base=brand.toLowerCase().replace(/\.[^.]+$/,'');
+  const origTld=(brand.match(/\.([^.]+)$/)||['',''])[1]||'com';
+  const seen=new Set();
+  const push=(d,type)=>{if(!seen.has(d)){seen.add(d);out.push({domain:d,type})}};
+
+  // Char omission
+  if(opts.charOmit){
+    for(let i=0;i<base.length;i++){
+      push(base.slice(0,i)+base.slice(i+1)+'.'+origTld,'omission');
+    }
+  }
+  // Char repetition
+  if(opts.repeat){
+    for(let i=0;i<base.length;i++){
+      push(base.slice(0,i)+base[i]+base[i]+base.slice(i+1)+'.'+origTld,'repetition');
+    }
+  }
+  // Char swap (adjacent)
+  if(opts.charSwap){
+    for(let i=0;i<base.length-1;i++){
+      const arr=base.split('');
+      [arr[i],arr[i+1]]=[arr[i+1],arr[i]];
+      push(arr.join('')+'.'+origTld,'swap');
+    }
+  }
+  // Homoglyph
+  if(opts.homo){
+    const HG={'a':['а','@','4'],'e':['е','3'],'o':['о','0'],'i':['1','l','і'],'l':['1','I','ⅼ'],'s':['5','$','ѕ'],'b':['6'],'g':['9'],'c':['ϲ','с'],'p':['р'],'n':['п'],'k':['κ']};
+    for(let i=0;i<base.length;i++){
+      const alts=HG[base[i]];
+      if(alts){
+        for(const a of alts){
+          push(base.slice(0,i)+a+base.slice(i+1)+'.'+origTld,'homoglyph');
+        }
+      }
+    }
+  }
+  // TLD swap
+  if(opts.tld){
+    ['xyz','top','club','online','site','icu','tk','ml','ga','cf','info','net','co','link','shop'].forEach(t=>{
+      push(base+'.'+t,'tld-swap');
+    });
+  }
+  // Combosquat
+  if(opts.combo){
+    ['login','secure','verify','account','online','support','app','mobile','bank','portal','update'].forEach(kw=>{
+      push(base+'-'+kw+'.'+origTld,'combo-prefix');
+      push(base+kw+'.'+origTld,'combo-suffix');
+    });
+  }
+  return out;
+}
+
+async function runSquatGen(){
+  const brand=document.getElementById('squatInput').value.trim();
+  if(!brand){toast('Enter a brand/domain','crit');return}
+  const opts={
+    charSwap:document.getElementById('squatCharSwap').checked,
+    charOmit:document.getElementById('squatCharOmit').checked,
+    repeat:document.getElementById('squatRepeat').checked,
+    homo:document.getElementById('squatHomo').checked,
+    tld:document.getElementById('squatTld').checked,
+    combo:document.getElementById('squatCombo').checked
+  };
+  const btn=document.getElementById('squatBtn');
+  btn.disabled=true;btn.textContent='Generating...';
+  const perms=generateSquats(brand,opts);
+  const progress=document.getElementById('squatProgress');
+  progress.style.display='block';
+  document.getElementById('squatStats').style.display='grid';
+  document.getElementById('squatResults').style.display='block';
+  document.getElementById('sqsGen').textContent=perms.length;
+  document.getElementById('sqsReg').textContent='0';
+  document.getElementById('sqsAvail').textContent='0';
+  document.getElementById('sqsUnk').textContent=LIVE_MODE?'0':perms.length.toString();
+  SQUAT_RESULTS=perms.map(p=>({...p,status:LIVE_MODE?'checking':'unknown'}));
+  renderSquatList();
+
+  if(!LIVE_MODE){
+    progress.innerHTML='<div class="scan-step done"><span class="step-ico">✓</span><span>Generated '+perms.length+' permutations (static mode — sign in to check DNS)</span></div>';
+    setTimeout(()=>progress.style.display='none',3500);
+    btn.disabled=false;btn.textContent='Generate & Check';
+    return;
+  }
+
+  // Live: resolve all permutations in parallel batches
+  let reg=0,avail=0,unk=0;
+  const BATCH=8;
+  let i=0;
+  while(i<SQUAT_RESULTS.length){
+    const batch=SQUAT_RESULTS.slice(i,i+BATCH);
+    progress.innerHTML=`<div class="scan-step running"><span class="step-ico">⏳</span><span>Resolving DNS</span><span class="step-meta">${i}/${SQUAT_RESULTS.length}</span></div>`;
+    await Promise.all(batch.map(async (p,idx)=>{
+      const r=await resolveQuick(p.domain);
+      const real=SQUAT_RESULTS[i+idx];
+      if(r===true){real.status='registered';reg++}
+      else if(r===false){real.status='available';avail++}
+      else{real.status='unknown';unk++}
+    }));
+    document.getElementById('sqsReg').textContent=reg;
+    document.getElementById('sqsAvail').textContent=avail;
+    document.getElementById('sqsUnk').textContent=unk;
+    renderSquatList();
+    i+=BATCH;
+  }
+  progress.innerHTML=`<div class="scan-step done"><span class="step-ico">✓</span><span>Complete — ${reg} registered, ${avail} available</span></div>`;
+  setTimeout(()=>progress.style.display='none',3500);
+  btn.disabled=false;btn.textContent='Generate & Check';
+  if(reg>0)toast(`⚠ ${reg} squat domains are REGISTERED`,'crit');
+}
+
+let SQUAT_FILTER='all';
+function filterSquat(f){SQUAT_FILTER=f;renderSquatList()}
+function renderSquatList(){
+  const el=document.getElementById('squatList');
+  const filtered=SQUAT_FILTER==='all'?SQUAT_RESULTS:SQUAT_RESULTS.filter(r=>r.status===SQUAT_FILTER);
+  el.innerHTML=filtered.map(p=>`<div class="perm-card ${p.status}"><span class="perm-domain">${escapeHtml(p.domain)}</span><span class="perm-type">${escapeHtml(p.type)}</span><span class="perm-status ${p.status}">${escapeHtml(p.status)}</span></div>`).join('')||'<div class="empty-state"><div class="sub">No permutations match filter</div></div>';
+}
+
+// ═══════════ CT LOG EXPLORER ═══════════
+async function runCTLookup(){
+  const q=document.getElementById('ctInput').value.trim();
+  if(!q){toast('Enter a domain','crit');return}
+  const btn=document.getElementById('ctBtn');
+  const card=document.getElementById('ctResultsCard');
+  const resEl=document.getElementById('ctResults');
+  btn.disabled=true;btn.textContent='Searching...';
+  card.style.display='block';
+  resEl.innerHTML='<div class="scan-progress"><div class="scan-step running"><span class="step-ico">⏳</span><span>Querying crt.sh...</span></div></div>';
+
+  if(!LIVE_MODE){
+    // Demo data
+    const demo=[
+      {common_name:q,issuer_name:"Let's Encrypt Authority X3",not_before:'2026-01-15',not_after:'2026-04-15',entry_timestamp:'2026-01-15'},
+      {common_name:'*.'+q,issuer_name:'DigiCert Global Root CA',not_before:'2025-11-08',not_after:'2026-11-08',entry_timestamp:'2025-11-08'},
+      {common_name:'www.'+q,issuer_name:"Let's Encrypt Authority X3",not_before:'2025-09-02',not_after:'2025-12-02',entry_timestamp:'2025-09-02'},
+    ];
+    document.getElementById('ctResultCount').textContent=`${demo.length} certs (demo)`;
+    resEl.innerHTML=demo.map(c=>`<div class="cert-card"><div class="cert-cn">${escapeHtml(c.common_name)}</div><div class="cert-meta">Logged: ${c.entry_timestamp} · Valid: ${c.not_before} → ${c.not_after}</div><div class="cert-issuer">${escapeHtml(c.issuer_name)}</div></div>`).join('');
+    btn.disabled=false;btn.textContent='Search crt.sh';
+    return;
+  }
+
+  try{
+    const certs=await fetchCrtSh(q);
+    if(!Array.isArray(certs)||!certs.length){
+      resEl.innerHTML='<div class="empty-state"><div class="ico">📜</div><div class="title">No certificates found</div><div class="sub">crt.sh returned no results for this query</div></div>';
+      document.getElementById('ctResultCount').textContent='0 certs';
+    }else{
+      // Dedupe by common_name + issuer
+      const seen=new Set();
+      const unique=certs.filter(c=>{const k=c.common_name+'|'+c.issuer_name+'|'+c.not_before;if(seen.has(k))return false;seen.add(k);return true}).slice(0,200);
+      document.getElementById('ctResultCount').textContent=`${unique.length} unique · ${certs.length} total`;
+      resEl.innerHTML=unique.map(c=>`<div class="cert-card"><div class="cert-cn">${escapeHtml(c.common_name||c.name_value||'(no CN)')}</div><div class="cert-meta">Logged: ${escapeHtml((c.entry_timestamp||'').slice(0,10))} · Valid: ${escapeHtml((c.not_before||'').slice(0,10))} → ${escapeHtml((c.not_after||'').slice(0,10))}</div><div class="cert-issuer">${escapeHtml(c.issuer_name||'')}</div></div>`).join('');
+    }
+  }catch(e){
+    resEl.innerHTML=`<div class="empty-state"><div class="ico">⚠</div><div class="title">crt.sh error</div><div class="sub">${escapeHtml(e.message)}</div></div>`;
+  }
+  btn.disabled=false;btn.textContent='Search crt.sh';
+}
+
+// ═══════════ DNS LOOKUP ═══════════
+async function runDnsLookup(){
+  const domain=document.getElementById('dnsInput').value.trim();
+  if(!domain){toast('Enter a domain','crit');return}
+  const btn=document.getElementById('dnsBtn');
+  const resEl=document.getElementById('dnsResults');
+  btn.disabled=true;btn.textContent='Resolving...';
+  resEl.innerHTML='<div class="card"><div class="scan-progress"><div class="scan-step running"><span class="step-ico">⏳</span><span>Querying Google DoH...</span></div></div></div>';
+
+  let dns;
+  if(!LIVE_MODE){
+    dns={A:[{data:'93.184.216.34',ttl:3600}],AAAA:[{data:'2606:2800:220:1:248:1893:25c8:1946',ttl:3600}],MX:[{data:'10 mail.'+domain,ttl:3600}],NS:[{data:'ns1.'+domain,ttl:86400},{data:'ns2.'+domain,ttl:86400}],TXT:[{data:'"v=spf1 include:_spf.google.com ~all"',ttl:3600}],CNAME:[],SOA:[],CAA:[]};
+  }else{
+    try{dns=await fetchDNSAll(domain)}catch(e){resEl.innerHTML=`<div class="card"><div class="empty-state"><div class="ico">⚠</div><div class="title">DNS error</div><div class="sub">${escapeHtml(e.message)}</div></div></div>`;btn.disabled=false;btn.textContent='Resolve';return}
+  }
+
+  const sections=Object.entries(dns).map(([t,recs])=>recs.length?`<div class="card"><div class="card-header"><span class="card-title">${t} Records</span><span class="card-sub">${recs.length}</span></div><div class="record-list">${recs.map(r=>`<div class="record-line"><span class="record-type">${t}</span><span class="record-val">${escapeHtml(r.data)}</span><span class="record-ttl">TTL ${r.ttl}</span></div>`).join('')}</div></div>`:'').filter(Boolean).join('');
+  resEl.innerHTML=sections||'<div class="card"><div class="empty-state"><div class="ico">🌐</div><div class="title">No records found</div></div></div>';
+  btn.disabled=false;btn.textContent='Resolve';
+}
+
+// ═══════════ RDAP ═══════════
+async function runRdap(){
+  const domain=document.getElementById('rdapInput').value.trim();
+  if(!domain){toast('Enter a domain','crit');return}
+  const btn=document.getElementById('rdapBtn');
+  const resEl=document.getElementById('rdapResults');
+  btn.disabled=true;btn.textContent='Looking up...';
+  resEl.innerHTML='<div class="card"><div class="scan-progress"><div class="scan-step running"><span class="step-ico">⏳</span><span>Querying RDAP...</span></div></div></div>';
+
+  let rd;
+  if(!LIVE_MODE){
+    rd={ldhName:domain,status:['client transfer prohibited','server delete prohibited'],events:[{eventAction:'registration',eventDate:'2001-03-05T15:00:00Z'},{eventAction:'expiration',eventDate:'2027-03-05T15:00:00Z'},{eventAction:'last changed',eventDate:'2024-11-12T09:22:00Z'}],entities:[{roles:['registrar'],vcardArray:[[],[ ['version',{},'text','4.0'],['fn',{},'text','Demo Registrar Inc'] ]]}],nameservers:[{ldhName:'ns1.demo.net'},{ldhName:'ns2.demo.net'}]};
+  }else{
+    try{rd=await fetchRDAP(domain);if(!rd){resEl.innerHTML=`<div class="card"><div class="empty-state"><div class="ico">📇</div><div class="title">No RDAP record</div><div class="sub">Domain may be unregistered or TLD has no RDAP endpoint</div></div></div>`;btn.disabled=false;btn.textContent='Lookup';return}}
+    catch(e){resEl.innerHTML=`<div class="card"><div class="empty-state"><div class="ico">⚠</div><div class="title">RDAP error</div><div class="sub">${escapeHtml(e.message)}</div></div></div>`;btn.disabled=false;btn.textContent='Lookup';return}
+  }
+
+  const evts=rd.events||[];
+  const reg=evts.find(e=>e.eventAction==='registration');
+  const exp=evts.find(e=>e.eventAction==='expiration');
+  const changed=evts.find(e=>e.eventAction==='last changed');
+  const registrar=(rd.entities||[]).find(e=>(e.roles||[]).includes('registrar'));
+  const regName=registrar?(((registrar.vcardArray||[[],[]])[1].find(v=>v[0]==='fn')||[,,,''])[3]||'—'):'—';
+  const ns=(rd.nameservers||[]).map(n=>n.ldhName||n.unicodeName).filter(Boolean);
+
+  resEl.innerHTML=`<div class="card">
+    <div class="card-header"><span class="card-title">Registration Details</span><span class="card-sub">${escapeHtml(rd.ldhName||domain)}</span></div>
+    <dl class="kv-grid">
+      <dt>Registrar</dt><dd class="wrap">${escapeHtml(regName)}</dd>
+      <dt>Created</dt><dd>${escapeHtml(reg?reg.eventDate.slice(0,10):'—')}</dd>
+      <dt>Expires</dt><dd>${escapeHtml(exp?exp.eventDate.slice(0,10):'—')}</dd>
+      <dt>Last Changed</dt><dd>${escapeHtml(changed?changed.eventDate.slice(0,10):'—')}</dd>
+      <dt>Nameservers</dt><dd>${ns.length?ns.map(n=>escapeHtml(n)).join('<br>'):'—'}</dd>
+      <dt>Status</dt><dd class="wrap">${(rd.status||[]).map(s=>'<span class="badge info" style="margin:2px">'+escapeHtml(s)+'</span>').join('')||'—'}</dd>
+      <dt>DNSSEC</dt><dd>${rd.secureDNS&&rd.secureDNS.delegationSigned?'<span class="sev-clean">✓ Signed</span>':'<span style="color:var(--text-muted)">Unsigned</span>'}</dd>
+    </dl>
+  </div>`;
+  btn.disabled=false;btn.textContent='Lookup';
+}
+
+// ═══════════ SCAN HISTORY ═══════════
+async function saveScanHistory(entry){
+  if(!CURRENT_USER)return;
+  const id='scan_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
+  await dbPut('scans',{id,owner:CURRENT_USER,ts:new Date().toISOString(),domain:entry.domain,score:entry.result.score,level:entry.result.level,categories:entry.result.categories,indicators:entry.result.indicators,live:entry.live});
+}
+async function renderHistory(){
+  if(!CURRENT_USER)return;
+  const tb=document.getElementById('historyTable');
+  const scans=(await dbAllBy('scans','owner',CURRENT_USER)).sort((a,b)=>(b.ts||'').localeCompare(a.ts||''));
+  if(!scans.length){
+    tb.innerHTML='<tr><td colspan="6"><div class="empty-state"><div class="ico">📚</div><div class="title">No scans yet</div><div class="sub">Run a scan to populate history</div></div></td></tr>';
+    return;
+  }
+  tb.innerHTML=scans.slice(0,500).map(s=>`<tr class="history-row" onclick="replayScan('${escapeHtml(s.domain)}')">
+    <td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml(s.domain)}</td>
+    <td><span style="font-family:var(--font-mono);font-weight:700;color:${s.score>=80?'var(--red)':s.score>=50?'var(--orange)':s.score>0?'var(--yellow)':'var(--green)'}">${s.score}</span></td>
+    <td><span class="badge ${s.level}">${s.level}</span></td>
+    <td>${s.live?'<span class="mode-badge live">LIVE</span>':'<span class="mode-badge demo">STATIC</span>'}</td>
+    <td>${(s.categories||[]).slice(0,3).map(c=>'<span class="badge info" style="margin:1px;font-size:.6rem">'+escapeHtml(c)+'</span>').join('')}</td>
+    <td style="color:var(--text-dim);font-size:.7rem;font-family:var(--font-mono)">${escapeHtml((s.ts||'').replace('T',' ').slice(0,19))}</td>
+  </tr>`).join('');
+}
+function replayScan(domain){
+  document.getElementById('scanInput').value=domain;
+  showPage('scanner',document.querySelector('[data-page="scanner"]'));
+  scanDomain();
+}
+async function clearHistory(){
+  if(!CURRENT_USER)return;
+  if(!confirm('Delete all scan history for this account?'))return;
+  const n=await dbClearOwner('scans','owner',CURRENT_USER);
+  toast('Cleared '+n+' scans','ok');
+  renderHistory();
+}
+async function exportHistoryJSON(){
+  if(!CURRENT_USER)return;
+  const scans=await dbAllBy('scans','owner',CURRENT_USER);
+  downloadJSON(scans,'kwtcyberwatch_history_'+new Date().toISOString().slice(0,10)+'.json');
+}
+async function exportHistoryCSV(){
+  if(!CURRENT_USER)return;
+  const scans=await dbAllBy('scans','owner',CURRENT_USER);
+  const rows=scans.map(s=>({domain:s.domain,score:s.score,level:s.level,live:s.live,categories:(s.categories||[]).join('|'),indicators:(s.indicators||[]).length,timestamp:s.ts}));
+  downloadCSV(rows,'kwtcyberwatch_history_'+new Date().toISOString().slice(0,10)+'.csv');
+}
+
+// ═══════════ EXPORT HELPERS ═══════════
+function downloadJSON(data,filename){
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();
+}
+function downloadCSV(rows,filename){
+  if(!rows.length){toast('Nothing to export','crit');return}
+  const headers=Object.keys(rows[0]);
+  const csv=[headers.join(','),...rows.map(r=>headers.map(h=>{const v=r[h];if(v==null)return '';const s=String(v);return s.includes(',')||s.includes('"')||s.includes('\n')?'"'+s.replace(/"/g,'""')+'"':s}).join(','))].join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();
+}
+
+// ═══════════ TOAST ═══════════
+function toast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast show '+(type||'');
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+// ═══════════ NAVIGATION HOOK ═══════════
+const _origShowPage=showPage;
+showPage=function(id,el){
+  _origShowPage(id,el);
+  if(id==='history')renderHistory();
+  if(id==='bulk')updateBulkCount();
+};
 
 // ═══════════ COUNTER ANIMATION ═══════════
 function animateCounter(){
