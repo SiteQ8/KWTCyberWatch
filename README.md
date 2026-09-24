@@ -165,6 +165,8 @@ Try it live at <https://siteq8.github.io/KWTCyberWatch/demo/> (project site: <ht
   involved; logs are discovered from Google's log list with a built-in fallback and the feed
   page shows per-log state, rate and coverage. Both RFC 6962 and Static CT API (tiled) logs
   are supported, and a deep-match mode runs the brand engine on every hostname.
+- **Relay feed** — a scheduled GitHub Actions job runs the same tailer and publishes matches to
+  the site, so the console shows real Kuwait certificates even if a browser cannot read a log.
 - **Watchtower** — a scheduled sweep that generates look-alikes of the protected brands,
   resolves them over DNS-over-HTTPS and records live ones as sightings with alerts.
 - **Real enrichment** — DNS via Google DNS-over-HTTPS, Certificate Transparency history via
@@ -386,6 +388,14 @@ See [SECURITY.md](SECURITY.md) for vulnerability reporting and the security poli
 - Tokens are HMAC-signed and expire; rate limiting and security headers are on by default
 
 ---
+
+## ⚖️ Disclaimer
+
+KWTCyberWatch produces **automated heuristic findings** from public data. A flagged domain is a
+candidate for review, not an accusation; verify independently before blocking, reporting or
+attributing. Brand names are used for identification only. The software, the hosted console and
+the published relay feed are provided as is, without warranty or liability. The console keeps all
+data in your browser and the site runs no tracking. Full text: [DISCLAIMER.md](DISCLAIMER.md).
 
 ## 🤝 Contributing
 

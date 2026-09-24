@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.4.0] - 2026-09-24
 
 ### Added
+- **Relay feed**: `.github/workflows/ct-relay.yml` runs `scripts/ct_snapshot.py` (the project's own
+  tailer) every 30 minutes for ~25 minutes and publishes Kuwait keyword matches to
+  `demo/feed/latest.json` plus a 14-day archive. The console loads this same-origin feed next to
+  direct tailing, so real matches arrive even where a browser cannot read a CT log directly.
+- **Disclaimer and terms** (`DISCLAIMER.md`), surfaced on the website, the console landing page
+  and sidebar, in generated reports and inside the published feed: findings are automated
+  heuristics from public data, not accusations; brand names are used for identification only;
+  no warranty; local-only data, no tracking.
 - **Project website** at the GitHub Pages root (`index.html`, `404.html`, `.nojekyll`): features,
   how it works, screenshots, self-hosting quickstart and links to the live console.
 - **Static CT API (tiled logs)** support in both tailers: `checkpoint` + `tile/data/...`

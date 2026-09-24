@@ -76,7 +76,7 @@
   const DEFAULTS = {
     soundAlerts: false, retentionDays: 90,
     feedSource: "ctlogs", ctLogs: [], keywordsVersion: 0,
-    feedDeepMatch: true, autoEnrich: true, rules: [],
+    feedDeepMatch: true, autoEnrich: true, rules: [], relayUrl: "", relayWatermark: "",
     watchtowerEnabled: true, watchtowerMinutes: 20, watchtowerBrands: 4, watchtowerPerBrand: 60, lastWatchtower: "",
     keywords: KCW.data.certstream_keywords.slice(),
     allowlist: [],
@@ -1163,6 +1163,7 @@
     const wt = $("setWatchtower"); if (wt) wt.checked = !!S.watchtowerEnabled;
     const wm = $("setWatchtowerMinutes"); if (wm) wm.value = S.watchtowerMinutes || 20;
     const cl = $("setCtLogs"); if (cl) cl.value = (S.ctLogs || []).join("\n");
+    const ru = $("setRelayUrl"); if (ru) ru.value = S.relayUrl || "";
     $("setFeedMinScore").value = S.feedMinScore; $("setFeedAlertSeverity").value = S.feedAlertSeverity; $("setCertstreamUrl").value = S.certstreamUrl; $("setApiUrl").value = S.apiUrl;
     checkApi();
     $("aboutText").innerHTML = `KWTCyberWatch v${esc(KCW.version)} · browser engine with ${engine.brands.length} brand profiles, ${KCW.data.phishing_keywords.length} lure keywords, ${Object.keys(KCW.data.confusables).length} confusable characters and ${KCW.data.suffixes.free_hosting.length} free-hosting suffixes.<br>Source: <a href="https://github.com/SiteQ8/KWTCyberWatch" target="_blank" rel="noopener">github.com/SiteQ8/KWTCyberWatch</a> · by Ali AlEnezi (@SiteQ8).`;
