@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   kwtcyberwatch-api:
     build: .
@@ -11,16 +9,23 @@ services:
       - ./config.yaml:/app/config.yaml:ro
     environment:
       - KCW_API_SECRET=${KCW_API_SECRET:-change-me}
+      - KCW_ADMIN_PASSWORD=${KCW_ADMIN_PASSWORD:-admin}
+      - KCW_API_KEY=${KCW_API_KEY:-}
+      - KCW_AUTH_REQUIRED=${KCW_AUTH_REQUIRED:-false}
       - KCW_VT_API_KEY=${KCW_VT_API_KEY:-}
+      - KCW_URLSCAN_KEY=${KCW_URLSCAN_KEY:-}
+      - KCW_GSB_KEY=${KCW_GSB_KEY:-}
       - KCW_SLACK_WEBHOOK=${KCW_SLACK_WEBHOOK:-}
+      - KCW_TEAMS_WEBHOOK=${KCW_TEAMS_WEBHOOK:-}
       - KCW_TELEGRAM_TOKEN=${KCW_TELEGRAM_TOKEN:-}
       - KCW_TELEGRAM_CHAT=${KCW_TELEGRAM_CHAT:-}
     command: ["api"]
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/api/v1/health"]
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:5000/api/v1/health', timeout=4).status == 200 else 1)"]
       interval: 30s
       timeout: 5s
+      start_period: 10s
       retries: 3
 
   kwtcyberwatch-monitor:
@@ -31,9 +36,31 @@ services:
       - ./config.yaml:/app/config.yaml:ro
     environment:
       - KCW_SLACK_WEBHOOK=${KCW_SLACK_WEBHOOK:-}
+      - KCW_TEAMS_WEBHOOK=${KCW_TEAMS_WEBHOOK:-}
       - KCW_TELEGRAM_TOKEN=${KCW_TELEGRAM_TOKEN:-}
       - KCW_TELEGRAM_CHAT=${KCW_TELEGRAM_CHAT:-}
+      - KCW_WEBHOOK_URL=${KCW_WEBHOOK_URL:-}
+      - KCW_WEBHOOK_SECRET=${KCW_WEBHOOK_SECRET:-}
     command: ["monitor"]
+    restart: unless-stopped
+    depends_on:
+      kwtcyberwatch-api:
+        condition: service_healthy
+
+  # Proactive typosquat discovery: resolves permutations of every protected
+  # brand on a schedule and alerts when a new look-alike goes live.
+  kwtcyberwatch-watcher:
+    build: .
+    container_name: kwtcyberwatch-watcher
+    volumes:
+      - ./data:/app/data
+      - ./config.yaml:/app/config.yaml:ro
+    environment:
+      - KCW_SLACK_WEBHOOK=${KCW_SLACK_WEBHOOK:-}
+      - KCW_TEAMS_WEBHOOK=${KCW_TEAMS_WEBHOOK:-}
+      - KCW_TELEGRAM_TOKEN=${KCW_TELEGRAM_TOKEN:-}
+      - KCW_TELEGRAM_CHAT=${KCW_TELEGRAM_CHAT:-}
+    command: ["watch-squats"]
     restart: unless-stopped
     depends_on:
       kwtcyberwatch-api:

@@ -15,6 +15,7 @@ class TestPhishingDetector:
 
     def setup_method(self):
         from src.core.phishing_detector import PhishingDetector
+
         self.detector = PhishingDetector()
 
     def test_clean_domain(self):
@@ -51,6 +52,7 @@ class TestDomainAnalyzer:
     def setup_method(self):
         from src.core.domain_analyzer import DomainAnalyzer
         from src.config.settings import DomainAnalysisConfig
+
         self.analyzer = DomainAnalyzer(DomainAnalysisConfig())
 
     def test_typosquatting(self):
@@ -84,6 +86,7 @@ class TestBrandMonitor:
 
     def setup_method(self):
         from src.core.brand_monitor import BrandMonitor
+
         self.monitor = BrandMonitor()
 
     def test_brand_detection(self):
