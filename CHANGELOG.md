@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.4.0] - 2026-09-24
 
 ### Added
+- **Project website** at the GitHub Pages root (`index.html`, `404.html`, `.nojekyll`): features,
+  how it works, screenshots, self-hosting quickstart and links to the live console.
 - **Static CT API (tiled logs)** support in both tailers: `checkpoint` + `tile/data/...`
   (including partial `.p/W` tiles) with the `TileLeaf` format, tile-path encoding and
   discovery of `tiled_logs` from the log list. Newer logs from Let's Encrypt, Geomys and others

@@ -152,7 +152,7 @@ Minimum severity, per-domain cooldown de-duplication and delivery statistics are
 
 ### Web dashboard
 The single-page dashboard in `demo/` is a **real client-side analyst console**, not a mock-up.
-Try it live at <https://siteq8.github.io/KWTCyberWatch/demo/>.
+Try it live at <https://siteq8.github.io/KWTCyberWatch/demo/> (project site: <https://siteq8.github.io/KWTCyberWatch/>).
 
 - **Browser-native detection engine** — `demo/engine.js` is a line-for-line port of the Python
   phishing detector, brand monitor and domain analyzer (26 Kuwaiti brand profiles, IDN/Arabic
@@ -356,6 +356,7 @@ KWTCyberWatch/
 │   │   └── network.py               # DNS, RDAP, WHOIS, TLS enrichment
 │   ├── models/database.py           # SQLite storage with migrations
 │   └── config/settings.py           # dataclass settings, YAML + env loading, validation
+├── index.html · 404.html            # Project website (GitHub Pages root)
 ├── demo/                            # Browser console: index.html, engine.js (JS port), engine-data.js (generated), app.js, features.js, sw.js
 ├── tests/                           # 420+ offline tests (incl. Python↔JS engine parity)
 ├── docs/screenshots/
