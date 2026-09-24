@@ -72,8 +72,11 @@
   // ------------------------------------------------------------------ //
   // Settings & engine
   // ------------------------------------------------------------------ //
+  const KEYWORDS_VERSION = 2;
   const DEFAULTS = {
     soundAlerts: false, retentionDays: 90,
+    feedSource: "ctlogs", ctLogs: [], keywordsVersion: 0,
+    watchtowerEnabled: true, watchtowerMinutes: 20, watchtowerBrands: 4, watchtowerPerBrand: 60, lastWatchtower: "",
     keywords: KCW.data.certstream_keywords.slice(),
     allowlist: [],
     customBrands: [],
@@ -92,6 +95,14 @@
     const rows = await dbAll("settings");
     for (const r of rows) if (r.key in DEFAULTS) S[r.key] = r.value;
     try { S.analyst = localStorage.getItem("kcw_analyst") || S.analyst; } catch (e) { /* private mode */ }
+    if ((S.keywordsVersion || 0) < KEYWORDS_VERSION) {
+      const merged = S.keywords.slice();
+      for (const k of DEFAULTS.keywords) if (!merged.includes(k)) merged.push(k);
+      S.keywords = merged;
+      await dbPut("settings", { key: "keywords", value: merged });
+      await dbPut("settings", { key: "keywordsVersion", value: KEYWORDS_VERSION });
+      S.keywordsVersion = KEYWORDS_VERSION;
+    }
   }
   async function saveSetting(key, value) {
     S[key] = value;
@@ -138,8 +149,11 @@
       return await r.json();
     } finally { clearTimeout(t); }
   }
+  const DOH_FALLBACK = "https://cloudflare-dns.com/dns-query";
   async function dohQuery(domain, type) {
-    const data = await fetchJSON(`${DOH}?name=${encodeURIComponent(domain)}&type=${type}`, { timeout: 8000 });
+    let data;
+    try { data = await fetchJSON(`${DOH}?name=${encodeURIComponent(domain)}&type=${type}`, { timeout: 8000 }); }
+    catch (e) { data = await fetchJSON(`${DOH_FALLBACK}?name=${encodeURIComponent(domain)}&type=${type}`, { timeout: 8000, headers: { accept: "application/dns-json" } }); }
     return { status: data.Status, answers: (data.Answer || []).map((a) => ({ type: a.type, data: a.data, ttl: a.TTL })) };
   }
   async function dohAll(domain) {
@@ -426,14 +440,16 @@
       if (dot) dot.style.background = colors[state] || "var(--text-dim)";
       const pill = $("feedPill");
       if (pill) { pill.className = "feed-pill state-" + state; pill.style.borderColor = state === "live" ? "var(--green-dim)" : ""; }
-      setText("feedStatusText", "CertStream: " + state + (detail ? " · " + detail : ""));
+      setText("feedStatusText", ((S.feedSource || "ctlogs") === "ctlogs" ? "CT logs: " : "CertStream: ") + state + (detail ? " · " + detail : ""));
       setText("csStatus", state);
       setText("csStatusSub", detail || (state === "live" ? this.keywords.length + " keywords" : "—"));
     },
     connect() {
-      if (typeof WebSocket === "undefined") { this.setState("offline", "WebSocket unsupported"); return; }
       this.keywords = S.keywords.map((k) => k.toLowerCase());
       this.stop(false);
+      if (!this.stats.startedAt) this.stats.startedAt = Date.now();
+      if ((S.feedSource || "ctlogs") === "ctlogs" && window.KCW_CT) { window.KCW_CT.start(this); return; }
+      if (typeof WebSocket === "undefined") { this.setState("offline", "WebSocket unsupported"); return; }
       this.setState(this.retry ? "reconnecting" : "connecting", this.retry ? `attempt ${this.retry + 1}` : S.certstreamUrl);
       try { this.ws = new WebSocket(S.certstreamUrl); } catch (e) { this.setState("offline", e.message); return; }
       if (!this.stats.startedAt) this.stats.startedAt = Date.now();
@@ -452,6 +468,7 @@
     },
     stop(markIdle) {
       clearTimeout(this.timer);
+      if (window.KCW_CT) window.KCW_CT.stop();
       if (this.ws) { const w = this.ws; this.ws = null; try { w.close(); } catch (e) { /* ignore */ } }
       if (markIdle !== false) this.setState("idle");
     },
@@ -470,10 +487,11 @@
     },
     matchKeywords(domain) {
       const lower = domain.toLowerCase();
+      const uni = lower.includes("xn--") ? KCW.toUnicode(lower) : lower;
       const tokens = new Set(lower.split(/[^a-z0-9]+/).filter(Boolean));
       const hits = [];
       for (const kw of this.keywords) {
-        if (kw.length >= 3) { if (lower.includes(kw)) hits.push(kw); } else if (tokens.has(kw)) hits.push(kw);
+        if (kw.length >= 3) { if (lower.includes(kw) || (uni !== lower && uni.includes(kw))) hits.push(kw); } else if (tokens.has(kw)) hits.push(kw);
       }
       return hits;
     },
@@ -498,12 +516,13 @@
         try { verdict = engine.detector.analyze(host, { issuer: issuerName, is_wildcard: raw.startsWith("*."), source: "certstream" }); } catch (e) { continue; }
         const score = verdict.risk_score;
         if (score >= 60) this.stats.high += 1;
-        const row = { domain: host, ts: new Date().toISOString(), score, keywords: hits, issuer: issuerName, source: synthetic ? "replay" : (msg.data.source && msg.data.source.name) || "certstream", brands: verdict.matched_brands, categories: verdict.categories, synthetic: !!synthetic };
+        const feedSrc = (S.feedSource || "ctlogs") === "ctlogs" ? "ctlogs" : "certstream";
+        const row = { domain: host, ts: new Date().toISOString(), score, keywords: hits, issuer: issuerName, source: synthetic ? "replay" : (msg.data.source && msg.data.source.name) || feedSrc, brands: verdict.matched_brands, categories: verdict.categories, synthetic: !!synthetic };
         if (score >= (S.feedMinScore || 0)) { try { await dbAdd("certs", row); } catch (e) { /* quota */ } }
         this.render(row, synthetic);
-        const alerts = engine.monitor.checkDomain(host, synthetic ? "replay" : "certstream", true);
+        const alerts = engine.monitor.checkDomain(host, synthetic ? "replay" : feedSrc, true);
         const keep = alerts.filter((a) => (SEV_RANK[a.severity] || 0) >= (SEV_RANK[S.feedAlertSeverity] || 3));
-        if (keep.length) await persistBrandAlerts(keep, synthetic ? "replay" : "certstream", { issuer: issuerName, risk_score: score });
+        if (keep.length) await persistBrandAlerts(keep, synthetic ? "replay" : feedSrc, { issuer: issuerName, risk_score: score, ct_log: (msg.data.source && msg.data.source.name) || "" });
       }
       setText("matchedToday", (await dbCount("certs")).toLocaleString());
       setText("csHighRisk", this.stats.high);
@@ -1071,6 +1090,10 @@
   async function removeCustomBrand(i) { const next = S.customBrands.slice(); next.splice(i, 1); await saveSetting("customBrands", next); renderCustomBrands(); }
   function renderSettings() {
     renderKeywords(); renderAllowlist(); renderCustomBrands();
+    const fs = $("setFeedSource"); if (fs) fs.value = S.feedSource || "ctlogs";
+    const wt = $("setWatchtower"); if (wt) wt.checked = !!S.watchtowerEnabled;
+    const wm = $("setWatchtowerMinutes"); if (wm) wm.value = S.watchtowerMinutes || 20;
+    const cl = $("setCtLogs"); if (cl) cl.value = (S.ctLogs || []).join("\n");
     $("setFeedMinScore").value = S.feedMinScore; $("setFeedAlertSeverity").value = S.feedAlertSeverity; $("setCertstreamUrl").value = S.certstreamUrl; $("setApiUrl").value = S.apiUrl;
     checkApi();
     $("aboutText").innerHTML = `KWTCyberWatch v${esc(KCW.version)} · browser engine with ${engine.brands.length} brand profiles, ${KCW.data.phishing_keywords.length} lure keywords, ${Object.keys(KCW.data.confusables).length} confusable characters and ${KCW.data.suffixes.free_hosting.length} free-hosting suffixes.<br>Source: <a href="https://github.com/SiteQ8/KWTCyberWatch" target="_blank" rel="noopener">github.com/SiteQ8/KWTCyberWatch</a> · by Ali AlEnezi (@SiteQ8).`;

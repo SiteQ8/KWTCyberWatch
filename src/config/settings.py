@@ -57,38 +57,115 @@ DEFAULT_SQUAT_TLDS = [
 ]
 
 
+DEFAULT_CERTSTREAM_KEYWORDS: List[str] = [
+    # Kuwait identifiers
+    "kuwait",
+    "kuwaiti",
+    "kw",
+    "kwt",
+    "kwi",
+    "q8",
+    "q-8",
+    "kuw",
+    "الكويت",
+    "كويت",
+    # banking & payments
+    "nbk",
+    "nbkonline",
+    "nbkbank",
+    "watani",
+    "alwatani",
+    "الوطني",
+    "kfh",
+    "kfhonline",
+    "baitak",
+    "بيتك",
+    "cbk",
+    "cbkonline",
+    "tijari",
+    "altijari",
+    "burgan",
+    "gulf-bank",
+    "gulfbank",
+    "warba",
+    "warbabank",
+    "boubyan",
+    "bankboubyan",
+    "ahli-united",
+    "ahliunited",
+    "eahli",
+    "abk-kw",
+    "kib-kw",
+    "knet",
+    "knetpay",
+    "kpay",
+    "kwpay",
+    "kw-pay",
+    "q8pay",
+    "q8bank",
+    "kwbank",
+    "kuwaitbank",
+    "kuwaitpay",
+    # telecom
+    "zain-kw",
+    "zainkw",
+    "zain-kuwait",
+    "ooredoo-kw",
+    "ooredookw",
+    "stc-kw",
+    "stckw",
+    "viva-kw",
+    "vivakw",
+    # government & public services
+    "moi-kw",
+    "moi-gov",
+    "mofa-kw",
+    "paci-kw",
+    "paci-gov",
+    "moh-kw",
+    "moe-kw",
+    "mew-kw",
+    "csc-kw",
+    "mosal",
+    "e-gov-kw",
+    "egov-kw",
+    "gov-kw",
+    "kuwaitgov",
+    "kuwait-gov",
+    "sahel",
+    "civilid",
+    "civil-id",
+    "kuna",
+    # energy, aviation, commerce
+    "kockw",
+    "knpc",
+    "kpc-kw",
+    "kuwaitairways",
+    "kuwait-airways",
+    "jazeeraairways",
+    "jazeera-airways",
+    "boursakuwait",
+    "boursa-kuwait",
+    "talabat",
+]
+
+
 @dataclass
 class CertStreamConfig:
     """CertStream monitoring configuration."""
 
-    url: str = "wss://certstream.calidog.io/"
-    keywords: List[str] = field(
-        default_factory=lambda: [
-            "kuwait",
-            "kw",
-            "kwt",
-            "kwi",
-            "q8",
-            "nbk",
-            "kfh",
-            "cbk",
-            "burgan",
-            "gulf-bank",
-            "gulfbank",
-            "warba",
-            "boubyan",
-            "ahli-united",
-            "knet",
-            "zain-kw",
-            "ooredoo-kw",
-            "stc-kw",
-            "moi-kw",
-            "mofa-kw",
-            "paci-kw",
-            "moh-kw",
-            "e-gov-kw",
-        ]
+    source: str = (
+        "ctlogs"  # "ctlogs" = read CT logs directly (no third party), "certstream" = WebSocket
     )
+    url: str = "wss://certstream.calidog.io/"  # only used when source == "certstream"
+    keywords: List[str] = field(default_factory=lambda: list(DEFAULT_CERTSTREAM_KEYWORDS))
+    ct_logs: List[str] = field(
+        default_factory=list
+    )  # explicit log URLs; empty = discover + fallback
+    ct_log_list_url: str = "https://www.gstatic.com/ct/log_list/v3/log_list.json"
+    ct_batch_size: int = 256
+    ct_poll_interval: float = 2.0
+    ct_max_lag: int = 5000  # skip ahead when a log outruns us by this many entries
     retry_delay: int = 5
     max_delay: int = 300
     log_file: str = "data/certstream_domains.log"
@@ -286,6 +363,7 @@ ENV_MAP: Dict[str, tuple] = {
     "KCW_ANALYST_PASSWORD": ("api", "analyst_password"),
     "KCW_DB_PATH": ("database", "db_path"),
     "KCW_CERTSTREAM_URL": ("certstream", "url"),
+    "KCW_CERTSTREAM_SOURCE": ("certstream", "source"),
     "KCW_LOG_LEVEL": (None, "log_level"),
     "KCW_DATA_DIR": (None, "data_dir"),
 }

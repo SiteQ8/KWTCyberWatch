@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="KWTCyberWatch">
 <meta name="description" content="KWTCyberWatch — Kuwait phishing detection & brand protection. Live Certificate Transparency monitoring, domain squatting detection and brand impersonation alerts, running entirely in your browser.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Cpath d=%27M16 2 4 7v9c0 7.5 5.1 14 12 16 6.9-2 12-8.5 12-16V7z%27 fill=%27%2300d4ff%27/%3E%3Cpath d=%27M16 6 8 9.3V16c0 5.2 3.4 9.9 8 11.6 4.6-1.7 8-6.4 8-11.6V9.3z%27 fill=%27%230a0e17%27/%3E%3C/svg%3E">
-<title>KWTCyberWatch v2.2 — Kuwait Phishing Detection Suite</title>
+<title>KWTCyberWatch v2.3 — Kuwait Phishing Detection Suite</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -619,7 +619,7 @@ tr.selected td{background:var(--cyan-glow)!important}
         <div><b>STIX 2.1</b><span>export</span></div>
       </div>
       <div class="feature-grid">
-        <div class="feature"><div class="f-ico" data-icon="certstream"></div><h3>Live CertStream</h3><p>Every newly logged certificate is matched and scored the moment it appears.</p></div>
+        <div class="feature"><div class="f-ico" data-icon="certstream"></div><h3>Direct CT tailing</h3><p>The browser reads Certificate Transparency logs itself — no third-party feed — and scores every new certificate.</p></div>
         <div class="feature"><div class="f-ico" data-icon="squatgen"></div><h3>Typosquat Hunter</h3><p>Generate look-alike domains and resolve them live over DNS-over-HTTPS.</p></div>
         <div class="feature"><div class="f-ico" data-icon="threatintel"></div><h3>Real enrichment</h3><p>crt.sh history, RDAP registration data and URLhaus reputation, fetched directly.</p></div>
         <div class="feature"><div class="f-ico" data-icon="alerts"></div><h3>Alert triage</h3><p>Lifecycle, one-click allowlisting, CSV and STIX 2.1 export — stored locally.</p></div>
@@ -634,13 +634,13 @@ tr.selected td{background:var(--cyan-glow)!important}
       <button class="login-btn" onclick="enterDashboard()" id="enterBtn">Open Dashboard <span class="kbd">↵</span></button>
       <div class="login-error" id="loginError"></div>
       <div class="entry-meta">
-        <div><span class="k">Engine</span><span class="v" id="lsVersion">v2.2.0 · IDN / Arabic aware</span></div>
+        <div><span class="k">Engine</span><span class="v" id="lsVersion">v2.3.0 · IDN / Arabic aware</span></div>
         <div><span class="k">Storage</span><span class="v">IndexedDB — local only</span></div>
-        <div><span class="k">Feed</span><span class="v">wss://certstream.calidog.io</span></div>
+        <div><span class="k">Feed</span><span class="v">CT logs read directly (RFC 6962)</span></div>
         <div><span class="k">Lookups</span><span class="v">dns.google · crt.sh · rdap.org · URLhaus</span></div>
       </div>
       <div id="apiHint" style="display:none;margin-top:10px;padding:10px;background:rgba(0,212,255,.08);border:1px solid var(--cyan-dim);border-radius:var(--radius-sm);font-size:.72rem;color:var(--cyan)"></div>
-      <div class="login-hint" id="loginHint">The JavaScript engine is parity-tested against the Python engine · MIT licensed · <code>v2.2</code></div>
+      <div class="login-hint" id="loginHint">The JavaScript engine is parity-tested against the Python engine · MIT licensed · <code>v2.3</code></div>
     </aside>
   </main>
   <footer class="landing-foot">Built by Ali AlEnezi (SiteQ8) · <a href="https://github.com/SiteQ8/KWTCyberWatch" target="_blank" rel="noopener">Source on GitHub</a> · <a href="https://github.com/SiteQ8/KWTCyberWatch#-quick-start" target="_blank" rel="noopener">Self-host with the API</a></footer>
@@ -651,7 +651,7 @@ tr.selected td{background:var(--cyan-glow)!important}
   <div class="topbar">
     <div class="topbar-left">
       <button class="icon-btn menu-btn" onclick="toggleSidebar()" aria-label="Open menu" data-icon="menu"></button>
-      <div class="topbar-brand"><span class="logo" data-icon="shield"></span><h1>KWT<span>CyberWatch</span></h1><span class="topbar-badge" id="versionBadge">v2.2.0</span></div>
+      <div class="topbar-brand"><span class="logo" data-icon="shield"></span><h1>KWT<span>CyberWatch</span></h1><span class="topbar-badge" id="versionBadge">v2.3.0</span></div>
       <span class="feed-pill" id="feedPill" title="Live Certificate Transparency feed"><span class="glow-dot" id="feedDot"></span><span id="feedStatusText">CertStream: connecting…</span></span>
     </div>
     <button class="search-btn" onclick="openPalette()" title="Search & commands (Ctrl+K)"><span data-icon="scanner" class="search-ico"></span><span class="search-txt">Search domains, brands, pages…</span><span class="kbd dim">Ctrl K</span></button>
@@ -670,7 +670,7 @@ tr.selected td{background:var(--cyan-glow)!important}
       <div class="sidebar-section">
         <div class="sidebar-section-title">Main</div>
         <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard',this)"><span class="nav-icon" data-icon="dashboard"></span> Dashboard</div>
-        <div class="nav-item" data-page="certstream" onclick="showPage('certstream',this)"><span class="nav-icon" data-icon="certstream"></span> CertStream Live <span class="nav-badge" id="feedCount">0</span></div>
+        <div class="nav-item" data-page="certstream" onclick="showPage('certstream',this)"><span class="nav-icon" data-icon="certstream"></span> CT Live Feed <span class="nav-badge" id="feedCount">0</span></div>
         <div class="nav-item" data-page="scanner" onclick="showPage('scanner',this)"><span class="nav-icon" data-icon="scanner"></span> Domain Scanner</div>
         <div class="nav-item" data-page="bulk" onclick="showPage('bulk',this)"><span class="nav-icon" data-icon="bulk"></span> Bulk Scanner</div>
         <div class="nav-item" data-page="squatgen" onclick="showPage('squatgen',this)"><span class="nav-icon" data-icon="squatgen"></span> Typosquat Hunter</div>
@@ -695,7 +695,7 @@ tr.selected td{background:var(--cyan-glow)!important}
         <div class="nav-item" data-page="notifications" onclick="showPage('notifications',this)"><span class="nav-icon" data-icon="notifications"></span> Notifications</div>
         <div class="nav-item" data-page="settings" onclick="showPage('settings',this)"><span class="nav-icon" data-icon="settings"></span> Settings</div>
       </div>
-      <div class="sidebar-foot"><a href="https://github.com/SiteQ8/KWTCyberWatch" target="_blank" rel="noopener">GitHub ↗</a><span id="sbVersion">v2.2.0</span></div>
+      <div class="sidebar-foot"><a href="https://github.com/SiteQ8/KWTCyberWatch" target="_blank" rel="noopener">GitHub ↗</a><span id="sbVersion">v2.3.0</span></div>
     </nav>
 
     <div class="main">
@@ -729,8 +729,8 @@ tr.selected td{background:var(--cyan-glow)!important}
 
       <!-- ──── CERTSTREAM ──── -->
       <div id="page-certstream" class="page">
-        <h2 class="page-title">CertStream Live Feed</h2>
-        <p class="page-desc">Direct WebSocket to <code>certstream.calidog.io</code>. Every certificate is matched against your keywords and scored by the detection engine in this browser.</p>
+        <h2 class="page-title">Certificate Transparency Live Feed</h2>
+        <p class="page-desc">This browser reads public CT logs directly (<code>get-sth</code> / <code>get-entries</code>) and parses every certificate itself — no CertStream or other third-party feed. Each hostname is matched against your keywords and scored by the engine.</p>
         <div class="stats-grid" style="margin-bottom:16px">
           <div class="stat-card cyan"><div class="stat-label">Feed Status</div><div class="stat-value cyan" id="csStatus" style="font-size:1.2rem">connecting</div><div class="stat-sub" id="csStatusSub">—</div></div>
           <div class="stat-card green"><div class="stat-label">Certs / second</div><div class="stat-value green" id="certsPerSec">0</div><div class="stat-sub" id="csTotalSub">0 seen</div><svg class="spark" id="spark-rate" viewBox="0 0 120 32" preserveAspectRatio="none"></svg></div>
@@ -751,12 +751,24 @@ tr.selected td{background:var(--cyan-glow)!important}
           </div>
           <div class="feed-container" id="liveFeed"><div style="padding:16px;color:var(--text-muted)">Waiting for the first matching certificate…</div></div>
         </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">🗂 CT logs being tailed</span>
+            <div style="display:flex;gap:14px;align-items:center;font-size:.72rem;color:var(--text-dim);flex-wrap:wrap">
+              <span>live <strong id="ctLogsLive" style="font-family:var(--font-mono);color:var(--text)">—</strong></span>
+              <span>entries parsed <strong id="ctEntries" style="font-family:var(--font-mono);color:var(--text)">0</strong></span>
+              <span title="Share of new log entries this session that were actually read (the rest were skipped to keep up)">coverage <strong id="ctCoverage" style="font-family:var(--font-mono);color:var(--text)">—</strong></span>
+              <span id="ctErrors" style="font-family:var(--font-mono)">0 errors</span>
+            </div>
+          </div>
+          <div class="table-wrap"><table><thead><tr><th>Log</th><th>State</th><th>Tree size</th><th>Read</th><th>Rate</th><th>Skipped</th></tr></thead><tbody id="ctLogTable"><tr><td colspan="6" style="color:var(--text-muted);font-size:.75rem;padding:14px">Not started</td></tr></tbody></table></div>
+          <p style="font-size:.7rem;color:var(--text-muted);margin-top:10px">Logs are discovered from Google's public CT log list, falling back to built-in shards. A log that blocks cross-origin requests or is offline is skipped automatically. Add your own log URLs under Settings → Engine &amp; feed.</p>
+        </div>
       </div>
 
       <!-- ──── SCANNER ──── -->
       <div id="page-scanner" class="page">
         <h2 class="page-title">Domain Scanner</h2>
-        <p class="page-desc">Phishing heuristics, brand impersonation and squatting analysis by the v2.2 engine, enriched live with DNS, Certificate Transparency and RDAP.</p>
+        <p class="page-desc">Phishing heuristics, brand impersonation and squatting analysis by the v2.3 engine, enriched live with DNS, Certificate Transparency and RDAP.</p>
         <div class="scanner-box">
           <input class="scanner-input" id="scanInput" placeholder="Enter a domain or URL (e.g., nbk-secure-login.xyz, nbк.com)" onkeydown="if(event.key==='Enter')scanDomain()">
           <button class="scan-btn" id="scanBtn" onclick="scanDomain()">🔍 Analyze</button>
@@ -930,7 +942,12 @@ tr.selected td{background:var(--cyan-glow)!important}
       <!-- ──── SIGHTINGS ──── -->
       <div id="page-sightings" class="page">
         <h2 class="page-title">🎯 Typosquat Sightings</h2>
-        <p class="page-desc">Look-alike domains of protected brands that resolved when checked by the Typosquat Hunter.</p>
+        <p class="page-desc">Look-alike domains of protected brands that resolved when checked by the Typosquat Hunter or the automatic Watchtower sweep.</p>
+        <div class="card" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 18px">
+          <label class="toggle"><input type="checkbox" id="wtToggle" onchange="setWatchtower(this.checked)"><span class="toggle-slider"></span></label>
+          <div style="flex:1;min-width:220px"><strong style="font-size:.9rem">🗼 Watchtower</strong><div id="wtStatus" style="font-size:.74rem;color:var(--text-dim);margin-top:2px">—</div></div>
+          <button class="btn-sm" onclick="runWatchtowerNow()">▶ Sweep now</button>
+        </div>
         <div class="stats-grid" style="margin-bottom:16px">
           <div class="stat-card red"><div class="stat-label">New</div><div class="stat-value red" id="sgNew">0</div></div>
           <div class="stat-card orange"><div class="stat-label">Monitoring</div><div class="stat-value orange" id="sgMonitoring">0</div></div>
@@ -1026,7 +1043,10 @@ tr.selected td{background:var(--cyan-glow)!important}
             <div class="card-header"><span class="card-title">⚙️ Engine &amp; feed</span></div>
             <div class="notif-field"><label>Store feed matches with score ≥</label><input id="setFeedMinScore" type="number" min="0" max="100" value="0" onchange="saveSetting('feedMinScore',Number(this.value))"></div>
             <div class="notif-field"><label>Raise alerts from feed for severity ≥</label><select class="api-select" id="setFeedAlertSeverity" style="width:100%" onchange="saveSetting('feedAlertSeverity',this.value)"><option value="critical">critical</option><option value="high" selected>high</option><option value="medium">medium</option><option value="low">low</option></select></div>
-            <div class="notif-field"><label>CertStream URL</label><input id="setCertstreamUrl" value="wss://certstream.calidog.io/" onchange="saveSetting('certstreamUrl',this.value.trim())"></div>
+            <div class="notif-field"><label>Live feed source</label><select class="api-select" id="setFeedSource" style="width:100%" onchange="saveSetting('feedSource',this.value);reconnectFeed()"><option value="ctlogs">Read CT logs directly (recommended, no third party)</option><option value="certstream">CertStream WebSocket (legacy)</option></select></div>
+            <div class="notif-field"><label>Extra CT log URLs (one per line, optional)</label><textarea class="bulk-textarea" id="setCtLogs" style="min-height:60px" placeholder="https://ct.googleapis.com/logs/us1/argon2026h2/" onchange="saveSetting('ctLogs',this.value.split(/\n/).map(s=>s.trim()).filter(Boolean));reconnectFeed()"></textarea></div>
+            <div class="notif-field" style="display:flex;align-items:center;gap:10px"><label class="toggle" style="margin:0"><input type="checkbox" id="setWatchtower" onchange="setWatchtower(this.checked)"><span class="toggle-slider"></span></label><span style="font-size:.78rem">Watchtower brand sweeps every <input class="api-select" id="setWatchtowerMinutes" type="number" min="5" max="720" value="20" style="width:64px" onchange="saveSetting('watchtowerMinutes',Number(this.value)||20)"> min</span></div>
+            <div class="notif-field"><label>CertStream URL (legacy source only)</label><input id="setCertstreamUrl" value="wss://certstream.calidog.io/" onchange="saveSetting('certstreamUrl',this.value.trim())"></div>
             <div class="notif-field"><label>Backend API base URL (optional)</label><input id="setApiUrl" placeholder="http://localhost:5000" onchange="saveSetting('apiUrl',this.value.trim());checkApi()"></div>
             <div id="apiStatus" style="font-size:.72rem;color:var(--text-dim);margin-top:4px">API: not configured</div>
             <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
@@ -1101,5 +1121,6 @@ tr.selected td{background:var(--cyan-glow)!important}
 <script src="engine.js"></script>
 <script src="app.js"></script>
 <script src="features.js"></script>
+<script src="discovery.js"></script>
 </body>
 </html>

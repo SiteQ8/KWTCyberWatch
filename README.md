@@ -7,7 +7,7 @@
     Open-source phishing detection and brand protection for Kuwait: live Certificate Transparency monitoring, IDN/Arabic-aware typosquat and brand-impersonation detection for 26 Kuwaiti banks, telecoms and government services, alert triage, threat-intel enrichment and a fully client-side analyst console you can run from GitHub Pages.
   </p>
   <p align="center">
-    <a href="#-features"><img src="https://img.shields.io/badge/version-2.2.0-00d4ff?style=flat-square" alt="Version"></a>
+    <a href="#-features"><img src="https://img.shields.io/badge/version-2.3.0-00d4ff?style=flat-square" alt="Version"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License"></a>
     <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square" alt="Python"></a>
     <a href="https://github.com/SiteQ8/KWTCyberWatch/actions"><img src="https://img.shields.io/badge/tests-420%2B-brightgreen?style=flat-square" alt="Tests"></a>
@@ -17,6 +17,12 @@
 </p>
 
 ---
+
+## ✨ What's new in 2.3
+
+- **No more CertStream dependency** — the monitor and the browser console tail Certificate Transparency logs directly with their own DER parser, discover current log shards automatically and show per-log coverage. `main.py monitor` works without the `certstream` package.
+- **Watchtower** — automatic brand sweeps in the browser that resolve generated look-alikes and raise alerts.
+- **84 Kuwait keywords** including Arabic identifiers, merged into existing workspaces.
 
 ## ✨ What's new in 2.2
 
@@ -31,7 +37,7 @@
 - **Threat intel that works out of the box** — OpenPhish and URLhaus need no key; VirusTotal, URLScan, PhishTank and Google Safe Browsing plug in with one.
 - **SIEM-ready outputs** — STIX 2.1 bundles, CSV exports, Syslog/CEF and Microsoft Teams channels, Prometheus metrics.
 - **Hardened API** — signed bearer tokens, roles, API keys, rate limiting, OpenAPI docs.
-- **A real browser dashboard** — the full detection engine is ported to JavaScript (parity-tested against Python), so the [GitHub Pages demo](https://siteq8.github.io/KWTCyberWatch/demo/) scans for real, follows the live CertStream feed, resolves typosquats over DNS-over-HTTPS and enriches with crt.sh, RDAP and URLhaus. No backend, no sample data.
+- **A real browser dashboard** — the full detection engine is ported to JavaScript (parity-tested against Python), so the [GitHub Pages demo](https://siteq8.github.io/KWTCyberWatch/demo/) scans for real, tails Certificate Transparency logs directly, resolves typosquats over DNS-over-HTTPS and enriches with crt.sh, RDAP and URLhaus. No backend, no sample data, no third-party feed.
 - **400+ offline tests** and a green CI (lint + tests + Docker).
 
 ---
@@ -147,9 +153,13 @@ Try it live at <https://siteq8.github.io/KWTCyberWatch/demo/>.
   aware, permutation generator). Its data tables are generated from the Python source by
   `scripts/export_engine_data.py`, and `tests/test_js_engine.py` proves both engines return
   identical verdicts on a 90-domain corpus.
-- **Live CertStream feed** — a WebSocket to `certstream.calidog.io` streams newly issued
-  certificates; every hostname is scored by the engine, keyword hits are stored, and brand alerts
-  are raised in the browser (desktop notifications optional).
+- **Direct Certificate Transparency tailing** — the browser reads the public CT logs itself
+  (RFC 6962 `get-sth` / `get-entries`), parses every certificate with a built-in DER reader and
+  scores each hostname the moment it is logged. No CertStream or other third-party feed is
+  involved; logs are discovered from Google's log list with a built-in fallback and the feed
+  page shows per-log state, rate and coverage.
+- **Watchtower** — a scheduled sweep that generates look-alikes of the protected brands,
+  resolves them over DNS-over-HTTPS and records live ones as sightings with alerts.
 - **Real enrichment** — DNS via Google DNS-over-HTTPS, Certificate Transparency history via
   crt.sh, registration data via RDAP (`rdap.org`) and URLhaus reputation, all fetched directly
   from the browser.
@@ -191,7 +201,7 @@ export KCW_API_SECRET='a-long-random-secret'
 | Command | Purpose |
 |---|---|
 | `python main.py api` / `demo` | API server + dashboard on <http://localhost:5000> (docs at `/api/v1/docs`) |
-| `python main.py monitor` | Live CertStream monitoring (`--replay capture.jsonl` to re-process a capture) |
+| `python main.py monitor [--source ctlogs\|certstream]` | Live Certificate Transparency monitoring, direct log tailing by default (`--replay capture.jsonl` re-processes a capture) |
 | `python main.py scan nbk-login.xyz [--json] [--intel] [--enrich]` | Analyse one domain |
 | `python main.py bulk domains.txt [--csv out.csv]` | Analyse a list (or `-` for stdin) |
 | `python main.py permutations nbk.com --tlds com kw com.kw --resolve` | Generate and resolve squatting candidates |
@@ -321,7 +331,8 @@ KWTCyberWatch/
 │   │   ├── domain_analyzer.py       # squatting techniques & permutation generator
 │   │   ├── brand_monitor.py         # 26 Kuwait brand profiles, alert generation
 │   │   ├── squat_watcher.py         # proactive permutation resolver
-│   │   ├── certstream_monitor.py    # CT log monitor with heartbeat & persistence
+│   │   ├── certstream_monitor.py    # live CT monitor (direct logs or CertStream) with heartbeat
+│   │   ├── ct_tailer.py             # RFC 6962 log tailer: discovery, polling, coverage
 │   │   ├── threat_intel.py          # OpenPhish, URLhaus, VT, GSB, PhishTank, URLScan
 │   │   ├── engine.py                # shared wiring + scan pipeline (API & CLI)
 │   │   ├── reports.py               # summaries, Markdown, CSV, Prometheus
@@ -334,6 +345,7 @@ KWTCyberWatch/
 │   ├── notifications/dispatcher.py  # Email, Slack, Teams, Telegram, Webhook, Syslog/CEF
 │   ├── utils/
 │   │   ├── domain.py                # parsing, suffixes, IDN, confusables, Arabic
+│   │   ├── x509.py                  # dependency-free DER / CT leaf parser
 │   │   └── network.py               # DNS, RDAP, WHOIS, TLS enrichment
 │   ├── models/database.py           # SQLite storage with migrations
 │   └── config/settings.py           # dataclass settings, YAML + env loading, validation

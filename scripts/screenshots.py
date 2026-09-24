@@ -51,8 +51,17 @@ async def main(base_url: str) -> None:
         await page.click("#enterBtn")
         await page.wait_for_timeout(800)
         # Seed the workspace with a few real scans and the feed replay so the views have content.
-        await page.evaluate("replayFeed()")
-        await page.wait_for_timeout(3500)
+        if os.environ.get(
+            "KCW_CT_LOG_URL"
+        ):  # tail a (local) CT log instead of the synthetic replay
+            await page.evaluate(
+                "KCW_APP.saveSetting('ctLogs',[%r]).then(()=>reconnectFeed())"
+                % os.environ["KCW_CT_LOG_URL"]
+            )
+            await page.wait_for_timeout(9000)
+        else:
+            await page.evaluate("replayFeed()")
+            await page.wait_for_timeout(3500)
         for domain in ("nbk-secure-login.xyz", "xn--nb-3lc.com", "kfh-verify.top", "login.nbk.com"):
             await page.evaluate(f"KCW_APP.engine().scan({domain!r})")
         await page.click('[data-page="dashboard"]')

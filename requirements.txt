@@ -1,7 +1,7 @@
 # KWTCyberWatch v2.1.0 - Dependencies - By Ali AlEnezi
 
 # Core
-certstream>=1.0.9        # only needed for `main.py monitor` (live CT log stream)
+certstream>=1.0.9        # optional legacy source for `main.py monitor --source certstream`
 flask>=3.0.0
 flask-cors>=4.0.0
 pyyaml>=6.0
