@@ -246,6 +246,9 @@ class CertStreamMonitor:
         """Persist the current statistics for the API to display."""
         if status:
             self.stats["status"] = status
+        tailer = getattr(self, "_tailer", None)
+        if tailer is not None and tailer.logs:
+            self.stats["ct"] = tailer.summary()
         self.stats["last_heartbeat"] = datetime.now(timezone.utc).isoformat()
         if self.db is not None:
             try:
@@ -257,7 +260,11 @@ class CertStreamMonitor:
     # ------------------------------------------------------------------ #
 
     def start(self) -> None:
-        """Start monitoring CertStream with exponential backoff retry."""
+        """Start monitoring: direct CT log tailing by default, CertStream WebSocket on request."""
+        source = str(getattr(self.config, "source", "ctlogs") or "ctlogs").lower()
+        if source == "ctlogs":
+            self.start_ct_logs()
+            return
         if certstream is None:
             raise ImportError("certstream package not installed: pip install certstream")
 
@@ -284,9 +291,53 @@ class CertStreamMonitor:
             retry_delay = min(self.max_delay, retry_delay * 2)
         self.heartbeat("stopped")
 
+    def build_ct_tailer(self, **overrides: Any) -> Any:
+        """Create the direct CT log tailer wired to this monitor (no third-party feed)."""
+        from src.core.ct_tailer import CTLogTailer
+
+        cfg = self.config
+        logs = [{"name": u, "url": u} for u in (getattr(cfg, "ct_logs", None) or [])]
+        kwargs: Dict[str, Any] = dict(
+            logs=logs or None,
+            batch_size=int(getattr(cfg, "ct_batch_size", 256) or 256),
+            poll_interval=float(getattr(cfg, "ct_poll_interval", 2.0) or 2.0),
+            max_lag=int(getattr(cfg, "ct_max_lag", 5000) or 5000),
+            log_list_url=getattr(cfg, "ct_log_list_url", None),
+        )
+        kwargs.update(overrides)
+        self._tailer = CTLogTailer(self._handle_message, **kwargs)
+        return self._tailer
+
+    def start_ct_logs(self, iterations: Optional[int] = None) -> None:
+        """Tail CT logs directly until :meth:`stop` (or for ``iterations`` polling rounds)."""
+        tailer = getattr(self, "_tailer", None) or self.build_ct_tailer()
+        self._running = True
+        self.stats["start_time"] = datetime.now(timezone.utc).isoformat()
+        self.stats["source"] = "ctlogs"
+        tailer.discover()
+        self.stats["ct_logs"] = [log["name"] for log in tailer.logs]
+        self.heartbeat("running")
+        logger.info(
+            "Starting direct CT log tailer | Keywords: %d | Logs: %d",
+            len(self.keywords),
+            len(tailer.logs),
+        )
+        if not tailer.logs:
+            logger.error("No CT log answered; check outbound HTTPS access")
+            self.heartbeat("no-logs")
+            return
+        try:
+            tailer.run(iterations=iterations)
+        finally:
+            self.stats["ct"] = tailer.summary()
+            self.heartbeat("stopped" if not self._running else "running")
+
     def stop(self) -> None:
         """Stop the monitor."""
         self._running = False
+        tailer = getattr(self, "_tailer", None)
+        if tailer is not None:
+            tailer.stop()
         self.heartbeat("stopped")
         logger.info("CertStream monitor stopped")
 

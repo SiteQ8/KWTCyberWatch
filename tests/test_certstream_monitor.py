@@ -127,5 +127,6 @@ class TestPersistence:
         import src.core.certstream_monitor as mod
 
         monkeypatch.setattr(mod, "certstream", None)
+        monitor.config.source = "certstream"
         with pytest.raises(ImportError):
             monitor.start()

@@ -5,6 +5,35 @@ All notable changes to KWTCyberWatch will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-09-24
+
+### Added
+- **Direct Certificate Transparency tailing — no third-party feed.** The public CertStream
+  server (`certstream.calidog.io`) is no longer available, so the live feed was empty. Both the
+  browser console (`demo/discovery.js`) and the backend (`src/core/ct_tailer.py`) now read the
+  public CT logs themselves over RFC 6962 (`get-sth` / `get-entries`), discover current shards
+  from Google's log list with a built-in fallback, skip logs that are offline or block
+  cross-origin requests, and parse every DER certificate / pre-certificate with a small
+  dependency-free X.509 reader (`src/utils/x509.py`, mirrored in JavaScript and parity-tested).
+  The feed page shows each log's state, tree size, read rate and skipped entries, plus the
+  session coverage. `main.py monitor` defaults to `--source ctlogs`; the CertStream WebSocket
+  remains available as `--source certstream` / `certstream.source: certstream`.
+- **Watchtower**: an automatic, scheduled brand sweep in the browser that generates look-alike
+  domains for the protected brands (critical first, round-robin), resolves them over
+  DNS-over-HTTPS (Google, Cloudflare fallback), records live ones as sightings and raises alerts.
+  Toggle and "Sweep now" on the Sightings page; interval under Settings.
+- **Expanded Kuwait keyword set** (84 keywords): `kuwait`, `kuwaiti`, `kw`, `kwt`, `kwi`, `q8`,
+  `kuw`, Arabic `الكويت` / `الوطني` / `بيتك`, bank, payment (`knet`, `kpay`, `q8pay` …), telecom
+  (`zain-kw`, `stckw` …), government (`moi-kw`, `paci-kw`, `sahel`, `civilid`, `egov-kw` …),
+  aviation, energy and commerce identifiers. Existing browser workspaces merge the new defaults
+  automatically; Arabic keywords match the Unicode form of IDN hostnames.
+- DNS-over-HTTPS falls back to Cloudflare when Google's resolver is unreachable.
+
+### Changed
+- `demo/index.html`: the feed page is now "Certificate Transparency Live Feed" with a CT log
+  table; Settings gain a feed source selector, extra CT log URLs and Watchtower controls.
+- `certstream` (the Python package) is optional; it is only needed for the legacy WebSocket source.
+
 ## [2.2.0] - 2026-09-24
 
 ### Added
@@ -208,6 +237,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Domain logging to text file
 - Exponential backoff retry logic
 
+[2.3.0]: https://github.com/SiteQ8/KWTCyberWatch/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/SiteQ8/KWTCyberWatch/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/SiteQ8/KWTCyberWatch/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/SiteQ8/KWTCyberWatch/compare/v1.0.0...v2.0.0

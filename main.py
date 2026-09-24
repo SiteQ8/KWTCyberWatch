@@ -107,6 +107,8 @@ def cmd_monitor(config: Settings, args: argparse.Namespace) -> int:
             if notify and not brand_alerts:
                 state.notifier.dispatch(phishing_notification(verdict))
 
+    if getattr(args, "source", None):
+        config.certstream.source = args.source
     monitor = CertStreamMonitor(config.certstream, db=db)
     monitor.add_callback(on_cert_event)
 
@@ -132,7 +134,7 @@ def cmd_monitor(config: Settings, args: argparse.Namespace) -> int:
         )
         return 0
 
-    logger.info("Starting CertStream monitor...")
+    logger.info("Starting live CT monitor (source=%s)...", config.certstream.source)
     try:
         monitor.start()
     except KeyboardInterrupt:
@@ -514,8 +516,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--version", action="version", version=f"KWTCyberWatch {__version__}")
     sub = parser.add_subparsers(dest="command")
 
-    p = sub.add_parser("monitor", help="Start CertStream monitoring")
+    p = sub.add_parser("monitor", help="Start live Certificate Transparency monitoring")
     p.add_argument("--no-notify", action="store_true", help="do not send notifications")
+    p.add_argument(
+        "--source",
+        choices=("ctlogs", "certstream"),
+        help="ctlogs = read CT logs directly (default, no third party); certstream = WebSocket",
+    )
     p.add_argument(
         "--replay", metavar="FILE", help="replay a JSON-lines capture instead of connecting"
     )

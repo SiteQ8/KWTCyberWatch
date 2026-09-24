@@ -276,3 +276,56 @@ class TestParity:
         assert [(p["domain"], p["technique"]) for p in py] == [
             (p["domain"], p["technique"]) for p in js
         ]
+
+
+X509_HARNESS = r"""
+globalThis.window = globalThis; window.KCW_APP = { esc: (s) => s, setText() {}, db: {}, settings: {}, engine() {}, saveSetting() {} };
+window.addEventListener = () => {}; globalThis.document = { getElementById: () => null };
+const path = require("path");
+require(path.join(process.argv[1], "demo", "engine-data.js"));
+require(path.join(process.argv[1], "demo", "engine.js"));
+require(path.join(process.argv[1], "demo", "discovery.js"));
+const leaves = JSON.parse(require("fs").readFileSync(0, "utf8"));
+const out = leaves.map((b64) => { try { const p = window.KCW_X509.parseLeafInput(b64); return { all_domains: p.all_domains, issuer: p.issuer, entry_type: p.entry_type, not_before: p.not_before, serial: p.serial_number }; } catch (e) { return { error: e.message }; } });
+process.stdout.write(JSON.stringify(out), () => process.exit(0));
+"""
+
+
+@pytest.mark.skipif(NODE is None, reason="node is not installed")
+def test_browser_x509_parser_matches_python():
+    """demo/discovery.js must extract the same certificate fields as src/utils/x509.py."""
+    from src.utils import x509
+    from tests.test_ct_tailer import certificate, leaf_input, tbs
+
+    leaves = [
+        leaf_input(
+            certificate("login.nbk-secure.xyz", ["login.nbk-secure.xyz", "www.nbk-secure.xyz"]), 0
+        ),
+        leaf_input(tbs("kfh-verify.top", ["kfh-verify.top"], poison=True), 1),
+        leaf_input(
+            certificate("host.kuwait-example.com", [f"h{i}.kuwait-example.com" for i in range(40)]),
+            0,
+        ),
+        leaf_input(
+            certificate("xn--mgbaa0aog6m.com", ["xn--mgbaa0aog6m.com"], issuer_org="ZeroSSL"), 0
+        ),
+    ]
+    js = json.loads(
+        subprocess.run(
+            [NODE, "-e", X509_HARNESS, str(ROOT)],
+            input=json.dumps(leaves),
+            capture_output=True,
+            text=True,
+            check=True,
+            cwd=str(ROOT),
+        ).stdout
+    )
+    for b64, got in zip(leaves, js):
+        want = x509.parse_leaf_input(b64)
+        assert got == {
+            "all_domains": want["all_domains"],
+            "issuer": want["issuer"],
+            "entry_type": want["entry_type"],
+            "not_before": want["not_before"].replace("+00:00", ".000Z"),
+            "serial": want["serial_number"],
+        }

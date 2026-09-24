@@ -1,34 +1,58 @@
 # KWTCyberWatch Configuration
-# Kuwait Phishing Detection & Brand Protection Suite v2.2.0
+# Kuwait Phishing Detection & Brand Protection Suite v2.3.0
 #
 # Resolution order: --config PATH > $KCW_CONFIG > config.local.yaml > config.yaml
 # Copy this file to config.local.yaml (git-ignored) for secrets, or use the
 # KCW_* environment variables listed at the bottom.
 
 certstream:
+  source: ctlogs               # ctlogs = read Certificate Transparency logs directly (no third-party
+                               # service); certstream = legacy CertStream WebSocket (url below)
   url: "wss://certstream.calidog.io/"
-  keywords:
+  ct_logs: []                  # explicit RFC 6962 log URLs; empty = Google log list + built-in shards
+  ct_batch_size: 256
+  ct_poll_interval: 2.0
+  ct_max_lag: 5000
+  keywords:                    # keywords shorter than min_keyword_length match whole tokens only
     - kuwait
-    - kw            # keywords shorter than min_keyword_length match whole tokens only
+    - kuwaiti
+    - kw
     - kwt
     - kwi
     - q8
+    - kuw
+    - الكويت
     - nbk
+    - watani
     - kfh
+    - baitak
     - cbk
+    - tijari
     - burgan
     - gulf-bank
     - gulfbank
     - warba
     - boubyan
     - ahli-united
+    - ahliunited
     - knet
+    - knetpay
+    - kpay
+    - q8pay
+    - kuwaitpay
     - zain-kw
     - ooredoo-kw
     - stc-kw
     - moi-kw
-    - e-gov-kw
+    - mofa-kw
     - paci-kw
+    - moh-kw
+    - e-gov-kw
+    - egov-kw
+    - sahel
+    - civilid
+    - kuwaitairways
+    - talabat
   retry_delay: 5
   max_delay: 300
   log_file: "data/certstream_domains.log"
