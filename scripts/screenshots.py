@@ -11,6 +11,7 @@ Screenshots are written to docs/screenshots/ relative to the repository root.
 """
 
 import asyncio
+import os
 import sys
 from pathlib import Path
 
@@ -35,15 +36,26 @@ PAGES = [
 async def main(base_url: str) -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     async with async_playwright() as p:
-        browser = await p.chromium.launch()
+        launch_kwargs = {}
+        if os.environ.get("CHROME_PATH"):  # e.g. a system Chromium
+            launch_kwargs = {"executable_path": os.environ["CHROME_PATH"], "args": ["--no-sandbox"]}
+        browser = await p.chromium.launch(**launch_kwargs)
         page = await browser.new_page(viewport={"width": 1400, "height": 900})
 
         await page.goto(base_url)
-        await page.wait_for_timeout(500)
+        await page.wait_for_timeout(800)
         await page.screenshot(path=str(OUT / "01-login.png"))
-        print("✓ Login page")
+        print("✓ Landing page")
 
-        await page.click(".login-demo-btn")
+        await page.fill("#analystName", "Ali")
+        await page.click("#enterBtn")
+        await page.wait_for_timeout(800)
+        # Seed the workspace with a few real scans and the feed replay so the views have content.
+        await page.evaluate("replayFeed()")
+        await page.wait_for_timeout(3500)
+        for domain in ("nbk-secure-login.xyz", "xn--nb-3lc.com", "kfh-verify.top", "login.nbk.com"):
+            await page.evaluate(f"KCW_APP.engine().scan({domain!r})")
+        await page.click('[data-page="dashboard"]')
         await page.wait_for_timeout(800)
         await page.screenshot(path=str(OUT / "02-dashboard.png"))
         print("✓ Dashboard")
@@ -53,7 +65,7 @@ async def main(base_url: str) -> None:
             if page_id == "scanner":
                 await page.fill("#scanInput", "nbk-secure-login.xyz")
                 await page.click(".scan-btn")
-                await page.wait_for_timeout(1500)
+                await page.wait_for_timeout(2500)
             elif wait_ms:
                 await page.wait_for_timeout(wait_ms)
             await page.screenshot(path=str(OUT / filename))
