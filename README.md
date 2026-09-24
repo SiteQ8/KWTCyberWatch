@@ -155,6 +155,11 @@ Try it live at <https://siteq8.github.io/KWTCyberWatch/demo/>.
   from the browser.
 - **Typosquat Hunter** — generates permutations for any brand domain and resolves them live,
   recording resolving look-alikes as **sightings** with triage status.
+- **Analyst console** — `Ctrl+K` command palette (scan / hunt / investigate / allowlist any
+  domain, jump to brands, pages, alerts), an alert drawer with evidence, a character-level
+  look-alike diff and Unicode inspector, notes, assignee, timeline and printable reports, bulk
+  triage, sortable tables, sparklines, deep links (`#scan=…`, `#alert=…`) and a weekly HTML
+  summary. Installable as a PWA and works offline once loaded.
 - **Alert lifecycle, history, analytics, STIX 2.1 export** — everything persists in IndexedDB,
   so the console keeps state between visits; settings (keywords, allowlist, custom brands) rebuild
   the engine on the fly, and the whole workspace can be exported/imported as JSON.
@@ -332,7 +337,7 @@ KWTCyberWatch/
 │   │   └── network.py               # DNS, RDAP, WHOIS, TLS enrichment
 │   ├── models/database.py           # SQLite storage with migrations
 │   └── config/settings.py           # dataclass settings, YAML + env loading, validation
-├── demo/                            # Browser console: index.html, engine.js (JS port), engine-data.js (generated), app.js
+├── demo/                            # Browser console: index.html, engine.js (JS port), engine-data.js (generated), app.js, features.js, sw.js
 ├── tests/                           # 420+ offline tests (incl. Python↔JS engine parity)
 ├── docs/screenshots/
 ├── Dockerfile · docker-compose.yml  # api + monitor + watcher

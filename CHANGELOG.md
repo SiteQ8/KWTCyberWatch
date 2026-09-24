@@ -29,6 +29,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   scan results, refreshed cards, tables, feed rows and toasts, an off-canvas sidebar and tuned
   layouts for phones, plus keyboard shortcuts (`/` focuses the scanner, `g` then a letter jumps
   between views).
+- **Analyst tooling** (`demo/features.js`): a command palette (`Ctrl/Cmd+K`) that scans, hunts,
+  investigates or allowlists any typed domain and jumps to brands, pages, open alerts and recent
+  scans; deep links (`#scan=`, `#hunt=`, `#intel=`, `#alert=`, `#page=`); an alert drawer with the
+  full evidence, a character-level look-alike diff, a Unicode character inspector, related scans /
+  certificates / sightings, notes, assignee, timeline, single-alert STIX and a printable HTML
+  report; bulk triage of selected alerts; sortable tables; a brand filter and optional sound on
+  the live feed; 24-hour sparklines on the dashboard and a certs/second sparkline on the feed;
+  file import for the bulk scanner; a weekly HTML summary report; storage usage, retention purge
+  and an installable PWA (manifest + service worker so the console opens offline).
 
 ### Changed
 - `demo/index.html` was rebuilt around the new engine and application; the login/demo-account

@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#060a14">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KWTCyberWatch">
 <meta name="description" content="KWTCyberWatch — Kuwait phishing detection & brand protection. Live Certificate Transparency monitoring, domain squatting detection and brand impersonation alerts, running entirely in your browser.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Cpath d=%27M16 2 4 7v9c0 7.5 5.1 14 12 16 6.9-2 12-8.5 12-16V7z%27 fill=%27%2300d4ff%27/%3E%3Cpath d=%27M16 6 8 9.3V16c0 5.2 3.4 9.9 8 11.6 4.6-1.7 8-6.4 8-11.6V9.3z%27 fill=%27%230a0e17%27/%3E%3C/svg%3E">
 <title>KWTCyberWatch v2.2 — Kuwait Phishing Detection Suite</title>
@@ -503,6 +506,93 @@ td{padding:11px 12px}
 }
 @media(max-width:480px){.feature-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr 1fr}.hero h1{font-size:2rem}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ── v2.2 ultra: palette, drawer, diff, sparklines, tables ── */
+.search-btn{display:inline-flex;align-items:center;gap:10px;height:36px;padding:0 10px 0 12px;border-radius:9px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);cursor:pointer;font-size:.78rem;min-width:260px;transition:all .15s}
+.search-btn:hover{border-color:var(--cyan-dim);color:var(--text-dim)}
+.search-btn .search-txt{flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-ico{width:15px;height:15px;display:inline-flex;color:var(--text-muted);flex-shrink:0}
+.search-ico svg{width:100%;height:100%}
+.kbd.dim{background:color-mix(in srgb,var(--text) 8%,transparent);border-color:var(--border);color:var(--text-muted)}
+.overlay{position:fixed;inset:0;background:#00000088;backdrop-filter:blur(6px);z-index:400;display:none;align-items:flex-start;justify-content:center;padding:10vh 16px}
+.overlay.show{display:flex;animation:fadeIn .15s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.palette{width:100%;max-width:640px;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;animation:pageIn .18s ease}
+.palette-input{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.palette-input input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:1rem;font-family:var(--font-display)}
+.palette-list{max-height:min(420px,55vh);overflow-y:auto;padding:6px}
+.palette-group{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);padding:10px 12px 4px}
+.palette-item{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:.85rem;color:var(--text)}
+.palette-item .pi-ico{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:color-mix(in srgb,var(--text) 6%,transparent);color:var(--text-dim);flex-shrink:0}
+.palette-item .pi-ico svg{width:14px;height:14px}
+.palette-item .pi-txt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.palette-item .pi-sub{font-size:.68rem;color:var(--text-muted);font-family:var(--font-mono);white-space:nowrap}
+.palette-item.active{background:var(--cyan-glow);color:var(--cyan)}
+.palette-item.active .pi-ico{background:var(--cyan);color:#041018}
+.palette-foot{display:flex;gap:18px;padding:8px 16px;border-top:1px solid var(--border);font-size:.68rem;color:var(--text-muted)}
+.modal{width:100%;max-width:560px;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:22px;animation:pageIn .18s ease}
+.shortcuts{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;font-size:.8rem}
+.shortcuts>div{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px dashed var(--border)}
+.shortcuts>div span:last-child{margin-left:auto;color:var(--text-dim)}
+.shortcuts .kbd{background:color-mix(in srgb,var(--text) 8%,transparent);border-color:var(--border);color:var(--text)}
+.drawer-backdrop{position:fixed;inset:0;background:#00000066;z-index:300;display:none}
+.drawer-backdrop.show{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(560px,100vw);background:var(--bg-deep);border-left:1px solid var(--border);z-index:310;transform:translateX(105%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.drawer.open{transform:none}
+.drawer-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:18px 20px;border-bottom:1px solid var(--border)}
+.drawer-kicker{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);font-weight:700;margin-bottom:4px}
+.drawer-title{font-family:var(--font-mono);font-size:1.05rem;font-weight:700;word-break:break-all}
+.drawer-body{flex:1;overflow-y:auto;padding:18px 20px 32px}
+.drawer-sec{margin-bottom:18px}
+.drawer-sec h4{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:8px;font-weight:700}
+.drawer-actions{display:flex;gap:6px;flex-wrap:wrap}
+.timeline{list-style:none;border-left:2px solid var(--border);margin-left:6px;padding-left:14px}
+.timeline li{position:relative;padding:4px 0 10px;font-size:.75rem;color:var(--text-dim)}
+.timeline li::before{content:'';position:absolute;left:-19px;top:9px;width:8px;height:8px;border-radius:50%;background:var(--cyan)}
+.timeline li b{color:var(--text)}
+.note-box{width:100%;min-height:70px;padding:10px;background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-display);font-size:.8rem;resize:vertical}
+.diff{text-transform:none;font-family:var(--font-mono);font-size:1.05rem;letter-spacing:.04em;padding:12px 14px;background:var(--bg-input);border:1px solid var(--border);border-radius:8px;word-break:break-all;line-height:1.9}
+.diff .df-eq{color:var(--text)}.diff .df-sub{background:#ff335533;color:var(--red);border-radius:3px;padding:0 2px;font-weight:700}
+.diff .df-ins{background:#ff8c0033;color:var(--orange);border-radius:3px;padding:0 2px;font-weight:700}
+.diff .df-del{background:#8899b033;color:var(--text-muted);text-decoration:line-through;border-radius:3px;padding:0 2px}
+.diff-row{display:grid;grid-template-columns:90px 1fr;gap:10px;align-items:center;margin-bottom:6px;font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em}
+.diff-legend{display:flex;gap:14px;font-size:.68rem;color:var(--text-muted);margin-top:8px}
+.char-grid{display:flex;flex-wrap:wrap;gap:6px}
+.char-cell{min-width:58px;padding:8px 6px;border:1px solid var(--border);border-radius:8px;background:var(--bg-input);text-align:center}
+.char-cell .ch{font-size:1.3rem;font-weight:700;font-family:var(--font-mono)}
+.char-cell .cp{font-size:.58rem;color:var(--text-muted);font-family:var(--font-mono)}
+.char-cell .sc{font-size:.58rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em}
+.char-cell.warn{border-color:var(--red-dim);background:#ff335514}.char-cell.warn .ch{color:var(--red)}
+.char-cell.arab{border-color:var(--purple-dim)}.char-cell.arab .ch{color:var(--purple)}
+.spark{position:absolute;left:0;right:0;bottom:0;width:100%;height:34px;opacity:.55;pointer-events:none}
+.spark polyline{fill:none;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
+.spark .area{opacity:.18}
+.stat-card:has(.spark){padding-bottom:40px}
+@media(max-width:768px){.spark{height:26px}.stat-card:has(.spark){padding-bottom:30px}}
+table.sortable th:not(.nosort){cursor:pointer;user-select:none}
+table.sortable th:not(.nosort):hover{color:var(--text)}
+table.sortable th.sorted-asc::after{content:' ↑';color:var(--cyan)}
+table.sortable th.sorted-desc::after{content:' ↓';color:var(--cyan)}
+.bulk-bar{display:none;align-items:center;gap:6px;padding:8px 12px;margin-bottom:10px;border:1px solid var(--cyan-dim);background:var(--cyan-glow);border-radius:8px;font-size:.75rem;color:var(--text)}
+.bulk-bar.show{display:flex;flex-wrap:wrap}
+.bulk-bar span{margin-right:8px;font-weight:600}
+tr.selected td{background:var(--cyan-glow)!important}
+.page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.page-actions{display:flex;gap:8px;padding-top:4px}
+.storage-bar{height:8px;border-radius:4px;background:var(--bg-input);border:1px solid var(--border);overflow:hidden}
+.storage-bar div{height:100%;width:0;background:var(--grad);transition:width .5s}
+.storage-counts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;font-size:.7rem;color:var(--text-dim);font-family:var(--font-mono)}
+.storage-counts span{padding:3px 8px;border-radius:99px;background:color-mix(in srgb,var(--text) 6%,transparent)}
+.feed-row.new-critical{animation:flashRow 1.2s ease}
+@keyframes flashRow{0%{background:#ff335540}100%{background:transparent}}
+@media(max-width:1024px){.search-btn{min-width:0}.search-btn .search-txt,.search-btn .kbd{display:none}}
+@media(max-width:768px){.search-btn{width:36px;padding:0;justify-content:center}.shortcuts{grid-template-columns:1fr}.drawer{width:100vw}}
+@media print{
+  body *{visibility:hidden}
+  .drawer,.drawer *{visibility:visible}
+  .drawer{position:static;width:auto;transform:none;border:none;box-shadow:none;background:#fff;color:#000}
+  .drawer .icon-btn,.drawer .drawer-actions,.drawer .note-box{display:none}
+}
 </style>
 </head>
 <body>
@@ -564,9 +654,11 @@ td{padding:11px 12px}
       <div class="topbar-brand"><span class="logo" data-icon="shield"></span><h1>KWT<span>CyberWatch</span></h1><span class="topbar-badge" id="versionBadge">v2.2.0</span></div>
       <span class="feed-pill" id="feedPill" title="Live Certificate Transparency feed"><span class="glow-dot" id="feedDot"></span><span id="feedStatusText">CertStream: connecting…</span></span>
     </div>
+    <button class="search-btn" onclick="openPalette()" title="Search & commands (Ctrl+K)"><span data-icon="scanner" class="search-ico"></span><span class="search-txt">Search domains, brands, pages…</span><span class="kbd dim">Ctrl K</span></button>
     <div class="topbar-right">
       <span class="topbar-user">Analyst <strong id="currentUser">—</strong></span>
       <span class="mode-badge live pulse-dot" id="modeBadge">LOCAL ENGINE</span>
+      <button class="icon-btn" onclick="openHelp()" title="Keyboard shortcuts (?)" aria-label="Help" data-icon="help"></button>
       <button class="icon-btn theme-btn" onclick="toggleTheme()" title="Toggle light / dark" aria-label="Toggle theme" data-icon="theme"></button>
       <button class="btn-sm" onclick="leaveDashboard()">Exit</button>
     </div>
@@ -613,11 +705,11 @@ td{padding:11px 12px}
         <h2 class="page-title">Dashboard</h2>
         <p class="page-desc">Live overview — every number below is computed from real feed events, scans and alerts stored in this browser.</p>
         <div class="stats-grid">
-          <div class="stat-card cyan"><div class="stat-label">Certificates Seen</div><div class="stat-value cyan" id="statCerts">0</div><div class="stat-sub" id="statCertsSub">this session · live CT feed</div></div>
-          <div class="stat-card red"><div class="stat-label">Phishing Detected</div><div class="stat-value red" id="statPhishing">0</div><div class="stat-sub" id="statPhishingSub">score ≥ 50 in scans &amp; feed</div></div>
-          <div class="stat-card orange"><div class="stat-label">Open Alerts</div><div class="stat-value orange" id="statAlerts">0</div><div class="stat-sub" id="statAlertsSub">0 critical</div></div>
+          <div class="stat-card cyan"><div class="stat-label">Certificates Seen</div><div class="stat-value cyan" id="statCerts">0</div><div class="stat-sub" id="statCertsSub">this session · live CT feed</div><svg class="spark" id="spark-statCerts" viewBox="0 0 120 32" preserveAspectRatio="none"></svg></div>
+          <div class="stat-card red"><div class="stat-label">Phishing Detected</div><div class="stat-value red" id="statPhishing">0</div><div class="stat-sub" id="statPhishingSub">score ≥ 50 in scans &amp; feed</div><svg class="spark" id="spark-statPhishing" viewBox="0 0 120 32" preserveAspectRatio="none"></svg></div>
+          <div class="stat-card orange"><div class="stat-label">Open Alerts</div><div class="stat-value orange" id="statAlerts">0</div><div class="stat-sub" id="statAlertsSub">0 critical</div><svg class="spark" id="spark-statAlerts" viewBox="0 0 120 32" preserveAspectRatio="none"></svg></div>
           <div class="stat-card green"><div class="stat-label">Brands Protected</div><div class="stat-value green" id="statBrands">26</div><div class="stat-sub" id="statBrandsSub">Kuwait banking, telecom, government</div></div>
-          <div class="stat-card purple"><div class="stat-label">Domains Analysed</div><div class="stat-value purple" id="statDomains">0</div><div class="stat-sub" id="statDomainsSub">0 live typosquats</div></div>
+          <div class="stat-card purple"><div class="stat-label">Domains Analysed</div><div class="stat-value purple" id="statDomains">0</div><div class="stat-sub" id="statDomainsSub">0 live typosquats</div><svg class="spark" id="spark-statDomains" viewBox="0 0 120 32" preserveAspectRatio="none"></svg></div>
         </div>
         <div class="grid-2">
           <div class="card">
@@ -641,7 +733,7 @@ td{padding:11px 12px}
         <p class="page-desc">Direct WebSocket to <code>certstream.calidog.io</code>. Every certificate is matched against your keywords and scored by the detection engine in this browser.</p>
         <div class="stats-grid" style="margin-bottom:16px">
           <div class="stat-card cyan"><div class="stat-label">Feed Status</div><div class="stat-value cyan" id="csStatus" style="font-size:1.2rem">connecting</div><div class="stat-sub" id="csStatusSub">—</div></div>
-          <div class="stat-card green"><div class="stat-label">Certs / second</div><div class="stat-value green" id="certsPerSec">0</div><div class="stat-sub" id="csTotalSub">0 seen</div></div>
+          <div class="stat-card green"><div class="stat-label">Certs / second</div><div class="stat-value green" id="certsPerSec">0</div><div class="stat-sub" id="csTotalSub">0 seen</div><svg class="spark" id="spark-rate" viewBox="0 0 120 32" preserveAspectRatio="none"></svg></div>
           <div class="stat-card orange"><div class="stat-label">Keyword Matches</div><div class="stat-value orange" id="matchedToday">0</div><div class="stat-sub" id="csMatchedSub">stored locally</div></div>
           <div class="stat-card red"><div class="stat-label">High Risk (≥60)</div><div class="stat-value red" id="csHighRisk">0</div><div class="stat-sub">scored by the engine</div></div>
         </div>
@@ -649,7 +741,9 @@ td{padding:11px 12px}
           <div class="card-header">
             <span class="card-title"><span class="glow-dot"></span> Matched Certificates</span>
             <div style="display:flex;gap:8px;align-items:center">
+              <select class="api-select" id="feedBrandFilter" title="Show only certificates matching a brand"><option value="">All brands</option></select>
               <label class="checkbox" style="display:flex;align-items:center;gap:6px;color:var(--text-dim);font-size:.72rem"><input type="checkbox" id="feedOnlyRisky"> only score ≥ 40</label>
+              <label class="checkbox" style="display:flex;align-items:center;gap:6px;color:var(--text-dim);font-size:.72rem" title="Play a tone when a critical alert is raised"><input type="checkbox" id="feedSound" onchange="setSound(this.checked)"> sound</label>
               <button class="btn-sm" onclick="toggleFeed()" id="feedToggle" style="border-color:var(--green);color:var(--green)">⏸ Pause</button>
               <button class="btn-sm" onclick="reconnectFeed()">↻ Reconnect</button>
               <button class="btn-sm" onclick="replayFeed()" id="replayBtn" title="Replays a bundled synthetic sample when the live feed is unreachable">▶ Replay sample</button>
@@ -689,6 +783,7 @@ td{padding:11px 12px}
             <button class="btn" onclick="runBulkScan()" id="bulkBtn">▶ Scan All</button>
             <button class="btn secondary" onclick="loadBulkSample()">Load Sample</button>
             <button class="btn secondary" onclick="clearBulk()">Clear</button>
+            <label class="btn secondary" style="cursor:pointer">↥ Import list<input type="file" accept=".txt,.csv,.lst,text/plain,text/csv" style="display:none" onchange="importBulkFile(this.files[0]);this.value=''"></label>
             <button class="btn secondary" onclick="exportBulkCSV()" id="bulkExport" disabled>↧ Export CSV</button>
             <label class="checkbox" style="display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:.8rem;margin-left:auto"><input type="checkbox" id="bulkDns" checked> Resolve DNS</label>
           </div>
@@ -795,7 +890,7 @@ td{padding:11px 12px}
           <div class="card-header"><span class="card-title">Your Scans</span>
             <div style="display:flex;gap:8px"><button class="btn-sm" onclick="exportHistoryJSON()">↧ JSON</button><button class="btn-sm" onclick="exportHistoryCSV()">↧ CSV</button><button class="btn-sm" onclick="clearHistory()" style="border-color:var(--red);color:var(--red)">Clear</button></div>
           </div>
-          <div class="table-wrap"><table><thead><tr><th>Domain</th><th>Score</th><th>Level</th><th>Brands</th><th>Categories</th><th>Time</th></tr></thead>
+          <div class="table-wrap"><table class="sortable"><thead><tr><th>Domain</th><th>Score</th><th>Level</th><th>Brands</th><th>Categories</th><th>Time</th></tr></thead>
             <tbody id="historyTable"></tbody></table></div>
         </div>
       </div>
@@ -804,7 +899,7 @@ td{padding:11px 12px}
       <div id="page-brands" class="page">
         <h2 class="page-title">Brand Protection Monitor</h2>
         <p class="page-desc">Protected profiles with aliases and Arabic keywords. Alert counts come from your local alerts. Add your own profiles in Settings.</p>
-        <div class="table-wrap"><table><thead><tr><th>Brand</th><th>Protected Domains</th><th>Aliases / Arabic</th><th>Industry</th><th>Priority</th><th>Alerts</th><th></th></tr></thead><tbody id="brandTable"></tbody></table></div>
+        <div class="table-wrap"><table class="sortable"><thead><tr><th>Brand</th><th>Protected Domains</th><th>Aliases / Arabic</th><th>Industry</th><th>Priority</th><th>Alerts</th><th></th></tr></thead><tbody id="brandTable"></tbody></table></div>
       </div>
 
       <!-- ──── ALERTS ──── -->
@@ -827,7 +922,8 @@ td{padding:11px 12px}
               <button class="btn-sm" onclick="exportAlertsCSV()">↧ CSV</button><button class="btn-sm" onclick="exportAlertsSTIX()">↧ STIX 2.1</button>
             </div>
           </div>
-          <div class="table-wrap"><table><thead><tr><th>ID</th><th>Severity</th><th>Brand</th><th>Domain</th><th>Type</th><th>Source</th><th>Detected</th><th>Status</th><th>Actions</th></tr></thead><tbody id="alertTable"></tbody></table></div>
+          <div class="bulk-bar" id="alertBulkBar"><span id="alertBulkCount">0 selected</span><button class="act-btn" onclick="bulkAlerts('investigating')">Investigate</button><button class="act-btn" onclick="bulkAlerts('resolved')">Resolve</button><button class="act-btn danger" onclick="bulkAlerts('false_positive')">False positive</button><button class="act-btn danger" onclick="bulkAlerts('false_positive',true)">FP + allowlist</button><button class="act-btn" onclick="bulkAlertsExport()">↧ STIX</button><button class="act-btn" onclick="clearAlertSelection()">Clear</button></div>
+          <div class="table-wrap"><table class="sortable"><thead><tr><th class="nosort" style="width:28px"><input type="checkbox" id="alertSelectAll" onchange="toggleAllAlerts(this.checked)" title="Select all"></th><th>ID</th><th>Severity</th><th>Brand</th><th>Domain</th><th>Type</th><th>Source</th><th>Detected</th><th>Status</th><th class="nosort">Actions</th></tr></thead><tbody id="alertTable"></tbody></table></div>
         </div>
       </div>
 
@@ -855,8 +951,9 @@ td{padding:11px 12px}
 
       <!-- ──── ANALYTICS ──── -->
       <div id="page-analytics" class="page">
-        <h2 class="page-title">Analytics</h2>
-        <p class="page-desc">Computed from the scans, alerts and feed matches stored in this browser.</p>
+        <div class="page-head"><div><h2 class="page-title">Analytics</h2>
+        <p class="page-desc">Computed from the scans, alerts and feed matches stored in this browser.</p></div>
+        <div class="page-actions"><button class="btn secondary" onclick="exportSummaryReport()">📄 Weekly report (HTML)</button></div></div>
         <div class="stats-grid">
           <div class="stat-card cyan"><div class="stat-label">Scans (7 days)</div><div class="stat-value cyan" id="anScans">0</div></div>
           <div class="stat-card red"><div class="stat-label">Alerts (7 days)</div><div class="stat-value red" id="anAlerts">0</div></div>
@@ -937,6 +1034,16 @@ td{padding:11px 12px}
               <label class="btn-sm" style="cursor:pointer">↥ Restore<input type="file" accept="application/json" style="display:none" onchange="importAllData(this.files[0])"></label>
               <button class="btn-sm" onclick="clearAllData()" style="border-color:var(--red);color:var(--red)">Clear all local data</button>
             </div>
+            <div class="storage-panel" id="storagePanel">
+              <div class="card-header" style="margin:18px 0 10px"><span class="card-title">💾 Storage &amp; retention</span><span class="card-sub" id="storageUsage">—</span></div>
+              <div class="storage-bar"><div id="storageFill"></div></div>
+              <div id="storageCounts" class="storage-counts"></div>
+              <div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;font-size:.75rem;color:var(--text-dim)">
+                Purge scans &amp; feed matches older than <input class="api-select" id="retentionDays" type="number" min="1" max="3650" value="90" style="width:70px" onchange="saveSetting('retentionDays',Number(this.value)||90)"> days
+                <button class="act-btn" onclick="purgeOldData()">Purge now</button>
+                <button class="act-btn" id="installBtn" style="display:none" onclick="installApp()">⬇ Install app</button>
+              </div>
+            </div>
           </div>
         </div>
         <div class="card">
@@ -951,8 +1058,48 @@ td{padding:11px 12px}
 
 <div class="toast" id="toast"></div>
 
+<!-- Command palette -->
+<div class="overlay" id="paletteOverlay" onclick="if(event.target===this)closePalette()">
+  <div class="palette" role="dialog" aria-label="Search and commands">
+    <div class="palette-input"><span data-icon="scanner" class="search-ico"></span><input id="paletteInput" placeholder="Type a domain to scan, a brand to hunt, or a page…" autocomplete="off" spellcheck="false"><span class="kbd dim">esc</span></div>
+    <div class="palette-list" id="paletteList"></div>
+    <div class="palette-foot"><span><span class="kbd dim">↑↓</span> navigate</span><span><span class="kbd dim">↵</span> run</span><span><span class="kbd dim">tab</span> hunt instead</span></div>
+  </div>
+</div>
+
+<!-- Alert drawer -->
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer" aria-label="Alert details">
+  <div class="drawer-head"><div><div class="drawer-kicker" id="drawerKicker">Alert</div><div class="drawer-title" id="drawerTitle">—</div></div><button class="icon-btn" onclick="closeDrawer()" aria-label="Close" data-icon="close"></button></div>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
+
+<!-- Help -->
+<div class="overlay" id="helpOverlay" onclick="if(event.target===this)closeHelp()">
+  <div class="modal" role="dialog" aria-label="Keyboard shortcuts">
+    <div class="card-header"><span class="card-title">⌨️ Keyboard shortcuts</span><button class="icon-btn" onclick="closeHelp()" aria-label="Close" data-icon="close"></button></div>
+    <div class="shortcuts">
+      <div><span class="kbd">Ctrl</span> <span class="kbd">K</span><span>Search &amp; commands</span></div>
+      <div><span class="kbd">/</span><span>Focus the domain scanner</span></div>
+      <div><span class="kbd">?</span><span>This help</span></div>
+      <div><span class="kbd">Esc</span><span>Close panels</span></div>
+      <div><span class="kbd">g</span> <span class="kbd">d</span><span>Dashboard</span></div>
+      <div><span class="kbd">g</span> <span class="kbd">f</span><span>CertStream feed</span></div>
+      <div><span class="kbd">g</span> <span class="kbd">s</span><span>Domain scanner</span></div>
+      <div><span class="kbd">g</span> <span class="kbd">b</span><span>Bulk scanner</span></div>
+      <div><span class="kbd">g</span> <span class="kbd">h</span><span>Typosquat hunter</span></div>
+      <div><span class="kbd">g</span> <span class="kbd">a</span><span>Alerts</span></div>
+      <div><span class="kbd">g</span> <span class="kbd">i</span><span>Domain intel</span></div>
+      <div><span class="kbd">g</span> <span class="kbd">n</span><span>Analytics</span></div>
+      <div><span class="kbd">g</span> <span class="kbd">t</span><span>Settings</span></div>
+    </div>
+    <p style="font-size:.72rem;color:var(--text-muted);margin-top:14px">Deep links: <code>#scan=domain</code>, <code>#hunt=brand.com</code>, <code>#intel=domain</code>, <code>#alert=ID</code>, <code>#page=alerts</code>.</p>
+  </div>
+</div>
+
 <script src="engine-data.js"></script>
 <script src="engine.js"></script>
 <script src="app.js"></script>
+<script src="features.js"></script>
 </body>
 </html>
