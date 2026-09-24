@@ -224,6 +224,11 @@ tr:hover td{background:var(--bg-card-hover)}
 .mode-badge.live{background:rgba(0,230,118,.15);color:var(--green);border:1px solid var(--green-dim)}
 .mode-badge.demo{background:rgba(179,136,255,.15);color:var(--purple);border:1px solid var(--purple-dim)}
 .mode-badge.pulse-dot::before{content:'●';margin-right:5px;animation:pulse 1.5s infinite}
+.mode-badge.api{background:rgba(0,212,255,.15);color:var(--cyan);border:1px solid var(--cyan-dim)}
+.act-btn{padding:3px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-deep);color:var(--text-dim);font-size:.65rem;cursor:pointer;margin:1px;font-family:var(--font-mono)}
+.act-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.act-btn.danger:hover{border-color:var(--red);color:var(--red)}
+.api-select{background:var(--bg-input);border:1px solid var(--border);color:var(--text);border-radius:var(--radius-sm);padding:5px 8px;font-family:var(--font-mono);font-size:.72rem}
 
 /* ── Real-scan loading ── */
 .scan-progress{background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-top:14px;font-family:var(--font-mono);font-size:.75rem}
@@ -417,6 +422,10 @@ tr:hover td{background:var(--bg-card-hover)}
           <span class="nav-icon">🚨</span> Alerts
           <span class="nav-badge" id="alertCount">12</span>
         </div>
+        <div class="nav-item" data-page="sightings" onclick="showPage('sightings',this)">
+          <span class="nav-icon">🎯</span> Typosquat Sightings
+          <span class="nav-badge" id="sightingCount">0</span>
+        </div>
         <div class="nav-item" data-page="threatintel" onclick="showPage('threatintel',this)">
           <span class="nav-icon">🧠</span> Threat Intel
         </div>
@@ -446,27 +455,27 @@ tr:hover td{background:var(--bg-card-hover)}
           <div class="stat-card cyan">
             <div class="stat-label">Certificates Scanned</div>
             <div class="stat-value cyan" id="statCerts">1,247,893</div>
-            <div class="stat-sub">+12,456 last hour</div>
+            <div class="stat-sub" id="statCertsSub">+12,456 last hour</div>
           </div>
           <div class="stat-card red">
             <div class="stat-label">Phishing Detected</div>
-            <div class="stat-value red">847</div>
-            <div class="stat-sub">+23 today</div>
+            <div class="stat-value red" id="statPhishing">847</div>
+            <div class="stat-sub" id="statPhishingSub">+23 today</div>
           </div>
           <div class="stat-card orange">
             <div class="stat-label">Active Alerts</div>
-            <div class="stat-value orange">12</div>
-            <div class="stat-sub">4 critical</div>
+            <div class="stat-value orange" id="statAlerts">12</div>
+            <div class="stat-sub" id="statAlertsSub">4 critical</div>
           </div>
           <div class="stat-card green">
             <div class="stat-label">Brands Protected</div>
-            <div class="stat-value green">14</div>
-            <div class="stat-sub">Kuwait financial & gov</div>
+            <div class="stat-value green" id="statBrands">14</div>
+            <div class="stat-sub" id="statBrandsSub">Kuwait financial & gov</div>
           </div>
           <div class="stat-card purple">
             <div class="stat-label">Domains Watchlisted</div>
-            <div class="stat-value purple">2,341</div>
-            <div class="stat-sub">156 high-risk</div>
+            <div class="stat-value purple" id="statDomains">2,341</div>
+            <div class="stat-sub" id="statDomainsSub">156 high-risk</div>
           </div>
         </div>
 
@@ -546,8 +555,8 @@ tr:hover td{background:var(--bg-card-hover)}
             <div class="stat-value green" id="matchedToday">342</div>
           </div>
           <div class="stat-card red">
-            <div class="stat-label">High Risk</div>
-            <div class="stat-value red">28</div>
+            <div class="stat-label" id="csHighRiskLabel">High Risk</div>
+            <div class="stat-value red" id="csHighRisk">28</div>
           </div>
         </div>
         <div class="card">
@@ -598,17 +607,72 @@ tr:hover td{background:var(--bg-card-hover)}
         <h2 class="page-title">Security Alerts</h2>
         <p class="page-desc">Active phishing and brand impersonation alerts</p>
         <div class="stats-grid" style="margin-bottom:16px">
-          <div class="stat-card red"><div class="stat-label">Critical</div><div class="stat-value red">4</div></div>
-          <div class="stat-card orange"><div class="stat-label">High</div><div class="stat-value orange">5</div></div>
-          <div class="stat-card cyan"><div class="stat-label">Medium</div><div class="stat-value cyan">3</div></div>
-          <div class="stat-card green"><div class="stat-label">Resolved Today</div><div class="stat-value green">8</div></div>
+          <div class="stat-card red"><div class="stat-label">Critical</div><div class="stat-value red" id="alertCritical">4</div></div>
+          <div class="stat-card orange"><div class="stat-label">High</div><div class="stat-value orange" id="alertHigh">5</div></div>
+          <div class="stat-card cyan"><div class="stat-label">Medium</div><div class="stat-value cyan" id="alertMedium">3</div></div>
+          <div class="stat-card green"><div class="stat-label" id="alertResolvedLabel">Resolved Today</div><div class="stat-value green" id="alertResolved">8</div></div>
         </div>
         <div class="card">
-          <div class="card-header"><span class="card-title">🚨 Active Alerts</span></div>
+          <div class="card-header"><span class="card-title">🚨 Active Alerts</span>
+            <div id="alertControls" style="display:none;gap:8px;align-items:center">
+              <select class="api-select" id="alertStatusFilter" onchange="apiLoadAlerts()">
+                <option value="open,investigating">Open + investigating</option>
+                <option value="open">Open</option>
+                <option value="investigating">Investigating</option>
+                <option value="resolved">Resolved</option>
+                <option value="false_positive">False positives</option>
+                <option value="">All</option>
+              </select>
+              <button class="btn-sm" onclick="apiLoadAlerts()">↻ Refresh</button>
+              <a class="btn-sm" href="/api/v1/alerts/export?format=csv" style="text-decoration:none">↧ CSV</a>
+              <a class="btn-sm" href="/api/v1/alerts/export?format=stix" target="_blank" style="text-decoration:none">↧ STIX</a>
+            </div>
+          </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>ID</th><th>Severity</th><th>Brand</th><th>Domain</th><th>Type</th><th>Detected</th><th>Status</th></tr></thead>
+              <thead><tr><th>ID</th><th>Severity</th><th>Brand</th><th>Domain</th><th>Type</th><th>Detected</th><th>Status</th><th id="alertActionsHead" style="display:none">Actions</th></tr></thead>
               <tbody id="alertTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ──── TYPOSQUAT SIGHTINGS ──── -->
+      <div id="page-sightings" class="page">
+        <h2 class="page-title">🎯 Typosquat Sightings</h2>
+        <p class="page-desc">Look-alike domains of protected brands that currently resolve. Populated by <code>main.py watch-squats</code> (or the watcher container) and on-demand checks.</p>
+        <div class="stats-grid" style="margin-bottom:16px">
+          <div class="stat-card red"><div class="stat-label">New</div><div class="stat-value red" id="sgNew">0</div></div>
+          <div class="stat-card orange"><div class="stat-label">Monitoring</div><div class="stat-value orange" id="sgMonitoring">0</div></div>
+          <div class="stat-card cyan"><div class="stat-label">Total Live</div><div class="stat-value cyan" id="sgTotal">0</div></div>
+          <div class="stat-card green"><div class="stat-label">Last Watcher Run</div><div class="stat-value green" id="sgLastRun" style="font-size:1rem">—</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Check a brand now</span></div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:10px">
+            <input class="scanner-input" id="sgBrandInput" placeholder="protected brand domain, e.g. nbk.com" onkeydown="if(event.key==='Enter')apiRunSquatCheck()">
+            <button class="btn" id="sgCheckBtn" onclick="apiRunSquatCheck()">▶ Resolve permutations</button>
+          </div>
+          <div class="scan-progress" id="sgProgress" style="display:none"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Live sightings</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <select class="api-select" id="sgStatusFilter" onchange="apiLoadSightings()">
+                <option value="">All statuses</option>
+                <option value="new">New</option>
+                <option value="monitoring">Monitoring</option>
+                <option value="takedown_requested">Takedown requested</option>
+                <option value="resolved">Resolved</option>
+                <option value="benign">Benign</option>
+              </select>
+              <button class="btn-sm" onclick="apiLoadSightings()">↻ Refresh</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Domain</th><th>Brand</th><th>Technique</th><th>IPs</th><th>First seen</th><th>Seen</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="sightingTable"><tr><td colspan="8"><div class="empty-state"><div class="ico">🎯</div><div class="title">No sightings</div><div class="sub">Serve the dashboard from <code>python main.py api</code> and run the squat watcher to populate this view</div></div></td></tr></tbody>
             </table>
           </div>
         </div>
@@ -2085,9 +2149,419 @@ function animateCounter(){
   const el=document.getElementById('statCerts');
   if(!el)return;
   let val=1247893;
-  setInterval(()=>{val+=Math.floor(Math.random()*12)+3;el.textContent=val.toLocaleString()},2000);
+  setInterval(()=>{if(typeof API_MODE!=='undefined'&&API_MODE&&LIVE_MODE)return;val+=Math.floor(Math.random()*12)+3;el.textContent=val.toLocaleString()},2000);
 }
 setTimeout(animateCounter,1000);
+
+// ═══════════ API BRIDGE — live data when served by the KWTCyberWatch API ═══════════
+let API_MODE=false, API_INFO=null, API_USER=null, apiFeedTimer=null, API_ALERTS=[];
+let API_TOKEN=null;
+try{API_TOKEN=sessionStorage.getItem('kwt_token')||null}catch(e){}
+const API_BASE='';
+
+async function apiFetch(path,opts){
+  opts=opts||{};
+  const headers=Object.assign({'Accept':'application/json'},opts.headers||{});
+  let body=opts.body;
+  if(body!==undefined&&typeof body!=='string'){headers['Content-Type']='application/json';body=JSON.stringify(body)}
+  if(API_TOKEN)headers['Authorization']='Bearer '+API_TOKEN;
+  const r=await fetch(API_BASE+path,{method:opts.method||'GET',headers,body,cache:'no-store'});
+  let data=null;
+  try{data=await r.json()}catch(e){}
+  if(!r.ok){
+    if(r.status===401&&API_TOKEN&&path!=='/api/v1/auth/login'){API_TOKEN=null;try{sessionStorage.removeItem('kwt_token')}catch(e){}}
+    const err=new Error((data&&data.error)||('HTTP '+r.status));err.status=r.status;err.data=data;throw err;
+  }
+  return data;
+}
+async function detectApi(){
+  if(location.protocol==='file:')return false;
+  try{
+    const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),2500);
+    const r=await fetch(API_BASE+'/api/v1/health',{signal:ctrl.signal,cache:'no-store'});
+    clearTimeout(t);
+    if(!r.ok)return false;
+    API_INFO=await r.json();
+    API_MODE=true;
+    const hint=document.querySelector('.login-hint');
+    if(hint)hint.innerHTML='Connected to KWTCyberWatch API v'+escapeHtml(API_INFO.version||'')+'. Sign in with the server credentials (<code>KCW_ADMIN_PASSWORD</code>) to triage alerts, or explore with the demo account.';
+    const badge=document.querySelector('.topbar-badge');
+    if(badge&&API_INFO.version)badge.textContent='v'+API_INFO.version;
+    return true;
+  }catch(e){return false}
+}
+function apiRequireToken(){
+  if(API_TOKEN)return true;
+  toast('Sign in with server credentials to perform this action','crit');
+  return false;
+}
+function fmtTime(iso){return iso?String(iso).replace('T',' ').slice(0,19):'—'}
+function scoreColor(v){return v>=80?'var(--red)':v>=60?'var(--orange)':v>=40?'var(--yellow)':v>0?'var(--text-dim)':'var(--green)'}
+function levelOf(v){return v>=80?'critical':v>=60?'high':v>=40?'medium':v>=20?'low':'clean'}
+function setText(id,val){const el=document.getElementById(id);if(el)el.textContent=val}
+
+// ── login / session hooks ──
+const _origDoLogin=doLogin;
+doLogin=async function(){
+  if(!API_MODE)return _origDoLogin();
+  const u=document.getElementById('loginUser').value.trim();
+  const p=document.getElementById('loginPass').value;
+  const errEl=document.getElementById('loginError');
+  errEl.textContent='';
+  if(AUTH_MODE==='register'){errEl.textContent='Accounts are managed by the server in API mode (KCW_ADMIN_PASSWORD / KCW_ANALYST_PASSWORD).';return}
+  if(!u||!p){errEl.textContent='Username and password required';return}
+  try{
+    const data=await apiFetch('/api/v1/auth/login',{method:'POST',body:{username:u,password:p}});
+    API_TOKEN=data.token;API_USER=data.user;
+    try{sessionStorage.setItem('kwt_token',API_TOKEN)}catch(e){}
+    toast('Signed in to API as '+data.user.role,'ok');
+    await completeLogin(u,true);
+  }catch(e){
+    if(e.status===401){errEl.textContent='Invalid credentials'}
+    else if(e.status===429){errEl.textContent='Rate limited — try again shortly'}
+    else{errEl.textContent='API error: '+e.message}
+  }
+};
+const _origCompleteLogin=completeLogin;
+completeLogin=async function(username,liveMode){
+  await _origCompleteLogin(username,liveMode);
+  if(!(API_MODE&&liveMode))return;
+  const badge=document.getElementById('modeBadge');
+  badge.className='mode-badge api pulse-dot';badge.textContent='API';
+  if(feedInterval){clearInterval(feedInterval);feedInterval=null}
+  document.getElementById('alertControls').style.display='flex';
+  document.getElementById('alertActionsHead').style.display='';
+  await apiRefresh();
+  startApiFeed();
+};
+const _origDoLogout=doLogout;
+doLogout=function(){
+  _origDoLogout();
+  API_TOKEN=null;API_USER=null;
+  try{sessionStorage.removeItem('kwt_token')}catch(e){}
+  if(apiFeedTimer){clearInterval(apiFeedTimer);apiFeedTimer=null}
+  document.getElementById('alertControls').style.display='none';
+  document.getElementById('alertActionsHead').style.display='none';
+};
+
+// ── data loading ──
+async function apiRefresh(){
+  const [stats,brands,summary,cs]=await Promise.allSettled([
+    apiFetch('/api/v1/stats'),apiFetch('/api/v1/brands'),
+    apiFetch('/api/v1/reports/summary?days=7'),apiFetch('/api/v1/certstream/status')
+  ]);
+  if(stats.status==='fulfilled')renderApiStats(stats.value,cs.status==='fulfilled'?cs.value:null);
+  if(brands.status==='fulfilled')renderApiBrands(brands.value.brands||[]);
+  if(summary.status==='fulfilled')renderApiSummary(summary.value);
+  if(cs.status==='fulfilled'&&Array.isArray(cs.value.keywords)){
+    document.getElementById('keywordList').innerHTML=cs.value.keywords.map(k=>`<span style="display:inline-block;padding:4px 12px;margin:3px;background:var(--cyan-glow);border:1px solid var(--cyan-dim);border-radius:99px;color:var(--cyan)">${escapeHtml(k)}</span>`).join('');
+  }
+  await Promise.allSettled([apiLoadAlerts(),apiLoadSightings(),apiLoadRecentScans()]);
+}
+function renderApiStats(s,cs){
+  const db=s.database||{};
+  const monitor=(cs&&cs.stats)||s.monitor||{};
+  const total=monitor.total_certs||db.certstream_events||0;
+  setText('statCerts',Number(total).toLocaleString());
+  setText('statCertsSub','monitor: '+((cs&&cs.status)||monitor.status||'unknown')+' · '+Number(db.certstream_events||0).toLocaleString()+' matches stored');
+  setText('statPhishing',Number(db.phishing_detected||0).toLocaleString());
+  setText('statPhishingSub',(db.critical_threats||0)+' critical · '+(db.high_threats||0)+' high');
+  setText('statAlerts',Number(db.open_alerts||0).toLocaleString());
+  const bySev=(s.alerts&&s.alerts.by_severity)||{};
+  setText('statAlertsSub',(bySev.critical||0)+' critical · '+(db.total_alerts||0)+' total');
+  setText('statBrands',(s.brands&&s.brands.total_brands)||0);
+  setText('statBrandsSub','Kuwait banking, telecom, government');
+  setText('statDomains',Number(db.total_domains||0).toLocaleString());
+  setText('statDomainsSub',(db.squat_sightings||0)+' live typosquats · '+(db.allowlist_entries||0)+' allowlisted');
+  setText('alertCount',db.open_alerts||0);
+  setText('alertCritical',bySev.critical||0);setText('alertHigh',bySev.high||0);setText('alertMedium',bySev.medium||0);
+  const byStatus=(s.alerts&&s.alerts.by_status)||{};
+  setText('alertResolvedLabel','Resolved');setText('alertResolved',(byStatus.resolved||0)+(byStatus.false_positive||0));
+  setText('certsPerSec',((cs&&cs.status)||'unknown').toUpperCase());
+  setText('matchedToday',Number(monitor.matched_certs||0).toLocaleString());
+  setText('csHighRiskLabel','Matched Domains');setText('csHighRisk',Number(monitor.matched_domains||db.certstream_events||0).toLocaleString());
+  setText('feedCount',Number(db.certstream_events||0).toLocaleString());
+}
+function renderApiBrands(brands){
+  const tb=document.getElementById('brandTable');
+  tb.innerHTML=brands.map(b=>`<tr>
+    <td><strong>${escapeHtml(b.name)}</strong></td>
+    <td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml((b.domains||[]).join(', '))}</td>
+    <td>${escapeHtml(b.industry||'')}</td>
+    <td><span class="badge ${escapeHtml(b.priority||'medium')}">${escapeHtml(b.priority||'')}</span></td>
+    <td style="font-family:var(--font-mono);font-weight:700;color:${b.alerts>0?'var(--red)':'var(--green)'}">${b.alerts||0}</td>
+    <td><span style="color:var(--green)">● Active</span></td>
+  </tr>`).join('');
+}
+function renderApiSummary(summary){
+  const top=summary.top_domains||[];
+  if(top.length){
+    document.getElementById('recentThreats').innerHTML=top.slice(0,8).map(d=>`<tr>
+      <td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml(d.domain)}</td>
+      <td><span class="badge ${escapeHtml(d.risk_level||levelOf(d.risk_score))}">${escapeHtml(((d.categories||[])[0]||'suspicious').replace(/_/g,' '))}</span></td>
+      <td><span style="font-family:var(--font-mono);font-weight:700;color:${scoreColor(d.risk_score)}">${Math.round(d.risk_score)}</span></td>
+      <td style="color:var(--text-dim);font-size:.75rem">${escapeHtml(fmtTime(d.last_seen))}</td>
+    </tr>`).join('');
+    const cats={};
+    top.forEach(d=>(d.categories||[]).forEach(c=>{cats[c]=(cats[c]||0)+1}));
+    const palette=['var(--red)','var(--orange)','var(--yellow)','var(--cyan)','var(--purple)','var(--green)','var(--text-dim)'];
+    const catData=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,7).map(([k,v],i)=>({label:k.replace(/_/g,' '),val:v,color:palette[i%palette.length]}));
+    if(catData.length)renderBarChart('categoryChart',catData,180);
+  }
+  const series=summary.timeseries||[];
+  if(series.length){
+    renderBarChart('weeklyChart',series.map(r=>({label:r.date.slice(5),val:r.domains+r.alerts,color:r.critical_alerts>0?'var(--red)':'var(--cyan)'})),170);
+  }
+  const byBrand=(summary.alerts_all_time&&summary.alerts_all_time.by_brand)||{};
+  const brandData=Object.entries(byBrand).slice(0,6).map(([k,v],i)=>({label:k.replace(/\s*\(.*\)$/,'').split(' ').slice(0,2).join(' '),val:v,color:['var(--red)','var(--orange)','var(--yellow)','var(--cyan)','var(--purple)','var(--green)'][i]}));
+  if(brandData.length)renderBarChart('brandChart',brandData,170);
+  const w=summary.watcher;
+  if(w)setText('sgLastRun',fmtTime(w.finished_at).slice(0,16));
+}
+async function apiLoadRecentScans(){
+  try{
+    const data=await apiFetch('/api/v1/scans/history?limit=15');
+    const rows=(data.scans||[]).filter(s=>s.scan_type==='domain');
+    if(!rows.length)return;
+    document.getElementById('recentScans').innerHTML=rows.map(s=>{
+      const cats=((s.result||{}).phishing||{}).categories||[];
+      const score=Math.round(s.risk_score||0);
+      return `<tr>
+      <td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml(s.domain)}</td>
+      <td><span style="font-family:var(--font-mono);font-weight:700;color:${scoreColor(score)}">${score}/100</span></td>
+      <td><span class="badge ${escapeHtml(s.risk_level||'clean')}">${escapeHtml(s.risk_level||'clean')}</span></td>
+      <td>${cats.map(c=>'<span class="badge info" style="margin:1px 2px;font-size:.6rem">'+escapeHtml(c)+'</span>').join('')||'<span style="color:var(--green)">—</span>'}</td>
+      <td style="color:var(--text-dim);font-size:.75rem">${escapeHtml(fmtTime(s.scanned_at))}</td></tr>`;
+    }).join('');
+  }catch(e){}
+}
+
+// ── alerts with lifecycle actions ──
+async function apiLoadAlerts(){
+  if(!API_MODE)return;
+  const status=(document.getElementById('alertStatusFilter')||{}).value;
+  const q=status?'&status='+encodeURIComponent(status):'';
+  try{
+    const data=await apiFetch('/api/v1/alerts?limit=200'+q);
+    API_ALERTS=data.alerts||[];
+    renderApiAlerts(API_ALERTS);
+  }catch(e){toast('Failed to load alerts: '+e.message,'crit')}
+}
+function renderApiAlerts(alerts){
+  const tb=document.getElementById('alertTable');
+  if(!alerts.length){tb.innerHTML='<tr><td colspan="8"><div class="empty-state"><div class="ico">🚨</div><div class="title">No alerts</div><div class="sub">Scan a domain or run the CertStream monitor</div></div></td></tr>';return}
+  const statusBadge=s=>s==='open'?'high':s==='investigating'?'info':s==='false_positive'?'clean':'low';
+  tb.innerHTML=alerts.map(a=>`<tr>
+    <td style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim)" title="${escapeHtml(a.description||'')}">${escapeHtml(a.alert_id)}</td>
+    <td><span class="badge ${escapeHtml(a.severity)}">${escapeHtml(a.severity)}</span></td>
+    <td><strong>${escapeHtml((a.brand_name||'').replace(/\s*\(.*\)$/,''))}</strong></td>
+    <td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml(a.domain)}</td>
+    <td>${escapeHtml((a.alert_type||'').replace(/_/g,' '))}</td>
+    <td style="color:var(--text-dim);font-size:.72rem">${escapeHtml(fmtTime(a.created_at))}</td>
+    <td><span class="badge ${statusBadge(a.status)}">${escapeHtml(a.status)}</span>${a.assignee?'<div style="font-size:.62rem;color:var(--text-muted)">'+escapeHtml(a.assignee)+'</div>':''}</td>
+    <td style="white-space:nowrap">
+      ${a.status!=='investigating'&&a.status!=='resolved'?`<button class="act-btn" onclick="apiAlertAction('${escapeHtml(a.alert_id)}','investigating')">Investigate</button>`:''}
+      ${a.status!=='resolved'&&a.status!=='false_positive'?`<button class="act-btn" onclick="apiAlertAction('${escapeHtml(a.alert_id)}','resolved')">Resolve</button>`:''}
+      ${a.status!=='false_positive'?`<button class="act-btn danger" onclick="apiAlertAction('${escapeHtml(a.alert_id)}','false_positive',true)">FP + allowlist</button>`:''}
+      ${a.status==='resolved'||a.status==='false_positive'?`<button class="act-btn" onclick="apiAlertAction('${escapeHtml(a.alert_id)}','open')">Reopen</button>`:''}
+    </td>
+  </tr>`).join('');
+}
+async function apiAlertAction(alertId,status,allowlist){
+  if(!apiRequireToken())return;
+  if(allowlist&&!confirm('Mark as false positive AND allowlist the domain (and its subdomains)?'))return;
+  try{
+    const body={status};
+    if(API_USER&&API_USER.username)body.assignee=API_USER.username;
+    if(allowlist)body.allowlist=true;
+    await apiFetch('/api/v1/alerts/'+encodeURIComponent(alertId),{method:'PATCH',body});
+    toast('Alert '+alertId+' → '+status.replace('_',' '),'ok');
+    await apiLoadAlerts();
+    try{renderApiStats(await apiFetch('/api/v1/stats'),null)}catch(e){}
+  }catch(e){toast('Update failed: '+e.message,'crit')}
+}
+
+// ── typosquat sightings ──
+async function apiLoadSightings(){
+  if(!API_MODE)return;
+  const status=(document.getElementById('sgStatusFilter')||{}).value;
+  try{
+    const data=await apiFetch('/api/v1/squats/sightings?limit=300'+(status?'&status='+encodeURIComponent(status):''));
+    renderApiSightings(data.sightings||[],data.watcher);
+  }catch(e){toast('Failed to load sightings: '+e.message,'crit')}
+}
+function renderApiSightings(rows,watcher){
+  const tb=document.getElementById('sightingTable');
+  const counts={new:0,monitoring:0};
+  rows.forEach(r=>{if(r.status in counts)counts[r.status]++});
+  setText('sgNew',counts.new);setText('sgMonitoring',counts.monitoring);setText('sgTotal',rows.length);setText('sightingCount',counts.new);
+  if(watcher&&watcher.finished_at)setText('sgLastRun',fmtTime(watcher.finished_at).slice(0,16));
+  if(!rows.length){tb.innerHTML='<tr><td colspan="8"><div class="empty-state"><div class="ico">🎯</div><div class="title">No live typosquats recorded</div><div class="sub">Run <code>python main.py watch-squats --once</code> or check a brand above</div></div></td></tr>';return}
+  const badge=s=>s==='new'?'critical':s==='monitoring'?'high':s==='takedown_requested'?'medium':s==='benign'?'clean':'low';
+  const act=(d,st,label)=>`<button class="act-btn" onclick="apiSightingAction('${escapeHtml(d)}','${st}')">${label}</button>`;
+  tb.innerHTML=rows.map(r=>`<tr>
+    <td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml(r.domain)}</td>
+    <td>${escapeHtml(r.brand)}</td>
+    <td><span class="badge info" style="font-size:.6rem">${escapeHtml((r.technique||'').replace(/_/g,' '))}</span></td>
+    <td style="font-family:var(--font-mono);font-size:.7rem">${escapeHtml((r.ips||[]).join(', '))||'—'}</td>
+    <td style="color:var(--text-dim);font-size:.72rem">${escapeHtml(fmtTime(r.first_seen))}</td>
+    <td style="font-family:var(--font-mono);font-size:.72rem">${r.seen_count||1}×</td>
+    <td><span class="badge ${badge(r.status)}">${escapeHtml((r.status||'').replace(/_/g,' '))}</span></td>
+    <td style="white-space:nowrap">${r.status!=='monitoring'?act(r.domain,'monitoring','Monitor'):''}${r.status!=='takedown_requested'?act(r.domain,'takedown_requested','Takedown'):''}${r.status!=='resolved'?act(r.domain,'resolved','Resolved'):''}${r.status!=='benign'?act(r.domain,'benign','Benign'):''}</td>
+  </tr>`).join('');
+}
+async function apiSightingAction(domain,status){
+  if(!apiRequireToken())return;
+  try{
+    await apiFetch('/api/v1/squats/sightings/'+encodeURIComponent(domain),{method:'PATCH',body:{status}});
+    toast(domain+' → '+status.replace('_',' '),'ok');
+    await apiLoadSightings();
+  }catch(e){toast('Update failed: '+e.message,'crit')}
+}
+async function apiRunSquatCheck(){
+  if(!API_MODE){toast('Serve the dashboard from the API to run live checks','crit');return}
+  if(!apiRequireToken())return;
+  const brand=document.getElementById('sgBrandInput').value.trim().toLowerCase();
+  if(!brand){toast('Enter a protected brand domain','crit');return}
+  const btn=document.getElementById('sgCheckBtn');const progress=document.getElementById('sgProgress');
+  btn.disabled=true;progress.style.display='block';
+  progress.innerHTML=`<div class="scan-step running"><span class="step-ico">⏳</span><span>Generating and resolving permutations of ${escapeHtml(brand)} (server side)</span><span class="step-meta">this can take a minute</span></div>`;
+  try{
+    const s=await apiFetch('/api/v1/squats/check',{method:'POST',body:{brand,limit:400}});
+    progress.innerHTML=`<div class="scan-step done"><span class="step-ico">✓</span><span>${s.candidates} candidates resolved — ${s.live} live, ${s.new} new</span><span class="step-meta">${s.duration_seconds}s</span></div>`;
+    if(s.new>0)toast(`⚠ ${s.new} new typosquat(s) of ${brand} are live`,'crit');else toast('Check complete','ok');
+    await apiLoadSightings();
+  }catch(e){progress.innerHTML=`<div class="scan-step fail"><span class="step-ico">✕</span><span>${escapeHtml(e.message)}</span></div>`}
+  finally{btn.disabled=false;setTimeout(()=>progress.style.display='none',6000)}
+}
+
+// ── CertStream feed from stored events ──
+async function startApiFeed(){
+  const feed=document.getElementById('liveFeed');
+  let lastId=0;
+  const load=async()=>{
+    if(!feedRunning)return;
+    try{
+      const data=await apiFetch('/api/v1/certstream/events?limit=60');
+      const events=(data.events||[]).slice().reverse();
+      for(const ev of events){
+        if(ev.id<=lastId)continue;
+        lastId=Math.max(lastId,ev.id);
+        const score=Math.round(ev.risk_score||0);
+        const row=document.createElement('div');
+        row.className='feed-row';
+        row.innerHTML=`<span class="feed-time">${escapeHtml(fmtTime(ev.timestamp).slice(11))}</span>
+          <span class="badge ${levelOf(score)}" style="font-size:.6rem">${levelOf(score)}</span>
+          <span class="feed-domain">${escapeHtml(ev.domain)}</span>
+          <span class="feed-keywords">${escapeHtml((ev.matched_keywords||[]).join(', '))}</span>
+          <span class="feed-score" style="color:${scoreColor(score)}">${score}</span>`;
+        feed.insertBefore(row,feed.firstChild);
+        if(feed.children.length>100)feed.removeChild(feed.lastChild);
+      }
+      if(!feed.children.length)feed.innerHTML='<div style="padding:16px;color:var(--text-muted)">No matched certificates stored yet — start <code>python main.py monitor</code>.</div>';
+    }catch(e){}
+  };
+  feed.innerHTML='';
+  await load();
+  if(apiFeedTimer)clearInterval(apiFeedTimer);
+  apiFeedTimer=setInterval(load,15000);
+}
+
+// ── scanner & bulk scanner backed by the API ──
+function apiToResult(d){
+  const p=d.phishing||{};
+  return {score:Math.round(p.risk_score||0),level:p.risk_level||'clean',isPhishing:!!p.is_phishing,categories:p.categories||[],
+    indicators:(p.indicators||[]).map(i=>({type:i.type,detail:i.detail,w:Number(i.weight||0)})),recommendation:p.recommendation||''};
+}
+function apiScanExtras(d){
+  const panel=document.getElementById('scanResult');
+  const parsed=(d.phishing&&d.phishing.parsed)||{};
+  const brands=d.brand_alerts||[], squats=d.domain_squatting||[], enr=d.enrichment||null;
+  let html='<div class="card">';
+  html+=`<div style="font-size:.75rem;font-weight:600;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Domain structure</div>
+    <dl class="kv-grid"><dt>Registrable</dt><dd>${escapeHtml(parsed.registrable||'')}</dd><dt>Suffix</dt><dd>${escapeHtml(parsed.suffix||'')}</dd>
+    <dt>IDN</dt><dd>${parsed.is_idn?'yes — '+escapeHtml(parsed.unicode_hostname||''):'no'}</dd>
+    <dt>Hosting platform</dt><dd>${escapeHtml(parsed.hosting_platform||'—')}</dd>
+    <dt>Allowlisted</dt><dd>${d.allowlisted?'yes':'no'}</dd></dl>`;
+  if(brands.length){
+    html+=`<div style="font-size:.75rem;font-weight:600;color:var(--text-dim);margin:16px 0 8px;text-transform:uppercase;letter-spacing:.06em">Brand alerts (${brands.length})</div>`;
+    html+=brands.map(a=>`<div style="padding:8px 10px;border-left:3px solid var(--red);background:var(--bg-deep);border-radius:var(--radius-sm);margin-bottom:6px;font-size:.8rem"><span class="badge ${escapeHtml(a.severity)}">${escapeHtml(a.severity)}</span> <strong>${escapeHtml(a.brand_name)}</strong> — ${escapeHtml((a.alert_type||'').replace(/_/g,' '))}<div style="color:var(--text-dim);font-size:.7rem;margin-top:3px">${escapeHtml(a.description||'')}</div></div>`).join('');
+  }
+  if(squats.length){
+    html+=`<div style="font-size:.75rem;font-weight:600;color:var(--text-dim);margin:16px 0 8px;text-transform:uppercase;letter-spacing:.06em">Squatting analysis</div>`;
+    html+=squats.map(s=>`<div style="display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:.78rem"><span class="badge ${escapeHtml(s.risk_level)}">${escapeHtml(s.risk_level)}</span><span style="font-family:var(--font-mono)">${escapeHtml(s.target)}</span><span style="color:var(--text-dim)">${escapeHtml((s.attack_types||[]).join(', '))}</span><span style="margin-left:auto;font-family:var(--font-mono);color:var(--text-muted);font-size:.7rem">sim ${Math.round((s.similarity||0)*100)}% · conf ${Math.round((s.confidence||0)*100)}%</span></div>`).join('');
+  }
+  if(enr&&!enr.error){
+    const dns=enr.dns||{},rd=enr.rdap||{};
+    html+=`<div style="font-size:.75rem;font-weight:600;color:var(--text-dim);margin:16px 0 8px;text-transform:uppercase;letter-spacing:.06em">Enrichment</div>
+      <dl class="kv-grid"><dt>Resolves</dt><dd>${enr.resolves?'yes — '+escapeHtml((dns.A||[]).concat(dns.AAAA||[]).join(', ')):'no'}</dd>
+      <dt>Nameservers</dt><dd class="wrap">${escapeHtml((dns.NS||[]).join(', ')||'—')}</dd>
+      <dt>Registrar</dt><dd class="wrap">${escapeHtml(rd.registrar||'—')}</dd>
+      <dt>Created</dt><dd>${escapeHtml((rd.created||'').slice(0,10)||'—')}${rd.age_days!=null?' ('+rd.age_days+' days ago)':''}</dd>
+      <dt>Abuse contact</dt><dd class="wrap">${escapeHtml(rd.abuse_email||'—')}</dd></dl>`;
+    if(enr.errors&&Object.keys(enr.errors).length)html+=`<div style="font-size:.68rem;color:var(--orange);margin-top:6px">Partial enrichment: ${escapeHtml(Object.entries(enr.errors).map(([k,v])=>k+': '+v).join(' · '))}</div>`;
+  }
+  html+='</div>';
+  panel.insertAdjacentHTML('beforeend',html);
+}
+const _origScanDomain=scanDomain;
+scanDomain=async function(){
+  if(!(API_MODE&&LIVE_MODE))return _origScanDomain();
+  const input=document.getElementById('scanInput');
+  const domain=input.value.trim().toLowerCase();
+  if(!domain){toast('Enter a domain','crit');return}
+  const btn=document.getElementById('scanBtn');
+  btn.disabled=true;btn.textContent='Scanning...';
+  try{
+    const data=await apiFetch('/api/v1/scan/domain',{method:'POST',body:{domain,enrich:true}});
+    const r=apiToResult(data);
+    renderScanResult(data.domain,r,{});
+    apiScanExtras(data);
+    await saveScanHistory({domain:data.domain,result:r,live:true});
+    await apiLoadRecentScans();
+    if((data.brand_alerts||[]).length)apiLoadAlerts();
+  }catch(e){toast('Scan failed: '+e.message,'crit')}
+  finally{btn.disabled=false;btn.textContent='🔍 Analyze'}
+};
+const _origRunBulkScan=runBulkScan;
+runBulkScan=async function(){
+  if(!(API_MODE&&LIVE_MODE))return _origRunBulkScan();
+  const lines=document.getElementById('bulkInput').value.split('\n').map(l=>l.trim().toLowerCase()).filter(Boolean);
+  if(!lines.length){toast('Enter at least one domain','crit');return}
+  const btn=document.getElementById('bulkBtn');const progress=document.getElementById('bulkProgress');const tb=document.getElementById('bulkResults');
+  btn.disabled=true;btn.textContent='Scanning...';progress.style.display='block';
+  progress.innerHTML=`<div class="scan-step running"><span class="step-ico">⏳</span><span>Scanning ${lines.length} domains via API</span></div>`;
+  tb.innerHTML='';BULK_RESULTS=[];
+  try{
+    const chunks=[];for(let i=0;i<lines.length;i+=100)chunks.push(lines.slice(i,i+100));
+    for(const chunk of chunks){
+      const data=await apiFetch('/api/v1/scan/bulk',{method:'POST',body:{domains:chunk}});
+      for(const r of data.results||[]){
+        if(r.error){tb.insertAdjacentHTML('beforeend',`<tr><td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml(r.domain)}</td><td colspan="5" style="color:var(--text-muted)">${escapeHtml(r.error)}</td></tr>`);continue}
+        const res={score:Math.round(r.risk_score),level:r.risk_level,categories:r.categories||[],indicators:[]};
+        BULK_RESULTS.push({domain:r.domain,result:res,dns:null});
+        tb.insertAdjacentHTML('beforeend',`<tr><td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml(r.domain)}</td><td><span style="font-family:var(--font-mono);font-weight:700;color:${scoreColor(res.score)}">${res.score}</span></td><td><span class="badge ${escapeHtml(res.level)}">${escapeHtml(res.level)}</span></td><td>${res.categories.slice(0,3).map(c=>'<span class="badge info" style="margin:1px;font-size:.6rem">'+escapeHtml(c)+'</span>').join('')}</td><td style="font-size:.7rem">${escapeHtml((r.matched_brands||[]).join(', '))||'<span style="color:var(--text-muted)">—</span>'}</td><td style="font-size:.7rem;color:${r.brand_alerts?'var(--red)':'var(--text-dim)'}">${r.brand_alerts||0} alert(s)</td></tr>`);
+      }
+    }
+    progress.innerHTML=`<div class="scan-step done"><span class="step-ico">✓</span><span>Complete</span><span class="step-meta">${BULK_RESULTS.length} scanned</span></div>`;
+    document.getElementById('bulkResultCount').textContent=`${BULK_RESULTS.length} scanned · ${BULK_RESULTS.filter(r=>r.result.score>=60).length} high-risk`;
+    document.getElementById('bulkExport').disabled=false;
+    toast(`Scanned ${BULK_RESULTS.length} domains`,'ok');
+    apiLoadAlerts();
+  }catch(e){progress.innerHTML=`<div class="scan-step fail"><span class="step-ico">✕</span><span>${escapeHtml(e.message)}</span></div>`;toast('Bulk scan failed: '+e.message,'crit')}
+  finally{setTimeout(()=>progress.style.display='none',2500);btn.disabled=false;btn.textContent='▶ Scan All'}
+};
+
+// ── page hook & boot ──
+const _apiShowPage=showPage;
+showPage=function(id,el){
+  _apiShowPage(id,el);
+  if(!(API_MODE&&LIVE_MODE))return;
+  if(id==='alerts')apiLoadAlerts();
+  if(id==='sightings')apiLoadSightings();
+  if(id==='dashboard'||id==='analytics')apiRefresh();
+};
+window.addEventListener('DOMContentLoaded',()=>{detectApi()});
 </script>
 </body>
 </html>
