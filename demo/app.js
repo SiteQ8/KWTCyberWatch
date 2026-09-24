@@ -231,6 +231,88 @@
     history: renderHistory, analytics: renderAnalytics, settings: renderSettings, notifications: renderNotifications,
     scanner: renderRecentScans, threatintel: renderIntelTable, bulk: updateBulkCount,
   };
+
+  // ------------------------------------------------------------------ //
+  // UI chrome: icons, theme, mobile drawer, shortcuts
+  // ------------------------------------------------------------------ //
+  const svg = (d, extra) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}${extra || ""}</svg>`;
+  const ICONS = {
+    shield: svg('<path d="M12 2.5 4.5 5.6v6.2c0 4.7 3.2 9 7.5 10.2 4.3-1.2 7.5-5.5 7.5-10.2V5.6z"/><path d="m9 12 2 2 4-4"/>'),
+    menu: svg('<path d="M4 7h16M4 12h16M4 17h16"/>'),
+    close: svg('<path d="M6 6l12 12M18 6 6 18"/>'),
+    sun: svg('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),
+    moon: svg('<path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/>'),
+    external: svg('<path d="M14 4h6v6M20 4l-9 9M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/>'),
+    dashboard: svg('<rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/>'),
+    certstream: svg('<circle cx="12" cy="12" r="2"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4M7.8 16.2a6 6 0 0 1 0-8.4M19.1 4.9a10 10 0 0 1 0 14.2M4.9 19.1a10 10 0 0 1 0-14.2"/>'),
+    scanner: svg('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'),
+    bulk: svg('<path d="M9 6h11M9 12h11M9 18h11"/><path d="m3.5 6 1 1 2-2M3.5 12l1 1 2-2M3.5 18l1 1 2-2"/>'),
+    squatgen: svg('<path d="M6 3v12"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>'),
+    threatintel: svg('<path d="M12 4a4 4 0 0 0-4 4v1a3 3 0 0 0-2 5 3 3 0 0 0 2 5h1a3 3 0 0 0 3 2 3 3 0 0 0 3-2h1a3 3 0 0 0 2-5 3 3 0 0 0-2-5V8a4 4 0 0 0-4-4z"/><path d="M12 4v17"/>'),
+    ctlog: svg('<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>'),
+    dnslookup: svg('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>'),
+    rdap: svg('<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.5 1.7-2 3-2s2.4.5 3 2M14 10h4M14 14h4"/>'),
+    history: svg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
+    brands: svg('<path d="M3 10 12 4l9 6"/><path d="M5 10v9M9 10v9M15 10v9M19 10v9M3 19h18"/>'),
+    alerts: svg('<path d="m12 3 9.5 16.5H2.5z"/><path d="M12 10v4M12 17.5v.5"/>'),
+    sightings: svg('<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>'),
+    analytics: svg('<path d="M4 20h16"/><path d="M6 16v-5M11 16V7M16 16v-3M21 16V4" stroke-width="2.2"/>'),
+    notifications: svg('<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 21a2 2 0 0 0 4 0"/>'),
+    settings: svg('<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.5"/><circle cx="9" cy="17" r="2.5"/>'),
+  };
+  function paintIcons(root) {
+    (root || document).querySelectorAll("[data-icon]").forEach((el) => {
+      const name = el.dataset.icon === "theme" ? (currentTheme() === "light" ? "moon" : "sun") : el.dataset.icon;
+      if (ICONS[name]) el.innerHTML = ICONS[name];
+    });
+  }
+  function currentTheme() { return document.documentElement.dataset.theme === "light" ? "light" : "dark"; }
+  function applyTheme(theme, persist) {
+    document.documentElement.dataset.theme = theme === "light" ? "light" : "dark";
+    if (persist) { try { localStorage.setItem("kcw_theme", theme); } catch (e) { /* ignore */ } }
+    document.querySelectorAll('[data-icon="theme"]').forEach((el) => { el.innerHTML = ICONS[theme === "light" ? "moon" : "sun"]; el.title = theme === "light" ? "Switch to dark theme" : "Switch to light theme"; });
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.content = theme === "light" ? "#eef2f8" : "#060a14";
+  }
+  function toggleTheme() { applyTheme(currentTheme() === "light" ? "dark" : "light", true); }
+  function initTheme() {
+    let stored = null;
+    try { stored = localStorage.getItem("kcw_theme"); } catch (e) { /* ignore */ }
+    applyTheme(stored === "light" ? "light" : "dark", false);
+  }
+  function toggleSidebar(force) {
+    const sb = $("sidebar"), bd = $("backdrop");
+    if (!sb) return;
+    const open = typeof force === "boolean" ? force : !sb.classList.contains("open");
+    sb.classList.toggle("open", open);
+    if (bd) bd.classList.toggle("show", open);
+    document.querySelectorAll(".menu-btn").forEach((b) => { b.innerHTML = ICONS[open ? "close" : "menu"]; b.setAttribute("aria-label", open ? "Close menu" : "Open menu"); });
+  }
+  function fillLandingStats() {
+    const D = window.KCW_DATA || {};
+    setText("lsBrands", engine ? engine.brands.length : (D.brands || []).length);
+    setText("lsKeywords", S.keywords.length);
+    const suf = D.suffixes || {};
+    setText("lsSuffixes", Object.values(suf).reduce((n, list) => n + list.length, 0));
+    setText("lsVersion", "v" + KCW.version + " · IDN / Arabic aware");
+    setText("sbVersion", "v" + KCW.version);
+  }
+  document.addEventListener("keydown", (e) => {
+    const tag = (e.target.tagName || "").toLowerCase();
+    const typing = tag === "input" || tag === "textarea" || tag === "select" || e.target.isContentEditable;
+    if (e.key === "Escape") { toggleSidebar(false); return; }
+    if (typing || e.ctrlKey || e.metaKey || e.altKey) return;
+    if ($("app").style.display !== "block") return;
+    if (e.key === "/") { e.preventDefault(); showPage("scanner"); $("scanInput").focus(); $("scanInput").select(); }
+    if (e.key === "g") window._kcwG = Date.now();
+    else if (window._kcwG && Date.now() - window._kcwG < 900) {
+      const map = { d: "dashboard", f: "certstream", s: "scanner", b: "bulk", h: "squatgen", a: "alerts", i: "threatintel", n: "analytics", t: "settings" };
+      if (map[e.key]) showPage(map[e.key]);
+      window._kcwG = 0;
+    }
+  });
+  Object.assign(window, { toggleTheme, toggleSidebar, paintIcons });
+
   function showPage(id, el) {
     document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));
     document.querySelectorAll(".nav-item").forEach((n) => n.classList.remove("active"));
@@ -238,6 +320,9 @@
     if (page) page.classList.add("active");
     (el || document.querySelector(`[data-page="${id}"]`))?.classList.add("active");
     if (PAGE_HOOKS[id]) PAGE_HOOKS[id]();
+    toggleSidebar(false);
+    const main = document.querySelector(".main");
+    if (main) main.scrollTo({ top: 0, behavior: "smooth" });
   }
   window.showPage = showPage;
 
@@ -256,7 +341,7 @@
     try { sessionStorage.removeItem("kcw_open"); } catch (e) { /* ignore */ }
     feed.stop();
     $("app").style.display = "none";
-    $("loginPage").style.display = "flex";
+    $("loginPage").style.display = "flex"; fillLandingStats();
   }
   window.enterDashboard = enterDashboard;
   window.leaveDashboard = leaveDashboard;
@@ -264,6 +349,9 @@
   // ------------------------------------------------------------------ //
   // Dashboard & counters
   // ------------------------------------------------------------------ //
+  function syncNavBadges() {
+    document.querySelectorAll(".nav-badge").forEach((b) => b.setAttribute("data-zero", b.textContent.trim() === "0" ? "1" : "0"));
+  }
   async function refreshCounts() {
     const [alerts, scans, sightings, certs] = await Promise.all([dbAll("alerts"), dbCount("scans"), dbAll("sightings"), dbCount("certs")]);
     const open = alerts.filter((a) => a.status === "open" || a.status === "investigating");
@@ -277,6 +365,7 @@
     setText("feedCount", certs);
     setText("matchedToday", certs);
     return { alerts, scans, sightings, certs };
+    syncNavBadges();
   }
   async function renderDashboard() {
     const [scans, certs, alerts] = await Promise.all([dbAll("scans"), dbAll("certs"), dbAll("alerts")]);
@@ -330,6 +419,8 @@
       const colors = { live: "var(--green)", connecting: "var(--yellow)", reconnecting: "var(--orange)", offline: "var(--red)", paused: "var(--text-dim)", replay: "var(--purple)", idle: "var(--text-dim)" };
       const dot = $("feedDot");
       if (dot) dot.style.background = colors[state] || "var(--text-dim)";
+      const pill = $("feedPill");
+      if (pill) { pill.className = "feed-pill state-" + state; pill.style.borderColor = state === "live" ? "var(--green-dim)" : ""; }
       setText("feedStatusText", "CertStream: " + state + (detail ? " · " + detail : ""));
       setText("csStatus", state);
       setText("csStatusSub", detail || (state === "live" ? this.keywords.length + " keywords" : "—"));
@@ -421,6 +512,7 @@
       const level = levelOf(row.score);
       const div = document.createElement("div");
       div.className = "feed-row";
+      div.style.borderLeftColor = row.score >= 60 ? "var(--red)" : row.score >= 40 ? "var(--orange)" : "transparent";
       div.innerHTML = `<span class="feed-time">${esc(row.ts.slice(11, 19))}</span><span class="badge ${level}" style="font-size:.6rem">${synthetic ? "replay" : level}</span><span class="feed-domain" title="${esc(row.issuer)}">${esc(row.domain)}${row.brands.length ? ' <span style="color:var(--purple);font-size:.65rem">→ ' + esc(row.brands.join(", ")) + "</span>" : ""}</span><span class="feed-keywords">${esc(row.keywords.join(", "))}</span><span class="feed-score" style="color:${scoreColor(row.score)}">${Math.round(row.score)}</span>`;
       div.style.cursor = "pointer";
       div.onclick = () => quickScan(row.domain);
@@ -524,7 +616,7 @@
           <div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700">${esc(result.domain)}</div>
           ${parsed.is_idn ? `<div style="font-family:var(--font-mono);font-size:.85rem;color:var(--purple)">${esc(parsed.unicode_hostname)}</div>` : ""}
           <div style="font-size:.72rem;color:var(--text-muted);margin-top:4px">registrable <code>${esc(parsed.registrable)}</code> · suffix <code>${esc(parsed.suffix)}</code>${parsed.hosting_platform ? " · hosted on <code>" + esc(parsed.hosting_platform) + "</code>" : ""}</div></div>
-        <div style="text-align:right"><div style="font-family:var(--font-mono);font-size:2.5rem;font-weight:800;color:${sc};line-height:1">${Math.round(p.risk_score)}</div><div style="font-size:.7rem;color:var(--text-dim)">/100 risk score</div></div>
+        <div class="gauge" style="--val:${Math.max(0, Math.min(100, p.risk_score))};--c:${sc}" title="${Math.round(p.risk_score)}/100 risk score"><div class="gauge-in"><span class="gauge-num">${Math.round(p.risk_score)}</span><span class="gauge-lbl">/ 100</span></div></div>
       </div>
       <div class="risk-meter"><div class="risk-meter-fill" style="width:${p.risk_score}%;background:${sc}"></div></div>
       <div style="display:flex;gap:8px;margin:12px 0;flex-wrap:wrap">
@@ -534,7 +626,7 @@
       </div>
       ${p.categories.length ? `<div style="margin:8px 0">${p.categories.map((c) => `<span class="badge info" style="margin:2px">${esc(c)}</span>`).join("")}</div>` : ""}
       <div style="font-size:.8rem;color:var(--text-dim);margin-top:6px">${esc(p.explanation)}</div>`;
-    if (p.indicators.length) html += section(`Indicators (${p.indicators.length})`, `<ul class="indicator-list">${p.indicators.map((i) => `<li class="${i.weight >= 15 ? "high-weight" : i.weight >= 10 ? "med-weight" : "low-weight"}"><strong style="color:var(--text)">${esc(i.type)}</strong>: ${esc(i.detail)}<span style="float:right;font-family:var(--font-mono);font-size:.7rem;color:var(--text-muted)">+${i.weight}</span></li>`).join("")}</ul>`);
+    if (p.indicators.length) html += section(`Indicators (${p.indicators.length})`, `<ul class="indicator-list">${p.indicators.map((i) => `<li class="${i.weight >= 15 ? "high-weight" : i.weight >= 10 ? "med-weight" : "low-weight"}"><strong>${esc(i.type)}</strong><span class="ind-detail">${esc(i.detail)}</span><span class="ind-w">+${i.weight}</span></li>`).join("")}</ul>`);
     if (result.brand_alerts.length) html += section(`Brand alerts (${result.brand_alerts.length})`, result.brand_alerts.map((a) => `<div style="padding:8px 10px;border-left:3px solid var(--red);background:var(--bg-deep);border-radius:var(--radius-sm);margin-bottom:6px;font-size:.8rem"><span class="badge ${esc(a.severity)}">${esc(a.severity)}</span> <strong>${esc(a.brand_name)}</strong> — ${esc(a.alert_type.replace(/_/g, " "))}<div style="color:var(--text-dim);font-size:.7rem;margin-top:3px">${esc(a.description)}</div></div>`).join(""));
     if (result.domain_squatting.length) html += section("Squatting analysis", result.domain_squatting.map((s) => `<div style="display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:.78rem;flex-wrap:wrap"><span class="badge ${esc(s.risk_level)}">${esc(s.risk_level)}</span><span style="font-family:var(--font-mono)">${esc(s.target)}</span><span style="color:var(--text-dim)">${esc(s.attack_types.join(", "))}</span><span style="margin-left:auto;font-family:var(--font-mono);color:var(--text-muted);font-size:.7rem">similarity ${Math.round(s.similarity * 100)}% · confidence ${Math.round(s.confidence * 100)}%</span></div>`).join(""));
     const live = opts.live;
@@ -1009,9 +1101,12 @@
   // Boot
   // ------------------------------------------------------------------ //
   window.addEventListener("DOMContentLoaded", async () => {
+    initTheme();
+    paintIcons();
     setText("versionBadge", "v" + KCW.version);
     try { await loadSettings(); } catch (e) { console.warn("IndexedDB unavailable", e); }
     buildEngine();
+    fillLandingStats();
     if (S.analyst) $("analystName").value = S.analyst;
     if (location.protocol !== "file:") {
       fetchJSON("/api/v1/health", { timeout: 2500 }).then((info) => { const el = $("apiHint"); el.style.display = "block"; el.innerHTML = `This page is served by the KWTCyberWatch API v${esc(info.version)} — configure it under Settings → Backend API to send scans server-side.`; if (!S.apiUrl) S.apiUrl = ""; }).catch(() => { /* static hosting */ });

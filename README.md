@@ -38,9 +38,9 @@
 
 ## 📸 Screenshots
 
-### Login
+### Landing page
 <p align="center">
-  <img src="docs/screenshots/01-login.png" alt="Login Page" width="700">
+  <img src="docs/screenshots/01-login.png" alt="Landing page" width="900">
 </p>
 
 ### Dashboard

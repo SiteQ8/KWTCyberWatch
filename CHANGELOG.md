@@ -24,9 +24,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Settings for feed keywords, allowlist and custom brand profiles rebuild the browser engine
   immediately.
 
+- **Redesigned look and feel**: a hero landing page with live engine figures, SVG icon
+  navigation, light/dark themes (toggle in the top bar, remembered per browser), a risk gauge on
+  scan results, refreshed cards, tables, feed rows and toasts, an off-canvas sidebar and tuned
+  layouts for phones, plus keyboard shortcuts (`/` focuses the scanner, `g` then a letter jumps
+  between views).
+
 ### Changed
 - `demo/index.html` was rebuilt around the new engine and application; the login/demo-account
   flow was replaced by an analyst landing page.
+- README screenshots regenerated; `scripts/screenshots.py` follows the new landing flow and
+  honours `CHROME_PATH` for a system Chromium.
 
 ## [2.1.0] - 2026-09-24
 

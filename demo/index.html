@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#060a14">
 <meta name="description" content="KWTCyberWatch — Kuwait phishing detection & brand protection. Live Certificate Transparency monitoring, domain squatting detection and brand impersonation alerts, running entirely in your browser.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Cpath d=%27M16 2 4 7v9c0 7.5 5.1 14 12 16 6.9-2 12-8.5 12-16V7z%27 fill=%27%2300d4ff%27/%3E%3Cpath d=%27M16 6 8 9.3V16c0 5.2 3.4 9.9 8 11.6 4.6-1.7 8-6.4 8-11.6V9.3z%27 fill=%27%230a0e17%27/%3E%3C/svg%3E">
 <title>KWTCyberWatch v2.2 — Kuwait Phishing Detection Suite</title>
@@ -11,16 +12,31 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg-deepest:#05080f;--bg-deep:#0a1628;--bg-card:#0f1d32;--bg-card-hover:#132544;
-  --bg-input:#0c1827;--border:#1a3050;--border-active:#00d4ff40;
+  --bg-deepest:#060a14;--bg-deep:#0b1424;--bg-card:#101c30;--bg-card-hover:#152541;
+  --bg-input:#0b1526;--border:#1c2f4d;--border-active:#00d4ff40;
   --cyan:#00d4ff;--cyan-dim:#00d4ff80;--cyan-glow:#00d4ff30;
   --red:#ff3355;--red-dim:#ff335580;--orange:#ff8c00;--orange-dim:#ff8c0080;
   --yellow:#ffd600;--yellow-dim:#ffd60060;--green:#00e676;--green-dim:#00e67680;
   --purple:#b388ff;--purple-dim:#b388ff60;
-  --text:#e8edf5;--text-dim:#8899b0;--text-muted:#556680;
+  --text:#e9eef7;--text-dim:#8c9db8;--text-muted:#5a6b86;
   --font-display:'Outfit',sans-serif;--font-mono:'JetBrains Mono',monospace;
-  --radius:10px;--radius-sm:6px;--radius-lg:16px;
-  --shadow:0 4px 24px #00000060;
+  --radius:12px;--radius-sm:8px;--radius-lg:18px;
+  --shadow:0 8px 32px #00000070;--shadow-sm:0 1px 2px #00000040,0 0 0 1px #ffffff05 inset;
+  --grad:linear-gradient(135deg,var(--cyan),#0090ff);
+  --grid-line:#ffffff07;
+  color-scheme:dark;
+}
+:root[data-theme="light"]{
+  --bg-deepest:#eef2f8;--bg-deep:#ffffff;--bg-card:#ffffff;--bg-card-hover:#f1f5fb;
+  --bg-input:#f6f8fc;--border:#d9e1ee;--border-active:#0077cc40;
+  --cyan:#0077cc;--cyan-dim:#0077cc80;--cyan-glow:#0077cc1f;
+  --red:#d81b45;--red-dim:#d81b4580;--orange:#c96a00;--orange-dim:#c96a0080;
+  --yellow:#a86f00;--yellow-dim:#a86f0060;--green:#0b9a55;--green-dim:#0b9a5580;
+  --purple:#6b4fd8;--purple-dim:#6b4fd860;
+  --text:#0f1b2d;--text-dim:#4d5d77;--text-muted:#7d8ca5;
+  --shadow:0 12px 32px #0f1b2d1a;--shadow-sm:0 1px 2px #0f1b2d10;
+  --grid-line:#0f1b2d08;
+  color-scheme:light;
 }
 html{font-size:14px;scroll-behavior:smooth}
 body{font-family:var(--font-display);background:var(--bg-deepest);color:var(--text);min-height:100vh;overflow-x:hidden}
@@ -30,33 +46,73 @@ a{color:var(--cyan);text-decoration:none}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:var(--cyan-dim)}
 
-/* ── Login ── */
-.login-page{display:flex;align-items:center;justify-content:center;min-height:100vh;
-  background:radial-gradient(ellipse at 30% 20%,#0a1e3d 0%,var(--bg-deepest) 70%)}
-.login-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);
-  padding:48px 40px;width:420px;max-width:95vw;box-shadow:var(--shadow);position:relative;overflow:hidden}
-.login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  background:linear-gradient(90deg,var(--cyan),var(--purple),var(--cyan))}
-.login-logo{text-align:center;margin-bottom:32px}
-.login-logo h1{font-size:1.8rem;font-weight:800;letter-spacing:-0.03em;
-  background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.login-logo p{color:var(--text-dim);font-size:.85rem;margin-top:6px;font-family:var(--font-mono)}
-.form-group{margin-bottom:20px}
-.form-group label{display:block;font-size:.75rem;font-weight:600;color:var(--text-dim);
-  text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
-.form-group input{width:100%;padding:12px 16px;background:var(--bg-input);border:1px solid var(--border);
-  border-radius:var(--radius-sm);color:var(--text);font-family:var(--font-mono);font-size:.9rem;
-  transition:border-color .2s}
-.form-group input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-glow)}
-.login-btn{width:100%;padding:14px;border:none;border-radius:var(--radius-sm);
-  background:linear-gradient(135deg,var(--cyan),#0090ff);color:#fff;font-family:var(--font-display);
-  font-weight:700;font-size:1rem;cursor:pointer;transition:transform .15s,box-shadow .2s;
-  text-transform:uppercase;letter-spacing:.06em}
-.login-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px var(--cyan-glow)}
-.login-error{color:var(--red);font-size:.8rem;text-align:center;margin-top:12px;min-height:20px}
-.login-hint{text-align:center;margin-top:20px;padding:12px;background:var(--bg-deep);
-  border-radius:var(--radius-sm);font-family:var(--font-mono);font-size:.75rem;color:var(--text-dim)}
+/* ── Landing ── */
+.landing{position:relative;min-height:100vh;display:flex;flex-direction:column;overflow:hidden;
+  background:radial-gradient(1200px 600px at 15% -10%,#0d2a52 0%,transparent 60%),radial-gradient(900px 500px at 100% 100%,#2a1a5a40 0%,transparent 60%),var(--bg-deepest)}
+:root[data-theme="light"] .landing{background:radial-gradient(1200px 600px at 15% -10%,#d6e8ff 0%,transparent 60%),radial-gradient(900px 500px at 100% 100%,#ece4ff 0%,transparent 60%),var(--bg-deepest)}
+.landing-bg{position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+  background-size:48px 48px;mask-image:radial-gradient(ellipse at 50% 30%,#000 30%,transparent 75%)}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.35;animation:drift 18s ease-in-out infinite alternate}
+.orb.o1{width:520px;height:520px;left:-140px;top:-160px;background:var(--cyan)}
+.orb.o2{width:420px;height:420px;right:-120px;bottom:-140px;background:var(--purple);animation-delay:-9s}
+@keyframes drift{from{transform:translate(0,0)}to{transform:translate(40px,30px)}}
+.landing-nav{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:18px 40px;max-width:1240px;width:100%;margin:0 auto}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;letter-spacing:-.02em;color:var(--text)}
+.brand span{color:var(--cyan)}
+.brand .logo,.topbar-brand .logo{width:26px;height:26px;display:inline-flex;color:var(--cyan)}
+.brand .logo svg,.topbar-brand .logo svg{width:100%;height:100%}
+.landing-nav-right{display:flex;align-items:center;gap:10px}
+.hero{position:relative;z-index:2;flex:1;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(360px,440px);gap:56px;align-items:center;
+  max-width:1240px;width:100%;margin:0 auto;padding:32px 40px 56px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:99px;border:1px solid var(--border);
+  background:var(--bg-card);font-family:var(--font-mono);font-size:.68rem;color:var(--text-dim);letter-spacing:.04em;text-transform:uppercase}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px #00e67626;animation:pulse 1.6s infinite}
+.hero h1{font-size:clamp(2.2rem,4.6vw,3.6rem);font-weight:800;line-height:1.04;letter-spacing:-.035em;margin:22px 0 18px;max-width:14ch}
+.hero h1 .grad{background:linear-gradient(90deg,var(--cyan),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{font-size:1.02rem;line-height:1.65;color:var(--text-dim);max-width:56ch}
+.hero-stats{display:flex;flex-wrap:wrap;gap:0;margin:28px 0 30px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--bg-card);width:fit-content;max-width:100%}
+.hero-stats>div{display:flex;flex-direction:column;padding:14px 22px;border-right:1px solid var(--border);min-width:120px}
+.hero-stats>div:last-child{border-right:none}
+.hero-stats b{font-family:var(--font-mono);font-size:1.35rem;color:var(--text);letter-spacing:-.02em}
+.hero-stats span{font-size:.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+.feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:640px}
+.feature{padding:16px 18px;border:1px solid var(--border);border-radius:var(--radius);background:linear-gradient(180deg,#ffffff06,transparent),var(--bg-card);transition:transform .2s,border-color .2s}
+.feature:hover{transform:translateY(-2px);border-color:var(--cyan-dim)}
+.feature .f-ico{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:var(--cyan-glow);color:var(--cyan);margin-bottom:12px}
+.feature .f-ico svg{width:18px;height:18px}
+.feature h3{font-size:.92rem;font-weight:700;margin-bottom:4px}
+.feature p{font-size:.78rem;color:var(--text-dim);line-height:1.5}
+.entry-card{position:relative;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px 30px;box-shadow:var(--shadow);overflow:hidden}
+.entry-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--cyan),var(--purple),var(--cyan))}
+.entry-head{display:flex;gap:14px;align-items:center;margin-bottom:24px}
+.entry-shield{width:46px;height:46px;border-radius:12px;background:var(--grad);display:grid;place-items:center;color:#fff;flex-shrink:0;box-shadow:0 8px 20px var(--cyan-glow)}
+.entry-shield svg{width:24px;height:24px}
+.entry-head h2{font-size:1.2rem;font-weight:800;letter-spacing:-.02em}
+.entry-head p{font-size:.78rem;color:var(--text-dim);margin-top:2px}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:.7rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
+.form-group input{width:100%;padding:13px 16px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);
+  font-family:var(--font-display);font-size:.95rem;transition:border-color .2s,box-shadow .2s}
+.form-group input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 4px var(--cyan-glow)}
+.login-btn{width:100%;padding:14px;border:none;border-radius:var(--radius-sm);background:var(--grad);color:#fff;font-family:var(--font-display);
+  font-weight:700;font-size:.95rem;cursor:pointer;transition:transform .15s,box-shadow .2s;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;gap:10px}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px var(--cyan-glow)}
+.kbd{font-family:var(--font-mono);font-size:.68rem;padding:2px 7px;border-radius:5px;background:#ffffff26;border:1px solid #ffffff40}
+.login-error{color:var(--red);font-size:.8rem;text-align:center;margin-top:10px;min-height:18px}
+.entry-meta{display:grid;gap:8px;margin-top:8px;padding:14px 16px;background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-sm)}
+.entry-meta>div{display:flex;justify-content:space-between;gap:12px;font-size:.74rem}
+.entry-meta .k{color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;font-size:.64rem;font-weight:700;padding-top:2px}
+.entry-meta .v{font-family:var(--font-mono);color:var(--text);text-align:right;word-break:break-all}
+.login-hint{text-align:center;margin-top:16px;font-size:.72rem;color:var(--text-muted);line-height:1.6}
 .login-hint code{color:var(--cyan)}
+.landing-foot{position:relative;z-index:2;text-align:center;padding:18px 24px 26px;font-size:.72rem;color:var(--text-muted)}
+.landing-foot a{color:var(--text-dim)}.landing-foot a:hover{color:var(--cyan)}
+.icon-btn{width:36px;height:36px;border-radius:9px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-dim);display:inline-grid;place-items:center;cursor:pointer;transition:all .15s;padding:0}
+.icon-btn svg{width:17px;height:17px}
+.icon-btn:hover{color:var(--cyan);border-color:var(--cyan-dim)}
+.link-btn{padding:8px 14px;font-size:.78rem;font-weight:600;border:1px solid var(--border);border-radius:9px;color:var(--text-dim);background:var(--bg-card);display:inline-flex;align-items:center;gap:6px;transition:all .15s}
+.link-btn:hover{color:var(--cyan);border-color:var(--cyan-dim)}
 
 /* ── App Layout ── */
 .app{display:none;min-height:100vh}
@@ -333,77 +389,221 @@ tr:hover td{background:var(--bg-card-hover)}
 .api-select{background:var(--bg-input);border:1px solid var(--border);color:var(--text);border-radius:var(--radius-sm);padding:5px 8px;font-family:var(--font-mono);font-size:.72rem}
 .page-desc code,.login-hint code,.notif-card code{background:var(--bg-deep);padding:1px 5px;border-radius:3px;color:var(--cyan);font-family:var(--font-mono);font-size:.9em}
 .card-sub{font-size:.72rem;color:var(--text-dim)}
+
+/* ── v2.2 look & feel ── */
+body{background:var(--bg-deepest);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:var(--cyan-glow);color:var(--text)}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+button,input,select,textarea{font-family:inherit}
+.topbar{height:60px;padding:0 20px;background:color-mix(in srgb,var(--bg-deep) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.topbar-left{display:flex;align-items:center;gap:14px;min-width:0}
+.topbar-brand h1{font-size:1.05rem}
+.menu-btn{display:none}
+.feed-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:99px;border:1px solid var(--border);background:var(--bg-card);font-family:var(--font-mono);font-size:.68rem;color:var(--text-dim);white-space:nowrap;max-width:360px;overflow:hidden;text-overflow:ellipsis}
+.feed-pill .glow-dot{margin:0;flex-shrink:0}
+.topbar-right{gap:10px}
+.topbar-user{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;background:var(--bg-card);border:1px solid var(--border)}
+.layout{position:relative}
+.sidebar{position:sticky;top:60px;height:calc(100vh - 60px);min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding:12px 0 0;width:240px;transition:transform .25s ease;scrollbar-width:thin}
+.sidebar-section{margin-bottom:6px}
+.sidebar-section-title{margin-bottom:4px}
+.nav-item{padding:7px 12px;margin:1px 10px;gap:11px;font-size:.84rem;border-radius:9px;white-space:nowrap}
+.nav-item .nav-label{overflow:hidden;text-overflow:ellipsis}
+.nav-item.active{background:linear-gradient(90deg,var(--cyan-glow),transparent 85%);color:var(--cyan)}
+.nav-item.active::before{left:-10px;height:22px;border-radius:0 3px 3px 0}
+.nav-icon{width:27px;height:27px;border-radius:8px;display:inline-grid;place-items:center;background:color-mix(in srgb,var(--text) 6%,transparent);color:var(--text-dim);transition:all .15s;flex-shrink:0}
+.nav-icon svg{width:15px;height:15px}
+.nav-item:hover .nav-icon{color:var(--text)}
+.nav-item.active .nav-icon{background:var(--cyan);color:#041018;box-shadow:0 4px 12px var(--cyan-glow)}
+.nav-badge{min-width:22px;text-align:center}
+.nav-badge:empty,.nav-badge[data-zero="1"]{display:none}
+.sidebar-foot{margin-top:auto;padding:14px 18px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:.7rem;color:var(--text-muted);font-family:var(--font-mono)}
+.sidebar-foot a{color:var(--text-dim)}.sidebar-foot a:hover{color:var(--cyan)}
+.backdrop{display:none;position:fixed;inset:60px 0 0;background:#00000080;z-index:90;backdrop-filter:blur(2px)}
+.main{max-height:calc(100vh - 60px);padding:28px 32px 48px}
+.page.active{animation:pageIn .28s ease both}
+@keyframes pageIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.page-title{font-size:1.65rem;letter-spacing:-.025em;font-weight:800}
+.page-desc{max-width:78ch;line-height:1.55;margin-bottom:22px}
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.card{box-shadow:var(--shadow-sm);background:linear-gradient(180deg,#ffffff04,transparent 40%),var(--bg-card);transition:border-color .2s}
+.card:hover{border-color:color-mix(in srgb,var(--border) 40%,var(--cyan-dim))}
+.card-title{display:inline-flex;align-items:center;gap:8px;letter-spacing:-.01em}
+.stat-card{padding:20px 22px;box-shadow:var(--shadow-sm);transition:transform .2s,border-color .2s,box-shadow .2s;background:linear-gradient(180deg,#ffffff05,transparent 50%),var(--bg-card)}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.stat-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;background:var(--text-muted);opacity:.9}
+.stat-card.cyan::before{background:var(--cyan)}.stat-card.red::before{background:var(--red)}.stat-card.orange::before{background:var(--orange)}
+.stat-card.green::before{background:var(--green)}.stat-card.purple::before{background:var(--purple)}
+.stat-card::after{width:120px;height:120px;filter:blur(50px);opacity:.18;top:-30px;right:-30px}
+.stat-value{font-size:2.1rem;line-height:1.1}
+.table-wrap{border:1px solid var(--border);border-radius:var(--radius-sm);overflow:auto}
+table{font-size:.79rem}
+th{position:sticky;top:0;z-index:1;background:var(--bg-deep)}
+tbody tr:nth-child(even) td{background:#ffffff02}
+tr:last-child td{border-bottom:none}
+td{padding:11px 12px}
+.feed-container{max-height:520px;padding:6px;background:var(--bg-deep)}
+.feed-row{border-radius:6px;border-bottom:none;border-left:2px solid transparent;margin-bottom:2px;transition:background .15s}
+.feed-row:hover{background:var(--bg-card)}
+.feed-row .badge{font-size:.58rem;padding:2px 7px}
+.badge{letter-spacing:.03em}
+.btn,.login-btn,.scan-btn{box-shadow:0 4px 14px #0090ff26}
+.btn:hover,.scan-btn:hover{box-shadow:0 8px 22px var(--cyan-glow)}
+.btn-sm{border-radius:8px;padding:7px 13px;font-weight:600}
+.btn-sm:hover{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-glow)}
+.act-btn{border-radius:6px;padding:4px 9px}
+.api-select,.notif-field input,.bulk-textarea,.scanner-input{transition:border-color .2s,box-shadow .2s}
+.api-select:focus,.notif-field input:focus,.bulk-textarea:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-glow)}
+.scanner-input{padding:15px 18px;font-size:.95rem;border-radius:10px}
+.scan-btn{border-radius:10px;padding:14px 26px;display:inline-flex;align-items:center;gap:8px}
+.empty-state{border:1px dashed var(--border);border-radius:var(--radius);padding:44px 20px;background:var(--bg-deep)}
+.empty-state .ico{opacity:.5;font-size:2rem}
+.empty-state .title{font-weight:700}
+.gauge{--val:0;--c:var(--cyan);width:104px;height:104px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;
+  background:conic-gradient(var(--c) calc(var(--val) * 1%),var(--bg-deep) 0);box-shadow:0 0 0 1px var(--border),0 0 28px color-mix(in srgb,var(--c) 35%,transparent);animation:gaugeIn .7s ease both}
+@keyframes gaugeIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+.gauge-in{width:82px;height:82px;border-radius:50%;background:var(--bg-card);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gauge-num{font-family:var(--font-mono);font-size:1.9rem;font-weight:800;line-height:1;color:var(--c);letter-spacing:-.04em}
+.gauge-lbl{font-size:.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-top:3px}
+.indicator-list li{display:flex;gap:10px;align-items:baseline;border-radius:8px;border-left-width:3px;transition:background .15s;flex-wrap:wrap}
+.indicator-list li strong{font-family:var(--font-mono);font-size:.72rem;color:var(--text)}
+.indicator-list li .ind-detail{flex:1;min-width:200px;color:var(--text-dim)}
+.indicator-list li .ind-w{font-family:var(--font-mono);font-size:.7rem;color:var(--text-muted);padding:1px 7px;border-radius:99px;background:color-mix(in srgb,var(--text) 6%,transparent)}
+.indicator-list li:hover{background:var(--bg-card-hover)}
+.toast{border-radius:10px;padding:13px 18px 13px 16px;display:flex;align-items:center;gap:10px;font-weight:500;border-left-width:4px;visibility:hidden;opacity:0;transform:translateY(200%);transition:transform .25s cubic-bezier(.4,0,.2,1),opacity .2s,visibility 0s .25s}
+.toast.show{visibility:visible;opacity:1;transform:none;transition:transform .25s cubic-bezier(.4,0,.2,1),opacity .2s,visibility 0s}
+.toast::before{content:'i';width:20px;height:20px;border-radius:50%;background:var(--cyan);color:#041018;font-weight:800;font-size:.72rem;display:grid;place-items:center;flex-shrink:0;font-family:var(--font-mono)}
+.toast.ok::before{content:'✓';background:var(--green)}
+.toast.crit::before{content:'!';background:var(--red);color:#fff}
+.perm-card{border-radius:8px;transition:transform .15s,border-color .15s}
+.perm-card:hover{transform:translateY(-1px);border-color:var(--cyan-dim)}
+.cert-card,.record-list,.scan-progress{border-radius:8px}
+.notif-card{box-shadow:var(--shadow-sm)}
+.chart-area{border-radius:var(--radius-sm)}
+.chart-bar{border-radius:6px 6px 2px 2px;box-shadow:0 0 14px #00000030}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+:root[data-theme="light"] .nav-item.active .nav-icon{color:#fff}
+:root[data-theme="light"] .toast::before{color:#fff}
+:root[data-theme="light"] .feed-row{border-bottom-color:transparent}
+:root[data-theme="light"] .feature,:root[data-theme="light"] .card,:root[data-theme="light"] .stat-card{background:var(--bg-card)}
+:root[data-theme="light"] .badge.critical{background:#d81b4514}:root[data-theme="light"] .badge.high{background:#c96a0014}
+:root[data-theme="light"] .badge.medium{background:#a86f0014}:root[data-theme="light"] .badge.low{background:#0b9a5514}
+:root[data-theme="light"] .kbd{background:#ffffff33}
+@media(max-width:1180px){.hero{grid-template-columns:1fr;gap:32px;padding-top:12px}.entry-card{max-width:520px}.hero h1{max-width:none}}
+@media(max-width:1024px){.grid-2{grid-template-columns:1fr}.topbar-user{display:none}}
+@media(max-width:768px){
+  .landing-nav{padding:14px 18px}.hero{padding:8px 18px 36px}.feature-grid{grid-template-columns:1fr 1fr}.hero-stats>div{min-width:0;flex:1 1 40%;padding:12px 14px}
+  .topbar{padding:0 12px;height:56px}.menu-btn{display:inline-grid}.feed-pill{display:none}.topbar-badge{display:none}.mode-badge{display:none}
+  .sidebar{display:flex;position:fixed;top:56px;left:0;height:calc(100vh - 56px);z-index:95;transform:translateX(-105%);box-shadow:var(--shadow)}
+  .sidebar.open{transform:none}.backdrop.show{display:block;top:56px}
+  .main{max-height:none;padding:18px 16px 40px}.page-title{font-size:1.35rem}
+  .stat-value{font-size:1.7rem}.stats-grid{gap:12px}.feed-container{max-height:60vh}
+  .gauge{width:84px;height:84px}.gauge-in{width:66px;height:66px}.gauge-num{font-size:1.5rem}
+  .toast{left:12px;right:12px;bottom:12px;max-width:none}
+}
+@media(max-width:480px){.feature-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr 1fr}.hero h1{font-size:2rem}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
 
-<!-- ═══════════ LOGIN / LANDING ═══════════ -->
-<div id="loginPage" class="login-page">
-  <div class="login-box">
-    <div class="login-logo">
-      <h1>🛡️ KWTCyberWatch</h1>
-      <p>Kuwait Phishing Detection &amp; Brand Protection</p>
+<!-- ═══════════ LANDING ═══════════ -->
+<div id="loginPage" class="landing">
+  <div class="landing-bg"></div><span class="orb o1"></span><span class="orb o2"></span>
+  <header class="landing-nav">
+    <div class="brand"><span class="logo" data-icon="shield"></span>KWT<span>CyberWatch</span></div>
+    <div class="landing-nav-right">
+      <button class="icon-btn theme-btn" onclick="toggleTheme()" title="Toggle light / dark" aria-label="Toggle theme" data-icon="theme"></button>
+      <a class="link-btn" href="https://github.com/SiteQ8/KWTCyberWatch" target="_blank" rel="noopener">GitHub <span data-icon="external" style="display:inline-flex;width:12px;height:12px"></span></a>
     </div>
-    <div class="form-group">
-      <label>Analyst name (shown on triage actions)</label>
-      <input type="text" id="analystName" placeholder="e.g. Ali" autocomplete="off">
-    </div>
-    <button class="login-btn" onclick="enterDashboard()" id="enterBtn">Open Dashboard</button>
-    <div class="login-error" id="loginError"></div>
-    <div class="login-hint" id="loginHint">
-      Everything on this page runs for real in your browser: the <code>v2.2</code> detection engine (26 Kuwaiti brand profiles, IDN/Arabic aware),
-      a live <code>CertStream</code> Certificate Transparency feed, DNS-over-HTTPS, crt.sh and RDAP lookups. Results are stored locally in IndexedDB; nothing is sent to a server.
-    </div>
-    <div id="apiHint" style="display:none;margin-top:10px;padding:10px;background:rgba(0,212,255,.08);border:1px solid var(--cyan-dim);border-radius:var(--radius-sm);font-size:.72rem;color:var(--cyan)"></div>
-  </div>
+  </header>
+  <main class="hero">
+    <section class="hero-copy">
+      <div class="eyebrow"><span class="live-dot"></span> Live · runs entirely in your browser</div>
+      <h1>Phishing detection &amp; brand protection for <span class="grad">Kuwait</span></h1>
+      <p class="lede">Watch Certificate Transparency in real time, hunt typosquats of Kuwaiti banks, telecoms and government services, and triage alerts — with the full detection engine running client-side. Nothing leaves your browser.</p>
+      <div class="hero-stats">
+        <div><b id="lsBrands">26</b><span>brand profiles</span></div>
+        <div><b id="lsKeywords">—</b><span>feed keywords</span></div>
+        <div><b id="lsSuffixes">—</b><span>known suffixes</span></div>
+        <div><b>STIX 2.1</b><span>export</span></div>
+      </div>
+      <div class="feature-grid">
+        <div class="feature"><div class="f-ico" data-icon="certstream"></div><h3>Live CertStream</h3><p>Every newly logged certificate is matched and scored the moment it appears.</p></div>
+        <div class="feature"><div class="f-ico" data-icon="squatgen"></div><h3>Typosquat Hunter</h3><p>Generate look-alike domains and resolve them live over DNS-over-HTTPS.</p></div>
+        <div class="feature"><div class="f-ico" data-icon="threatintel"></div><h3>Real enrichment</h3><p>crt.sh history, RDAP registration data and URLhaus reputation, fetched directly.</p></div>
+        <div class="feature"><div class="f-ico" data-icon="alerts"></div><h3>Alert triage</h3><p>Lifecycle, one-click allowlisting, CSV and STIX 2.1 export — stored locally.</p></div>
+      </div>
+    </section>
+    <aside class="entry-card">
+      <div class="entry-head"><div class="entry-shield" data-icon="shield"></div><div><h2>Open the console</h2><p>Your workspace lives in this browser only.</p></div></div>
+      <div class="form-group">
+        <label for="analystName">Analyst name</label>
+        <input type="text" id="analystName" placeholder="e.g. Ali" autocomplete="off" onkeydown="if(event.key==='Enter')enterDashboard()">
+      </div>
+      <button class="login-btn" onclick="enterDashboard()" id="enterBtn">Open Dashboard <span class="kbd">↵</span></button>
+      <div class="login-error" id="loginError"></div>
+      <div class="entry-meta">
+        <div><span class="k">Engine</span><span class="v" id="lsVersion">v2.2.0 · IDN / Arabic aware</span></div>
+        <div><span class="k">Storage</span><span class="v">IndexedDB — local only</span></div>
+        <div><span class="k">Feed</span><span class="v">wss://certstream.calidog.io</span></div>
+        <div><span class="k">Lookups</span><span class="v">dns.google · crt.sh · rdap.org · URLhaus</span></div>
+      </div>
+      <div id="apiHint" style="display:none;margin-top:10px;padding:10px;background:rgba(0,212,255,.08);border:1px solid var(--cyan-dim);border-radius:var(--radius-sm);font-size:.72rem;color:var(--cyan)"></div>
+      <div class="login-hint" id="loginHint">The JavaScript engine is parity-tested against the Python engine · MIT licensed · <code>v2.2</code></div>
+    </aside>
+  </main>
+  <footer class="landing-foot">Built by Ali AlEnezi (SiteQ8) · <a href="https://github.com/SiteQ8/KWTCyberWatch" target="_blank" rel="noopener">Source on GitHub</a> · <a href="https://github.com/SiteQ8/KWTCyberWatch#-quick-start" target="_blank" rel="noopener">Self-host with the API</a></footer>
 </div>
 
 <!-- ═══════════ MAIN APP ═══════════ -->
 <div id="app" class="app">
   <div class="topbar">
-    <div class="topbar-brand">
-      <h1>🛡️ KWT<span>CyberWatch</span></h1>
-      <span class="topbar-badge" id="versionBadge">v2.2.0</span>
-      <span style="display:flex;align-items:center;margin-left:12px;font-size:.75rem;color:var(--text-dim)">
-        <span class="glow-dot" id="feedDot"></span><span id="feedStatusText">CertStream: connecting…</span>
-      </span>
+    <div class="topbar-left">
+      <button class="icon-btn menu-btn" onclick="toggleSidebar()" aria-label="Open menu" data-icon="menu"></button>
+      <div class="topbar-brand"><span class="logo" data-icon="shield"></span><h1>KWT<span>CyberWatch</span></h1><span class="topbar-badge" id="versionBadge">v2.2.0</span></div>
+      <span class="feed-pill" id="feedPill" title="Live Certificate Transparency feed"><span class="glow-dot" id="feedDot"></span><span id="feedStatusText">CertStream: connecting…</span></span>
     </div>
     <div class="topbar-right">
-      <span class="topbar-user">Analyst <strong id="currentUser">—</strong><span class="mode-badge live pulse-dot" id="modeBadge">LOCAL ENGINE</span></span>
+      <span class="topbar-user">Analyst <strong id="currentUser">—</strong></span>
+      <span class="mode-badge live pulse-dot" id="modeBadge">LOCAL ENGINE</span>
+      <button class="icon-btn theme-btn" onclick="toggleTheme()" title="Toggle light / dark" aria-label="Toggle theme" data-icon="theme"></button>
       <button class="btn-sm" onclick="leaveDashboard()">Exit</button>
     </div>
   </div>
 
   <div class="layout">
-    <nav class="sidebar">
+    <div class="backdrop" id="backdrop" onclick="toggleSidebar(false)"></div>
+    <nav class="sidebar" id="sidebar">
       <div class="sidebar-section">
         <div class="sidebar-section-title">Main</div>
-        <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard',this)"><span class="nav-icon">📊</span> Dashboard</div>
-        <div class="nav-item" data-page="certstream" onclick="showPage('certstream',this)"><span class="nav-icon">📡</span> CertStream Live <span class="nav-badge" id="feedCount">0</span></div>
-        <div class="nav-item" data-page="scanner" onclick="showPage('scanner',this)"><span class="nav-icon">🔍</span> Domain Scanner</div>
-        <div class="nav-item" data-page="bulk" onclick="showPage('bulk',this)"><span class="nav-icon">📋</span> Bulk Scanner</div>
-        <div class="nav-item" data-page="squatgen" onclick="showPage('squatgen',this)"><span class="nav-icon">🧬</span> Typosquat Hunter</div>
+        <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard',this)"><span class="nav-icon" data-icon="dashboard"></span> Dashboard</div>
+        <div class="nav-item" data-page="certstream" onclick="showPage('certstream',this)"><span class="nav-icon" data-icon="certstream"></span> CertStream Live <span class="nav-badge" id="feedCount">0</span></div>
+        <div class="nav-item" data-page="scanner" onclick="showPage('scanner',this)"><span class="nav-icon" data-icon="scanner"></span> Domain Scanner</div>
+        <div class="nav-item" data-page="bulk" onclick="showPage('bulk',this)"><span class="nav-icon" data-icon="bulk"></span> Bulk Scanner</div>
+        <div class="nav-item" data-page="squatgen" onclick="showPage('squatgen',this)"><span class="nav-icon" data-icon="squatgen"></span> Typosquat Hunter</div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-section-title">Intelligence</div>
-        <div class="nav-item" data-page="threatintel" onclick="showPage('threatintel',this)"><span class="nav-icon">🧠</span> Domain Intel</div>
-        <div class="nav-item" data-page="ctlog" onclick="showPage('ctlog',this)"><span class="nav-icon">📜</span> CT Log Explorer</div>
-        <div class="nav-item" data-page="dnslookup" onclick="showPage('dnslookup',this)"><span class="nav-icon">🌐</span> DNS Lookup</div>
-        <div class="nav-item" data-page="rdap" onclick="showPage('rdap',this)"><span class="nav-icon">📇</span> RDAP / WHOIS</div>
-        <div class="nav-item" data-page="history" onclick="showPage('history',this)"><span class="nav-icon">📚</span> Scan History</div>
+        <div class="nav-item" data-page="threatintel" onclick="showPage('threatintel',this)"><span class="nav-icon" data-icon="threatintel"></span> Domain Intel</div>
+        <div class="nav-item" data-page="ctlog" onclick="showPage('ctlog',this)"><span class="nav-icon" data-icon="ctlog"></span> CT Log Explorer</div>
+        <div class="nav-item" data-page="dnslookup" onclick="showPage('dnslookup',this)"><span class="nav-icon" data-icon="dnslookup"></span> DNS Lookup</div>
+        <div class="nav-item" data-page="rdap" onclick="showPage('rdap',this)"><span class="nav-icon" data-icon="rdap"></span> RDAP / WHOIS</div>
+        <div class="nav-item" data-page="history" onclick="showPage('history',this)"><span class="nav-icon" data-icon="history"></span> Scan History</div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-section-title">Protection</div>
-        <div class="nav-item" data-page="brands" onclick="showPage('brands',this)"><span class="nav-icon">🏦</span> Brand Monitor</div>
-        <div class="nav-item" data-page="alerts" onclick="showPage('alerts',this)"><span class="nav-icon">🚨</span> Alerts <span class="nav-badge" id="alertCount">0</span></div>
-        <div class="nav-item" data-page="sightings" onclick="showPage('sightings',this)"><span class="nav-icon">🎯</span> Sightings <span class="nav-badge" id="sightingCount">0</span></div>
+        <div class="nav-item" data-page="brands" onclick="showPage('brands',this)"><span class="nav-icon" data-icon="brands"></span> Brand Monitor</div>
+        <div class="nav-item" data-page="alerts" onclick="showPage('alerts',this)"><span class="nav-icon" data-icon="alerts"></span> Alerts <span class="nav-badge" id="alertCount">0</span></div>
+        <div class="nav-item" data-page="sightings" onclick="showPage('sightings',this)"><span class="nav-icon" data-icon="sightings"></span> Sightings <span class="nav-badge" id="sightingCount">0</span></div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-section-title">System</div>
-        <div class="nav-item" data-page="analytics" onclick="showPage('analytics',this)"><span class="nav-icon">📈</span> Analytics</div>
-        <div class="nav-item" data-page="notifications" onclick="showPage('notifications',this)"><span class="nav-icon">🔔</span> Notifications</div>
-        <div class="nav-item" data-page="settings" onclick="showPage('settings',this)"><span class="nav-icon">⚙️</span> Settings</div>
+        <div class="nav-item" data-page="analytics" onclick="showPage('analytics',this)"><span class="nav-icon" data-icon="analytics"></span> Analytics</div>
+        <div class="nav-item" data-page="notifications" onclick="showPage('notifications',this)"><span class="nav-icon" data-icon="notifications"></span> Notifications</div>
+        <div class="nav-item" data-page="settings" onclick="showPage('settings',this)"><span class="nav-icon" data-icon="settings"></span> Settings</div>
       </div>
+      <div class="sidebar-foot"><a href="https://github.com/SiteQ8/KWTCyberWatch" target="_blank" rel="noopener">GitHub ↗</a><span id="sbVersion">v2.2.0</span></div>
     </nav>
 
     <div class="main">
@@ -419,7 +619,7 @@ tr:hover td{background:var(--bg-card-hover)}
           <div class="stat-card green"><div class="stat-label">Brands Protected</div><div class="stat-value green" id="statBrands">26</div><div class="stat-sub" id="statBrandsSub">Kuwait banking, telecom, government</div></div>
           <div class="stat-card purple"><div class="stat-label">Domains Analysed</div><div class="stat-value purple" id="statDomains">0</div><div class="stat-sub" id="statDomainsSub">0 live typosquats</div></div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div class="grid-2">
           <div class="card">
             <div class="card-header"><span class="card-title">🔴 Highest-risk Domains</span><span class="card-sub" id="recentThreatsSub">from your scans and the live feed</span></div>
             <div class="table-wrap"><table><thead><tr><th>Domain</th><th>Signal</th><th>Score</th><th>When</th></tr></thead><tbody id="recentThreats"></tbody></table></div>
@@ -663,7 +863,7 @@ tr:hover td{background:var(--bg-card-hover)}
           <div class="stat-card orange"><div class="stat-label">Feed matches (7 days)</div><div class="stat-value orange" id="anCerts">0</div></div>
           <div class="stat-card green"><div class="stat-label">False-positive rate</div><div class="stat-value green" id="anFpRate">—</div></div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div class="grid-2">
           <div class="card"><div class="card-header"><span class="card-title">📈 Daily activity (scans + alerts)</span></div><div class="chart-area"><div class="chart-bars" id="weeklyChart"></div></div></div>
           <div class="card"><div class="card-header"><span class="card-title">🎯 Most-targeted brands</span></div><div class="chart-area"><div class="chart-bars" id="brandChart"></div></div></div>
         </div>
@@ -700,7 +900,7 @@ tr:hover td{background:var(--bg-card-hover)}
       <div id="page-settings" class="page">
         <h2 class="page-title">Settings</h2>
         <p class="page-desc">Everything here is stored locally and applied immediately to the engine and the live feed.</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div class="grid-2">
           <div class="card">
             <div class="card-header"><span class="card-title">🔑 CertStream Keywords</span><button class="btn-sm" onclick="resetKeywords()">Reset defaults</button></div>
             <div id="keywordList" style="font-family:var(--font-mono);font-size:.8rem;line-height:2"></div>
@@ -713,7 +913,7 @@ tr:hover td{background:var(--bg-card-hover)}
             <div style="display:flex;gap:8px;margin-top:10px"><input class="api-select" id="newAllow" placeholder="domain (subdomains included)" style="flex:1" onkeydown="if(event.key==='Enter')addAllowlist()"><button class="btn-sm" onclick="addAllowlist()">Add</button></div>
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div class="grid-2">
           <div class="card">
             <div class="card-header"><span class="card-title">🏦 Custom brand profile</span></div>
             <div class="notif-field"><label>Name</label><input id="cbName" placeholder="My Bank"></div>
