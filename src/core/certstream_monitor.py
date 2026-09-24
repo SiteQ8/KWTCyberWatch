@@ -1,29 +1,47 @@
 #!/usr/bin/env python3
 """
 KWTCyberWatch - CertStream Monitor
-Real-time Certificate Transparency log monitoring for suspicious domain detection.
+
+Real-time Certificate Transparency log monitoring. Every certificate seen
+by CertStream is matched against the configured keywords; matching
+hostnames are scored, de-duplicated per certificate (a certificate with
+``example.com`` and ``*.example.com`` yields one event) and handed to the
+registered callbacks.
+
+Short keywords such as ``kw`` or ``q8`` only match whole tokens or the TLD
+so ``hawkwind.com`` is not reported for ``kw``. Statistics are persisted to
+the database heartbeat so the API can show live monitor status even though
+the monitor runs in another process.
 """
 
-import re
+from __future__ import annotations
+
 import json
 import logging
+import re
 import time
-import hashlib
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import List, Dict, Optional, Callable
-from dataclasses import dataclass, asdict
+from typing import Any, Callable, Dict, List, Optional
 
-try:
+from src.core.constants import tld_risk
+from src.utils.domain import parse_domain, shannon_entropy
+
+try:  # pragma: no cover - optional runtime dependency
     import certstream
-except ImportError:
+except ImportError:  # pragma: no cover
     certstream = None
 
 logger = logging.getLogger("kwtcyberwatch.certstream")
+
+STATE_KEY = "certstream.monitor"
+_TOKEN_SPLIT = re.compile(r"[^a-z0-9]+")
 
 
 @dataclass
 class CertificateEvent:
     """Represents a parsed certificate transparency event."""
+
     domain: str
     all_domains: List[str]
     issuer: str
@@ -36,173 +54,245 @@ class CertificateEvent:
     matched_keywords: List[str]
     risk_score: float = 0.0
     is_wildcard: bool = False
+    issuer_name: str = ""
+    seen: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "domain": self.domain,
+            "all_domains": list(self.all_domains),
+            "issuer": self.issuer,
+            "issuer_name": self.issuer_name,
+            "fingerprint": self.fingerprint,
+            "not_before": self.not_before,
+            "not_after": self.not_after,
+            "serial_number": self.serial_number,
+            "source": self.source,
+            "timestamp": self.timestamp,
+            "matched_keywords": list(self.matched_keywords),
+            "risk_score": self.risk_score,
+            "is_wildcard": self.is_wildcard,
+        }
 
 
 class CertStreamMonitor:
-    """
-    Monitors Certificate Transparency logs via CertStream for suspicious
-    domains matching configurable keyword patterns.
-    """
+    """Monitors Certificate Transparency logs via CertStream for keyword matches."""
 
-    def __init__(self, config):
+    def __init__(self, config: Any, db: Any = None, now: Callable[[], float] = time.time):
         self.config = config
-        self.keywords = config.keywords
-        self.url = config.url
-        self.retry_delay = config.retry_delay
-        self.max_delay = config.max_delay
-        self.callbacks: List[Callable] = []
-        self.stats = {
+        self.db = db
+        self._now = now
+        self.keywords: List[str] = [k.lower().strip() for k in (config.keywords or []) if k]
+        self.url: str = config.url
+        self.retry_delay: int = int(config.retry_delay)
+        self.max_delay: int = int(config.max_delay)
+        self.heartbeat_interval: int = int(getattr(config, "heartbeat_interval", 100) or 100)
+        self.persist_events: bool = bool(getattr(config, "persist_events", True))
+        self.ignore_wildcards: bool = bool(getattr(config, "ignore_wildcards", False))
+        self.min_keyword_length: int = int(getattr(config, "min_keyword_length", 3) or 3)
+        self.callbacks: List[Callable[[CertificateEvent], None]] = []
+        self.stats: Dict[str, Any] = {
+            "status": "stopped",
             "total_certs": 0,
             "matched_certs": 0,
+            "matched_domains": 0,
+            "callback_errors": 0,
+            "reconnects": 0,
+            "errors": 0,
             "start_time": None,
             "last_event": None,
+            "last_heartbeat": None,
+            "keywords": len(self.keywords),
         }
         self._running = False
 
-    def add_callback(self, callback: Callable):
+    # ------------------------------------------------------------------ #
+
+    def add_callback(self, callback: Callable[[CertificateEvent], None]) -> None:
         """Register a callback for matched certificate events."""
         self.callbacks.append(callback)
 
-    def _calculate_risk_score(self, domain: str, cert_data: dict) -> float:
-        """Calculate risk score based on multiple heuristics."""
-        score = 0.0
+    def match_keywords(self, domain: str) -> List[str]:
+        """Keywords that match ``domain`` (token match for short keywords)."""
+        lowered = domain.lower()
+        tokens = set(t for t in _TOKEN_SPLIT.split(lowered) if t)
+        hits: List[str] = []
+        for kw in self.keywords:
+            if len(kw) >= self.min_keyword_length:
+                if kw in lowered:
+                    hits.append(kw)
+            elif kw in tokens:
+                hits.append(kw)
+        return hits
 
-        # Keyword density
-        keyword_hits = sum(1 for kw in self.keywords if kw.lower() in domain.lower())
-        score += min(keyword_hits * 15, 40)
-
-        # Suspicious TLD patterns
-        suspicious_tlds = [".xyz", ".top", ".club", ".online", ".site", ".icu",
-                          ".buzz", ".tk", ".ml", ".ga", ".cf", ".gq"]
-        if any(domain.endswith(tld) for tld in suspicious_tlds):
+    def _calculate_risk_score(
+        self, domain: str, cert_data: Dict[str, Any], hits: List[str]
+    ) -> float:
+        """Heuristic risk score for a matched certificate hostname."""
+        parsed = parse_domain(domain)
+        label = parsed.label or domain.split(".")[0]
+        score = min(len(hits) * 15.0, 40.0)
+        risk = tld_risk(parsed.suffix)
+        if risk == "high":
             score += 20
-
-        # Entropy check (high entropy = random = suspicious)
-        entropy = self._calculate_entropy(domain.split(".")[0])
-        if entropy > 3.5:
-            score += 15
-
-        # Length-based heuristic
-        base_domain = domain.split(".")[0]
-        if len(base_domain) > 20:
+        elif risk == "medium":
             score += 10
-
-        # Hyphen abuse
-        if base_domain.count("-") >= 3:
+        if shannon_entropy(label) > 3.5 and len(label) >= 10:
             score += 15
-
-        # Number padding
-        if re.search(r"\d{4,}", base_domain):
+        if len(label) > 20:
             score += 10
-
-        # Let's Encrypt (common for phishing)
-        issuer = cert_data.get("issuer", {})
-        if "Let's Encrypt" in str(issuer):
+        if label.count("-") >= 3:
+            score += 15
+        if re.search(r"\d{4,}", label):
+            score += 10
+        issuer = json.dumps(cert_data.get("leaf_cert", {}).get("issuer", {})).lower()
+        if "let's encrypt" in issuer or "zerossl" in issuer:
             score += 5
-
-        # Subdomain depth
-        if domain.count(".") >= 4:
+        if parsed.depth >= 4:
             score += 10
-
+        if parsed.hosting_platform:
+            score += 10
         return min(score, 100.0)
 
     @staticmethod
-    def _calculate_entropy(text: str) -> float:
-        """Calculate Shannon entropy of a string."""
-        if not text:
-            return 0.0
-        import math
-        freq = {}
-        for c in text:
-            freq[c] = freq.get(c, 0) + 1
-        length = len(text)
-        return -sum((count / length) * math.log2(count / length)
-                     for count in freq.values())
+    def _issuer_name(issuer: Any) -> str:
+        if isinstance(issuer, dict):
+            return str(issuer.get("O") or issuer.get("CN") or issuer.get("aggregated") or "")
+        return str(issuer or "")
 
-    def _handle_message(self, message, context):
-        """Process incoming CertStream messages."""
+    # ------------------------------------------------------------------ #
+
+    def process_certificate(
+        self, data: Dict[str, Any], source: Optional[str] = None
+    ) -> List[CertificateEvent]:
+        """
+        Match one certificate (the ``data`` part of a CertStream message).
+
+        Returns the events emitted (already dispatched to callbacks).
+        """
+        leaf = data.get("leaf_cert", {}) or {}
+        all_domains = [d for d in (leaf.get("all_domains") or []) if isinstance(d, str)]
+        issuer = leaf.get("issuer", {}) or {}
+        src_name = source or (data.get("source") or {}).get("name", "unknown")
+        events: List[CertificateEvent] = []
+        seen_hosts: set = set()
+
+        for raw in all_domains:
+            is_wildcard = raw.startswith("*.")
+            if is_wildcard and self.ignore_wildcards:
+                continue
+            hostname = parse_domain(raw).hostname
+            if not hostname or hostname in seen_hosts:
+                continue
+            hits = self.match_keywords(hostname)
+            if not hits:
+                continue
+            seen_hosts.add(hostname)
+            event = CertificateEvent(
+                domain=hostname,
+                all_domains=all_domains,
+                issuer=json.dumps(issuer, ensure_ascii=False),
+                fingerprint=leaf.get("fingerprint", "") or "",
+                not_before=str(leaf.get("not_before", "") or ""),
+                not_after=str(leaf.get("not_after", "") or ""),
+                serial_number=str(leaf.get("serial_number", "") or ""),
+                source=str(src_name),
+                timestamp=datetime.now(timezone.utc).isoformat(),
+                matched_keywords=hits,
+                risk_score=self._calculate_risk_score(hostname, data, hits),
+                is_wildcard=is_wildcard,
+                issuer_name=self._issuer_name(issuer),
+            )
+            events.append(event)
+
+        if events:
+            self.stats["matched_certs"] += 1
+            self.stats["matched_domains"] += len(events)
+            self.stats["last_event"] = events[-1].timestamp
+        for event in events:
+            logger.info(
+                "[MATCH] %s | Risk: %.0f | Keywords: %s",
+                event.domain,
+                event.risk_score,
+                event.matched_keywords,
+            )
+            if self.db is not None and self.persist_events:
+                try:
+                    self.db.add_certstream_event(event)
+                except Exception as exc:  # storage must not stop the stream
+                    logger.error("Failed to persist certstream event: %s", exc)
+            for callback in self.callbacks:
+                try:
+                    callback(event)
+                except Exception as exc:
+                    self.stats["callback_errors"] += 1
+                    logger.error("Callback error for %s: %s", event.domain, exc)
+        return events
+
+    def _handle_message(self, message: Dict[str, Any], context: Any = None) -> None:
+        """CertStream message hook."""
         if message.get("message_type") != "certificate_update":
             return
-
         self.stats["total_certs"] += 1
-
         try:
-            leaf = message["data"]["leaf_cert"]
-            all_domains = leaf.get("all_domains", [])
-            issuer = leaf.get("issuer", {})
-            fingerprint = leaf.get("fingerprint", "")
-            not_before = leaf.get("not_before", "")
-            not_after = leaf.get("not_after", "")
-            serial = leaf.get("serial_number", "")
-            source = message["data"].get("source", {}).get("name", "unknown")
+            self.process_certificate(message.get("data", {}) or {})
+        except Exception as exc:
+            self.stats["errors"] += 1
+            logger.debug("Parse error: %s", exc)
+        if self.heartbeat_interval and self.stats["total_certs"] % self.heartbeat_interval == 0:
+            self.heartbeat()
 
-            for domain in all_domains:
-                matched_keywords = [
-                    kw for kw in self.keywords
-                    if kw.lower() in domain.lower()
-                ]
+    def heartbeat(self, status: Optional[str] = None) -> Dict[str, Any]:
+        """Persist the current statistics for the API to display."""
+        if status:
+            self.stats["status"] = status
+        self.stats["last_heartbeat"] = datetime.now(timezone.utc).isoformat()
+        if self.db is not None:
+            try:
+                self.db.set_state(STATE_KEY, self.get_stats())
+            except Exception as exc:
+                logger.error("Failed to persist monitor heartbeat: %s", exc)
+        return self.get_stats()
 
-                if matched_keywords:
-                    risk_score = self._calculate_risk_score(domain, message["data"])
+    # ------------------------------------------------------------------ #
 
-                    event = CertificateEvent(
-                        domain=domain,
-                        all_domains=all_domains,
-                        issuer=json.dumps(issuer),
-                        fingerprint=fingerprint,
-                        not_before=not_before,
-                        not_after=not_after,
-                        serial_number=serial,
-                        source=source,
-                        timestamp=datetime.now(timezone.utc).isoformat(),
-                        matched_keywords=matched_keywords,
-                        risk_score=risk_score,
-                        is_wildcard=domain.startswith("*."),
-                    )
-
-                    self.stats["matched_certs"] += 1
-                    self.stats["last_event"] = event.timestamp
-
-                    logger.info(
-                        f"[MATCH] {domain} | Risk: {risk_score:.0f} | "
-                        f"Keywords: {matched_keywords}"
-                    )
-
-                    for callback in self.callbacks:
-                        try:
-                            callback(event)
-                        except Exception as e:
-                            logger.error(f"Callback error: {e}")
-
-        except (KeyError, TypeError) as e:
-            logger.debug(f"Parse error: {e}")
-
-    def start(self):
+    def start(self) -> None:
         """Start monitoring CertStream with exponential backoff retry."""
         if certstream is None:
             raise ImportError("certstream package not installed: pip install certstream")
 
         self._running = True
         self.stats["start_time"] = datetime.now(timezone.utc).isoformat()
+        self.heartbeat("running")
         retry_delay = self.retry_delay
-
-        logger.info(f"Starting CertStream monitor | Keywords: {len(self.keywords)}")
+        logger.info("Starting CertStream monitor | Keywords: %d | %s", len(self.keywords), self.url)
 
         while self._running:
+            connected_at = self._now()
             try:
-                certstream.listen_for_events(
-                    self._handle_message, url=self.url
-                )
-            except Exception as e:
-                logger.warning(f"CertStream error: {e}. Retry in {retry_delay}s")
-                time.sleep(retry_delay)
-                retry_delay = min(self.max_delay, retry_delay * 2)
+                certstream.listen_for_events(self._handle_message, url=self.url)
+            except Exception as exc:
+                self.stats["errors"] += 1
+                logger.warning("CertStream error: %s. Retry in %ss", exc, retry_delay)
+            if not self._running:
+                break
+            if self._now() - connected_at > 300:
+                retry_delay = self.retry_delay  # a long healthy session resets the backoff
+            self.stats["reconnects"] += 1
+            self.heartbeat("reconnecting")
+            time.sleep(retry_delay)
+            retry_delay = min(self.max_delay, retry_delay * 2)
+        self.heartbeat("stopped")
 
-    def stop(self):
+    def stop(self) -> None:
         """Stop the monitor."""
         self._running = False
+        self.heartbeat("stopped")
         logger.info("CertStream monitor stopped")
 
-    def get_stats(self) -> dict:
+    def get_stats(self) -> Dict[str, Any]:
         """Return monitoring statistics."""
         return dict(self.stats)
+
+
+__all__ = ["CertStreamMonitor", "CertificateEvent", "STATE_KEY"]

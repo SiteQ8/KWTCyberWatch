@@ -49,9 +49,9 @@ pip install -r requirements.txt
 # Run tests
 pytest tests/ -v
 
-# Run linting
-flake8 src/ tests/
-black --check src/ tests/
+# Run linting (settings live in .flake8 and pyproject.toml)
+flake8 src/ tests/ main.py
+black --check src/ tests/ main.py
 ```
 
 ### Code Style
@@ -59,7 +59,7 @@ black --check src/ tests/
 - **Python**: Follow PEP 8, use Black formatter (line length 100)
 - **Type hints**: Required for all public functions
 - **Docstrings**: Google-style docstrings for modules, classes, and functions
-- **Tests**: Minimum 80% coverage for new code
+- **Tests**: Minimum 80% coverage for new code; tests must run offline (mock network calls)
 
 ### Commit Messages
 

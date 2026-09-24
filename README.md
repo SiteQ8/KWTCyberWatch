@@ -4,17 +4,30 @@
     <strong>Kuwait Phishing Detection & Brand Protection Suite</strong>
   </p>
   <p align="center">
-    Real-time Certificate Transparency monitoring, domain squatting detection, brand impersonation alerting, and integrated threat intelligence — purpose-built for Kuwait's digital ecosystem.
+    Real-time Certificate Transparency monitoring, proactive typosquat discovery, IDN/Arabic-aware domain squatting detection, brand impersonation alerting with a full triage lifecycle, and integrated threat intelligence — purpose-built for Kuwait's digital ecosystem.
   </p>
   <p align="center">
-    <a href="#features"><img src="https://img.shields.io/badge/version-2.0.0-00d4ff?style=flat-square" alt="Version"></a>
+    <a href="#-features"><img src="https://img.shields.io/badge/version-2.1.0-00d4ff?style=flat-square" alt="Version"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License"></a>
     <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square" alt="Python"></a>
-    <a href="https://github.com/SiteQ8/KWTCyberWatch/actions"><img src="https://img.shields.io/badge/CI-passing-brightgreen?style=flat-square" alt="CI"></a>
+    <a href="https://github.com/SiteQ8/KWTCyberWatch/actions"><img src="https://img.shields.io/badge/tests-420%2B-brightgreen?style=flat-square" alt="Tests"></a>
     <a href="SECURITY.md"><img src="https://img.shields.io/badge/security-policy-red?style=flat-square" alt="Security"></a>
     <a href="https://github.com/SiteQ8/KWTCyberWatch/issues"><img src="https://img.shields.io/badge/issues-welcome-yellow?style=flat-square" alt="Issues"></a>
   </p>
 </p>
+
+---
+
+## ✨ What's new in 2.1
+
+- **Registrable-domain aware detection** — `login.nbk.com.kw`, `nbk.com.verify-login.tk` and `nbk-login.web.app` are all interpreted correctly thanks to a built-in public-suffix layer covering Kuwait, the GCC and free-hosting platforms.
+- **IDN homograph, mixed-script and Arabic support** — `nbк.com` (Cyrillic *k*) and `بيتك-تحديث.com` are detected; 26 Kuwaiti brands ship with Arabic keywords.
+- **Proactive typosquat watcher** — permutations of every protected brand are resolved on a schedule; a look-alike that goes live raises an alert *before* a certificate is ever issued.
+- **Alert lifecycle** — persisted alerts with `open → investigating → resolved / false_positive`, assignees, notes, history and one-click allowlisting.
+- **Threat intel that works out of the box** — OpenPhish and URLhaus need no key; VirusTotal, URLScan, PhishTank and Google Safe Browsing plug in with one.
+- **SIEM-ready outputs** — STIX 2.1 bundles, CSV exports, Syslog/CEF and Microsoft Teams channels, Prometheus metrics.
+- **Hardened API** — signed bearer tokens, roles, API keys, rate limiting, OpenAPI docs.
+- **400+ offline tests** and a green CI (lint + tests + Docker).
 
 ---
 
@@ -69,106 +82,197 @@
 
 ## 🎯 Features
 
-### Core Detection Engine
-- **CertStream Monitor** — Real-time Certificate Transparency log ingestion with configurable keyword matching, risk scoring, and exponential backoff reconnection
-- **Phishing Detector** — Multi-layered heuristic engine analyzing keywords, brand impersonation, TLD risk, domain structure, Shannon entropy, and IDN/punycode attacks
-- **Domain Squatting Analyzer** — Detects typosquatting (Levenshtein), homoglyph attacks (Unicode confusables), combo-squatting, bitsquatting, vowel-swap, TLD-swap, hyphenation, and subdomain abuse
-- **Brand Protection Monitor** — Pre-configured profiles for 14 Kuwait organizations (NBK, KFH, CBK, Burgan, Gulf Bank, Boubyan, Warba, Zain, Ooredoo, eGov, MOI, Kuwait Airways, KNPC, KPC)
-- **Domain Permutation Generator** — Generates all squatting variants of protected domains for proactive monitoring
+### Detection engine
+- **Domain parsing layer** — eTLD+1 extraction for `com.kw`, `gov.kw`, `edu.kw`, GCC/MENA and global second-level registries, plus 90+ free-hosting / tunnelling platforms (`web.app`, `github.io`, `pages.dev`, `ngrok-free.app`, `duckdns.org` …) that are both parsed as suffixes and flagged as an indicator.
+- **Phishing detector** — weighted layers for lure keywords (English and Arabic), brand impersonation, TLD risk tiers, structure (deep subdomains, hyphen/digit padding, embedded `-com`/`-gov` tokens, fake *ministry*/*gov* wording outside `gov.kw`), Shannon entropy, IDN/mixed-script analysis, free hosting and certificate context (free CA + wildcard). Every verdict explains itself (`explanation`, per-indicator weights, matched brands).
+- **Squatting analyzer** — typosquats (omission, transposition, repetition, insertion, keyboard, vowel swap, bitsquat), homoglyphs, leetspeak (`nbk0nline`), hyphenation (`k-net`), combo-squats (`knetpay`, `moi-fines`), TLD swaps and subdomain abuse. Edit-distance thresholds scale with brand length and short-brand matches require context, so `nbc.com`, `kibana.io`, `mohammed.com` and `pacific.com` stay clean.
+- **Permutation generator** — thousands of technique-tagged candidates per brand across configurable TLDs (`main.py permutations nbk.com --tlds com kw com.kw --resolve`).
 
-### Web Dashboard
-- **Interactive Demo UI** — Full-featured single-page application with login authentication
-- **Real-time CertStream Feed** — Live visualization of matched certificates with risk scoring
-- **Domain Scanner** — On-demand analysis with detailed indicator breakdown and recommendations
-- **Brand Monitor Panel** — Overview of all protected brands with alert counts
-- **Alert Management** — Severity-based alert triage with status tracking
-- **Threat Intelligence View** — Consolidated intel from multiple sources
-- **Analytics Dashboard** — Detection trends, category breakdowns, hourly timelines, and brand targeting statistics
-- **Notification Configuration** — Visual setup for Email, Slack, Telegram, and Webhook integrations
-- **Settings Panel** — Keyword management, detection thresholds, API configuration, and TI API keys
+### Brand protection
+- **26 built-in Kuwait profiles** with aliases, Arabic keywords, industry and priority:
 
-### Notification System
-- **Email** — SMTP with HTML-formatted alert templates
-- **Slack** — Rich Block Kit messages via webhook
-- **Telegram** — Bot API with Markdown formatting
-- **Webhook** — Generic HTTPS endpoint with HMAC-SHA256 signing (SIEM integration)
-- **Central Dispatcher** — Routes alerts to all configured channels with severity filtering
+  | Sector | Brands |
+  |---|---|
+  | Banking & payments | NBK, KFH, CBK (central bank), Al-Tijari (CBK), Burgan, Gulf Bank, Boubyan, Warba, ABK, KIB, Ahli United, **KNET / KPay** |
+  | Telecom | Zain, Ooredoo, stc |
+  | Government | eGov / Sahel, MOI, PACI (Civil ID), MOH, MOE |
+  | Aviation, energy, markets, e-commerce | Kuwait Airways, Jazeera Airways, KNPC, KPC, Boursa Kuwait, Talabat |
 
-### Threat Intelligence Integration
-- VirusTotal API v3
-- URLScan.io
-- PhishTank
-- Google Safe Browsing
-- OpenPhish
-- Shodan (configurable)
+- **Custom profiles** via `brands:` in `config.yaml` (merge with or replace the defaults).
+- **Noise control** — legitimate brand infrastructure is never reported, one alert per (brand, domain) per dedupe window, and a strong match against one brand suppresses weak matches against others.
+- **Alert lifecycle** — persisted with severity, numeric risk score, status, assignee, notes and change history; resolving as `false_positive` can allowlist the domain in the same call.
 
-### REST API
-| Endpoint | Method | Description |
+### Proactive typosquat watcher
+`main.py watch-squats` (or the `kwtcyberwatch-watcher` container) generates permutations of every protected brand, resolves them concurrently and records **sightings** with first/last seen, IPs and a triage status (`new`, `monitoring`, `takedown_requested`, `resolved`, `benign`). New sightings are pushed to the notification channels.
+
+### Threat intelligence & enrichment
+| Source | Key needed | What it adds |
 |---|---|---|
-| `/api/v1/scan/domain` | POST | Analyze a single domain |
-| `/api/v1/scan/bulk` | POST | Bulk scan up to 100 domains |
-| `/api/v1/brands` | GET | List monitored brands |
-| `/api/v1/brands/permutations` | POST | Generate squatting permutations |
-| `/api/v1/alerts` | GET | Retrieve filtered alerts |
-| `/api/v1/stats` | GET | Dashboard statistics |
-| `/api/v1/certstream/status` | GET | Monitor status |
-| `/api/v1/auth/login` | POST | Authentication |
-| `/api/v1/health` | GET | Health check |
+| OpenPhish feed | no | known phishing URLs (cached locally, refreshed hourly) |
+| URLhaus (abuse.ch) | no | malware-distribution hosts |
+| VirusTotal v3 | yes | engine verdicts, categories, reputation |
+| Google Safe Browsing v4 | yes | SOCIAL_ENGINEERING / MALWARE matches |
+| PhishTank | yes | community-verified phish |
+| URLScan.io | yes | historical scans and verdicts |
+
+Plus **RDAP** registration data (registrar, creation date, domain age, abuse contact), DNS records and TLS certificate details — `main.py scan <domain> --intel --enrich` or `GET /api/v1/enrich/<domain>`.
+
+### Notifications
+| Channel | Notes |
+|---|---|
+| Email (SMTP) | HTML template |
+| Slack | Block Kit |
+| Microsoft Teams | MessageCard webhook |
+| Telegram | Bot API, Markdown |
+| Generic webhook | HMAC-SHA256 signature (`X-KCW-Signature`) |
+| Syslog / CEF | UDP or TCP, ArcSight CEF for any SIEM |
+
+Minimum severity, per-domain cooldown de-duplication and delivery statistics are built into the dispatcher (`main.py test-notify` checks every channel).
+
+### Exports & reporting
+- **STIX 2.1** indicator bundles with TLP markings and deterministic IDs (`/api/v1/export/stix`, `main.py export-stix`) for MISP, OpenCTI, Splunk ES, Sentinel.
+- **CSV / JSON** alert exports, **Markdown / JSON** activity reports, **Prometheus** `/metrics`.
+
+### Web dashboard
+The single-page dashboard (`demo/index.html`, also served at `/`) provides login, live CertStream feed, scanner, brand monitor, alerts, threat intel, notification and analytics views. It works stand-alone from the file system in demo mode.
 
 ---
 
 ## 🚀 Quick Start
 
-### Demo (No Installation Required)
-
-Open `demo/index.html` in any browser. Login with:
-- **Username:** `admin`
-- **Password:** `admin`
+### Demo (no installation)
+Open `demo/index.html` in a browser and use the **Demo** button (or `admin` / `admin`).
 
 ### Installation
 
 ```bash
-# Clone the repository
 git clone https://github.com/SiteQ8/KWTCyberWatch.git
 cd KWTCyberWatch
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate
-
-# Install dependencies
+python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 
-# Copy and edit configuration
-cp config.yaml config.local.yaml
-# Edit config.local.yaml with your API keys and settings
+cp config.yaml config.local.yaml      # git-ignored; put keys and webhooks here
+export KCW_ADMIN_PASSWORD='a-strong-password'
+export KCW_API_SECRET='a-long-random-secret'
 ```
 
-### Usage
+### Command line
 
-```bash
-# Start the API server with dashboard
-python main.py api
+| Command | Purpose |
+|---|---|
+| `python main.py api` / `demo` | API server + dashboard on <http://localhost:5000> (docs at `/api/v1/docs`) |
+| `python main.py monitor` | Live CertStream monitoring (`--replay capture.jsonl` to re-process a capture) |
+| `python main.py scan nbk-login.xyz [--json] [--intel] [--enrich]` | Analyse one domain |
+| `python main.py bulk domains.txt [--csv out.csv]` | Analyse a list (or `-` for stdin) |
+| `python main.py permutations nbk.com --tlds com kw com.kw --resolve` | Generate and resolve squatting candidates |
+| `python main.py watch-squats [--once] [--brand nbk.com]` | Proactive typosquat discovery |
+| `python main.py report [--days 7] [--json] [--out report.md]` | Activity report |
+| `python main.py allowlist list \| add \| remove <domain>` | Manage the allowlist |
+| `python main.py export-stix --out indicators.json` | STIX 2.1 export |
+| `python main.py config [--check]` | Show effective configuration and warnings |
+| `python main.py test-notify` | Send a test alert to every channel |
 
-# Start CertStream real-time monitoring
-python main.py monitor
+```text
+$ python main.py --no-banner scan nbk-secure-login.xyz
 
-# Scan a specific domain
-python main.py scan nbk-secure-login.xyz
+  Scanning: nbk-secure-login.xyz
+  Registrable: nbk-secure-login.xyz   Suffix: xyz   IDN: no
 
-# Start demo mode
-python main.py demo
+  Phishing Detection:
+    Risk Score:  100.0/100 🔴
+    Risk Level:  CRITICAL
+    Categories:  brand_impersonation, keyword_abuse, suspicious_tld
+    Brands:      NBK
+
+  Indicators (7):
+    • phishing_keyword: Lure keyword 'login' in registrable label (+12)
+    • brand_combo: Brand 'nbk' (NBK) combined with secure, login (+35)
+    • brand_priority: NBK is a critical-priority protected brand (+10)
+    • medium_risk_tld: Medium-risk TLD: .xyz (+10)
+    ...
+  Brand Alerts (1):
+    [CRITICAL] National Bank of Kuwait (NBK): Combo-squat targeting ... nbk-secure-login.xyz
 ```
 
 ### Docker
 
 ```bash
-# Build and run
-docker-compose up -d
-
-# API available at http://localhost:5000
-# Monitor runs as a separate service
+docker compose up -d        # api (:5000) + certstream monitor + squat watcher
 ```
+
+Secrets are passed through `KCW_*` environment variables (see `docker-compose.yml`).
+
+---
+
+## 🔌 REST API
+
+Base path `/api/v1`. Read endpoints are open by default (set `api.auth_required: true` to change that); mutating endpoints always need a **bearer token** from `/auth/login` or an `X-API-Key` header.
+
+| Endpoint | Method | Description |
+|---|---|---|
+| `/auth/login` · `/auth/me` | POST · GET | Obtain / inspect a signed token (roles: admin, analyst) |
+| `/scan/domain` | POST | Full analysis; `intel`, `enrich`, `persist` flags |
+| `/scan/bulk` | POST | Up to `max_bulk_domains` hostnames |
+| `/scans/history` | GET | Recent scans |
+| `/brands` · `/brands/permutations` | GET · POST | Profiles with alert counts; technique-tagged permutations |
+| `/alerts` · `/alerts/<id>` | GET · GET/PATCH | Filter, paginate, triage (status, assignee, notes, `allowlist`) |
+| `/alerts/export?format=csv\|json\|stix` | GET | Alert export |
+| `/allowlist` · `/allowlist/<domain>` | GET/POST · DELETE | Allowlist management |
+| `/intel/<domain>` | GET | Threat-intel lookup (`?refresh=1`) |
+| `/enrich/<domain>` | GET | DNS, RDAP, TLS (`?tls=1&whois=1`) |
+| `/squats/sightings` · `/squats/sightings/<domain>` | GET · PATCH | Live typosquats and triage |
+| `/squats/check` | POST | Resolve permutations of one brand now |
+| `/stats` · `/reports/summary?days=7&format=markdown` | GET | Dashboard statistics, activity report |
+| `/export/stix?min_risk=40&tlp=amber` | GET | STIX 2.1 bundle |
+| `/certstream/status` · `/certstream/events` | GET | Monitor heartbeat and recent matches |
+| `/config` | GET | Effective configuration, secrets masked (admin) |
+| `/health` · `/openapi.json` · `/docs` · `/metrics` | GET | Health, OpenAPI 3, Swagger UI, Prometheus |
+
+```bash
+TOKEN=$(curl -s -X POST localhost:5000/api/v1/auth/login \
+  -H 'Content-Type: application/json' -d '{"username":"admin","password":"..."}' | jq -r .token)
+
+curl -X PATCH localhost:5000/api/v1/alerts/BA-1a2b3c4d5e \
+  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  -d '{"status":"false_positive","allowlist":true,"notes":"our marketing microsite"}'
+```
+
+---
+
+## ⚙️ Configuration
+
+`config.yaml` is fully documented. Resolution order: `--config PATH` → `$KCW_CONFIG` → `config.local.yaml` → `config.yaml`; `KCW_*` environment variables override everything.
+
+```yaml
+domain_analysis:
+  allowlist: [marketing-nbk.com]          # never reported
+brands:                                   # extra profiles merged with the built-ins
+  - name: My Bank
+    domains: [mybank.com.kw]
+    keywords: [mybank, my bank kuwait]
+    arabic_keywords: [بنكي]
+    priority: critical
+squat_watcher:
+  tlds: [com, net, kw, com.kw, xyz, top]
+  interval_seconds: 21600
+notifications:
+  min_severity: high
+  teams_enabled: true
+  syslog_enabled: true
+  syslog_host: siem.internal
+api:
+  auth_required: true
+  rate_limit: 300/hour
+```
+
+| Variable | Overrides |
+|---|---|
+| `KCW_API_SECRET`, `KCW_API_KEY`, `KCW_ADMIN_PASSWORD`, `KCW_ANALYST_PASSWORD`, `KCW_AUTH_REQUIRED`, `KCW_RATE_LIMIT`, `KCW_API_HOST`, `KCW_API_PORT` | API |
+| `KCW_VT_API_KEY`, `KCW_URLSCAN_KEY`, `KCW_GSB_KEY`, `KCW_PHISHTANK_KEY`, `KCW_SHODAN_KEY`, `KCW_ABUSEIPDB_KEY` | Threat intel |
+| `KCW_SLACK_WEBHOOK`, `KCW_TEAMS_WEBHOOK`, `KCW_TELEGRAM_TOKEN`, `KCW_TELEGRAM_CHAT`, `KCW_WEBHOOK_URL`, `KCW_WEBHOOK_SECRET`, `KCW_SMTP_PASSWORD`, `KCW_MIN_SEVERITY` | Notifications |
+| `KCW_DB_PATH`, `KCW_DATA_DIR`, `KCW_LOG_LEVEL`, `KCW_CERTSTREAM_URL`, `KCW_CONFIG` | Storage, logging, config file |
+
+`python main.py config --check` prints warnings for insecure defaults (default secret, demo password, debug mode, misconfigured channels).
 
 ---
 
@@ -176,103 +280,71 @@ docker-compose up -d
 
 ```
 KWTCyberWatch/
-├── main.py                          # CLI entry point
-├── config.yaml                      # Configuration file
-├── requirements.txt                 # Python dependencies
-├── setup.py                         # Package setup
-├── Dockerfile                       # Container image
-├── docker-compose.yml               # Multi-service deployment
+├── main.py                          # CLI entry point (api, monitor, scan, bulk, watch-squats, report ...)
+├── config.yaml                      # Documented configuration
+├── pyproject.toml / .flake8         # black (100 cols), pytest, flake8 settings
 ├── src/
+│   ├── __init__.py                  # __version__
 │   ├── core/
-│   │   ├── certstream_monitor.py    # CertStream CT log monitor
-│   │   ├── phishing_detector.py     # Multi-layered phishing detection
-│   │   ├── domain_analyzer.py       # Domain squatting analysis
-│   │   ├── brand_monitor.py         # Brand protection engine
-│   │   └── threat_intel.py          # Threat intelligence aggregator
+│   │   ├── constants.py             # keyword lists, TLD risk tiers, Arabic lures
+│   │   ├── phishing_detector.py     # multi-layer scoring engine
+│   │   ├── domain_analyzer.py       # squatting techniques & permutation generator
+│   │   ├── brand_monitor.py         # 26 Kuwait brand profiles, alert generation
+│   │   ├── squat_watcher.py         # proactive permutation resolver
+│   │   ├── certstream_monitor.py    # CT log monitor with heartbeat & persistence
+│   │   ├── threat_intel.py          # OpenPhish, URLhaus, VT, GSB, PhishTank, URLScan
+│   │   ├── engine.py                # shared wiring + scan pipeline (API & CLI)
+│   │   ├── reports.py               # summaries, Markdown, CSV, Prometheus
+│   │   └── stix_export.py           # STIX 2.1 bundles
 │   ├── api/
-│   │   └── app.py                   # Flask REST API server
-│   ├── notifications/
-│   │   └── dispatcher.py            # Email, Slack, Telegram, Webhook
+│   │   ├── app.py                   # Flask factory & routes
+│   │   ├── auth.py                  # signed tokens, users, API keys
+│   │   ├── ratelimit.py             # sliding-window limiter
+│   │   └── openapi.py               # OpenAPI 3 document + Swagger UI
+│   ├── notifications/dispatcher.py  # Email, Slack, Teams, Telegram, Webhook, Syslog/CEF
 │   ├── utils/
-│   │   └── network.py               # DNS, WHOIS, SSL utilities
-│   ├── models/
-│   │   └── database.py              # SQLite storage layer
-│   └── config/
-│       └── settings.py              # Configuration management
-├── demo/
-│   └── index.html                   # Interactive web dashboard
-├── tests/
-│   └── test_core.py                 # Test suite
-├── docs/
-│   └── screenshots/                 # Dashboard screenshots
-├── scripts/
-│   └── screenshots.py               # Screenshot automation
-├── .github/
-│   ├── workflows/
-│   │   ├── ci.yml                   # CI pipeline (test, lint, docker)
-│   │   └── security.yml             # Security scanning (CodeQL, Bandit, etc.)
-│   ├── ISSUE_TEMPLATE/
-│   │   ├── bug_report.md
-│   │   ├── feature_request.md
-│   │   └── security.md
-│   ├── PULL_REQUEST_TEMPLATE.md
-│   └── dependabot.yml
-├── CODEOWNERS
-├── CODE_OF_CONDUCT.md
-├── CONTRIBUTING.md
-├── SUPPORT.md
-├── SECURITY.md
-├── CHANGELOG.md
-└── LICENSE
+│   │   ├── domain.py                # parsing, suffixes, IDN, confusables, Arabic
+│   │   └── network.py               # DNS, RDAP, WHOIS, TLS enrichment
+│   ├── models/database.py           # SQLite storage with migrations
+│   └── config/settings.py           # dataclass settings, YAML + env loading, validation
+├── demo/index.html                  # Web dashboard
+├── tests/                           # 400+ offline tests
+├── docs/screenshots/
+├── Dockerfile · docker-compose.yml  # api + monitor + watcher
+└── .github/workflows/               # CI (tests, lint, Docker) and security scanning
 ```
 
 ---
 
-## ⚙️ Configuration
+## 🧪 Development
 
-Edit `config.yaml` to customize:
-
-```yaml
-certstream:
-  keywords: [kuwait, kw, nbk, kfh, ...]  # Monitoring keywords
-
-notifications:
-  slack_enabled: true
-  slack_webhook_url: "https://hooks.slack.com/..."
-
-threat_intel:
-  virustotal_api_key: "your-key-here"
+```bash
+pip install -r requirements.txt
+pytest tests/ -v --cov=src            # all tests run offline
+flake8 src/ tests/ main.py
+black --check src/ tests/ main.py
 ```
-
-Environment variables override config file:
-- `KCW_VT_API_KEY` — VirusTotal API key
-- `KCW_SLACK_WEBHOOK` — Slack webhook URL
-- `KCW_TELEGRAM_TOKEN` — Telegram bot token
-- `KCW_API_SECRET` — API secret key
 
 ---
 
 ## 🔐 Security
 
-See [SECURITY.md](SECURITY.md) for vulnerability reporting and security policy.
+See [SECURITY.md](SECURITY.md) for vulnerability reporting and the security policy.
 
-- Automated dependency scanning via Dependabot
-- CodeQL analysis on every push
-- Bandit security linting
-- TruffleHog secrets scanning
+- Change `api.secret_key` and `api.admin_password` before exposing the API (`main.py config --check` reminds you)
+- Automated dependency scanning via Dependabot, CodeQL analysis, Bandit and TruffleHog in CI
+- Tokens are HMAC-signed and expire; rate limiting and security headers are on by default
 
 ---
 
 ## 🤝 Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-Areas needing help:
-- Additional Kuwait brand profiles
-- Threat intelligence feed integrations
-- Machine learning detection models
-- Arabic language support
-- Testing and documentation
+See [CONTRIBUTING.md](CONTRIBUTING.md). Areas needing help:
+- Additional Kuwait and GCC brand profiles (`brands:` in `config.yaml` is a great way to prototype)
+- More threat-intelligence feeds
+- Machine-learning detection models
+- Dashboard integration with the new alert-lifecycle and sightings endpoints
+- Documentation and translations
 
 ---
 
@@ -286,6 +358,7 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 **Ali AlEnezi** ([@SiteQ8](https://github.com/SiteQ8))
 - Email: Site@hotmail.com
+
 ---
 
 <p align="center">

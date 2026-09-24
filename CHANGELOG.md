@@ -5,6 +5,85 @@ All notable changes to KWTCyberWatch will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-09-24
+
+### Added
+- **Domain parsing layer** (`src/utils/domain.py`): registrable-domain (eTLD+1) extraction
+  with Kuwait (`com.kw`, `gov.kw`, ...), GCC/MENA and global second-level suffixes, free-hosting
+  platforms treated as suffixes (`web.app`, `github.io`, `pages.dev` ...), punycode decoding,
+  Unicode script detection, confusable-character skeletons, leetspeak folding and Arabic
+  normalisation.
+- **IDN homograph & mixed-script detection** (`nbк.com` → NBK) across the detector, analyzer
+  and brand monitor.
+- **Arabic language support**: Arabic brand keywords (الوطني, بيتك, كي نت ...) and Arabic lure
+  words (تحديث, تفعيل, بطاقة ...) are detected inside IDN domains.
+- **26 Kuwait brand profiles** (previously 10) including KNET, ABK, KIB, AUB, Al-Tijari, stc,
+  PACI, MOH, MOE, Kuwait Airways, Jazeera Airways, KNPC, KPC, Boursa Kuwait and Talabat, with
+  aliases, Arabic keywords and priorities. Custom profiles can be added via `brands:` in
+  `config.yaml`.
+- **Proactive typosquat watcher** (`main.py watch-squats`, `/api/v1/squats/*`): generates
+  permutations of every protected brand across configurable TLDs, resolves them concurrently,
+  persists sightings with first/last seen and triage status, and alerts when a new look-alike
+  goes live.
+- **Persisted alerts with a lifecycle**: `open → investigating → resolved / false_positive`,
+  assignee, notes and a change history (`PATCH /api/v1/alerts/<id>`); resolving as a false
+  positive can allowlist the domain in one call.
+- **Allowlist** shared by every engine (`/api/v1/allowlist`, `main.py allowlist`).
+- **Threat intelligence**: real OpenPhish feed matching (cached on disk), URLhaus host lookups,
+  PhishTank, Google Safe Browsing v4, VirusTotal v3 and URLScan with an injectable fetcher,
+  TTL cache, per-source error reporting and a synchronous wrapper.
+- **Enrichment**: RDAP registration data (registrar, creation date, age, abuse contact),
+  DNS and TLS certificate lookups (`/api/v1/enrich/<domain>`, `main.py scan --enrich`).
+- **Notifications**: Microsoft Teams and Syslog/CEF channels, minimum-severity filtering,
+  per-domain cooldown de-duplication and delivery statistics (`main.py test-notify`).
+- **Exports & reporting**: STIX 2.1 bundles (`/api/v1/export/stix`, `main.py export-stix`),
+  CSV/JSON alert exports, Markdown/JSON activity reports (`/api/v1/reports/summary`,
+  `main.py report`) and a Prometheus `/metrics` endpoint.
+- **API hardening**: HMAC-signed bearer tokens with expiry, optional static API key, roles
+  (admin/analyst), sliding-window rate limiting with `X-RateLimit-*` headers, JSON error
+  handlers, security headers, OpenAPI 3 document (`/api/v1/openapi.json`) and Swagger UI
+  (`/api/v1/docs`).
+- **CLI**: `bulk`, `permutations --resolve`, `watch-squats`, `report`, `allowlist`,
+  `export-stix`, `config --check`, `test-notify`, `monitor --replay`, `scan --json/--intel/--enrich`,
+  global `--config` and `--version`.
+- **CertStream monitor**: per-certificate de-duplication of SANs and wildcards, token matching for
+  short keywords (`kw`, `q8`), event persistence and a database heartbeat surfaced by
+  `/api/v1/certstream/status`.
+- **Configuration**: `config.local.yaml` / `KCW_CONFIG` resolution, every section (including
+  `domain_analysis` and `database`, previously ignored) loaded with type coercion, many new
+  `KCW_*` environment overrides, `validate()` warnings for insecure defaults.
+- **Database**: schema versioning with automatic migration from 2.0.0 databases, scan history,
+  allowlist, squat sightings, key/value state, alert history, daily time series, indicator export
+  and retention purge.
+- Test suite grew from 14 to 400+ offline tests; `pyproject.toml` / `.flake8` configure black
+  (line length 100) and flake8; CI now lints `main.py` and runs a CLI smoke test.
+
+### Changed
+- Detection is performed on the registrable label instead of the first label, so
+  `login.nbk.com.kw` and `nbk.com.verify-login.tk` are interpreted correctly.
+- Typosquat thresholds scale with brand length: `nbk.com` is no longer reported as a typo of
+  `kfh.com`, and single-bit "bitsquats" of three-letter brands (`nbc.com`, `abc.com`) require
+  contextual signals.
+- Brand alerts now carry a numeric risk score, a per-(brand, domain) de-duplication window and
+  deterministic descriptions; the strongest match per brand wins and weaker matches against
+  other brands are dropped as noise.
+- Phishing scores were recalibrated: brand priority bonus, brand + lure keyword synergy, brand
+  on risky TLD synergy, free-hosting platform indicator, fake `gov`/`ministry` wording and
+  embedded `-com`/`-net` tokens.
+- `PhishingVerdict`, `DomainAnalysisResult` and `BrandAlert` gained `to_dict()` and extra fields;
+  API responses keep the 2.0.0 field names for compatibility.
+- `Dockerfile` runs as a non-root user and its health check no longer depends on `curl`
+  (which is absent from `python:slim`, so the old check never passed).
+- `docker-compose.yml` adds the `kwtcyberwatch-watcher` service and secret-bearing env vars.
+
+### Fixed
+- `BrandMonitor` flagged every domain containing the letter `e` (from `e.gov.kw`) or `kw`.
+- `DomainAnalyzer` reported protected brands as typosquats of each other.
+- `load_config()` silently ignored the `domain_analysis` and `database` sections and never read
+  `config.local.yaml` despite the README instructions.
+- `main.py monitor` created a `DomainAnalyzer` it never used and alerted once per SAN.
+- flake8 (unused imports) and black checks in CI were failing on `main`.
+
 ## [2.0.0] - 2026-03-08
 
 ### Added
@@ -83,5 +162,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Domain logging to text file
 - Exponential backoff retry logic
 
+[2.1.0]: https://github.com/SiteQ8/KWTCyberWatch/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/SiteQ8/KWTCyberWatch/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/SiteQ8/KWTCyberWatch/releases/tag/v1.0.0
