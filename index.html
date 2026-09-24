@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="KWTCyberWatch — open-source phishing detection and brand protection for Kuwait. Live Certificate Transparency tailing, typosquat hunting and brand-impersonation alerts, running entirely in your browser or self-hosted with a Python API.">
+<meta name="theme-color" content="#060a14">
+<meta property="og:title" content="KWTCyberWatch — Kuwait Phishing Detection & Brand Protection">
+<meta property="og:description" content="Live CT log monitoring, typosquat hunting and brand-impersonation alerts for Kuwait. No third-party feed. Runs in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://siteq8.github.io/KWTCyberWatch/">
+<meta property="og:image" content="https://siteq8.github.io/KWTCyberWatch/docs/screenshots/02-dashboard.png">
+<link rel="icon" href="demo/icon.svg" type="image/svg+xml">
+<title>KWTCyberWatch — Kuwait Phishing Detection & Brand Protection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#060a14;--bg-deep:#0b1424;--card:#101c30;--border:#1c2f4d;--cyan:#00d4ff;--cyan-glow:#00d4ff30;--purple:#b388ff;--green:#00e676;--red:#ff3355;--orange:#ff8c00;--text:#e9eef7;--dim:#8c9db8;--muted:#5a6b86;--grad:linear-gradient(135deg,#00d4ff,#0090ff);--grid:#ffffff07;--radius:14px;color-scheme:dark}
+@media(prefers-color-scheme:light){:root{--bg:#eef2f8;--bg-deep:#fff;--card:#fff;--border:#d9e1ee;--cyan:#0077cc;--cyan-glow:#0077cc1f;--purple:#6b4fd8;--green:#0b9a55;--red:#d81b45;--orange:#c96a00;--text:#0f1b2d;--dim:#4d5d77;--muted:#7d8ca5;--grid:#0f1b2d08;color-scheme:light}}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--cyan);text-decoration:none}
+code,pre{font-family:'JetBrains Mono',monospace}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(1100px 600px at 10% -10%,#0d2a52 0%,transparent 60%),radial-gradient(900px 500px at 100% 100%,#2a1a5a40 0%,transparent 60%),var(--bg)}
+.bg::after{content:'';position:absolute;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse at 50% 0%,#000 20%,transparent 70%)}
+@media(prefers-color-scheme:light){.bg{background:radial-gradient(1100px 600px at 10% -10%,#d6e8ff 0%,transparent 60%),radial-gradient(900px 500px at 100% 100%,#ece4ff 0%,transparent 60%),var(--bg)}}
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;letter-spacing:-.02em;color:var(--text)}
+.brand span{color:var(--cyan)}.brand svg{width:26px;height:26px}
+.links{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.links a{padding:8px 12px;border-radius:9px;font-size:.85rem;font-weight:600;color:var(--dim)}
+.links a:hover{color:var(--text);background:var(--card)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:10px;font-weight:700;font-size:.92rem;background:var(--grad);color:#fff;box-shadow:0 8px 24px var(--cyan-glow);transition:transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.ghost{background:var(--card);color:var(--text);border:1px solid var(--border);box-shadow:none}
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:center;padding:56px 0 40px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:99px;border:1px solid var(--border);background:var(--card);font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--dim);letter-spacing:.04em;text-transform:uppercase}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px #00e67626;animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+h1{font-size:clamp(2.3rem,5vw,3.8rem);line-height:1.04;letter-spacing:-.035em;font-weight:800;margin:22px 0 18px}
+h1 .g{background:linear-gradient(90deg,var(--cyan),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{font-size:1.08rem;color:var(--dim);max-width:56ch}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.stats{display:flex;flex-wrap:wrap;margin-top:32px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--card);width:fit-content;max-width:100%}
+.stats>div{display:flex;flex-direction:column;padding:14px 22px;border-right:1px solid var(--border);min-width:120px}
+.stats>div:last-child{border-right:none}
+.stats b{font-family:'JetBrains Mono',monospace;font-size:1.35rem}
+.stats span{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.shot{border-radius:16px;border:1px solid var(--border);box-shadow:0 30px 80px #00000080;overflow:hidden;background:var(--card)}
+.shot img{display:block;width:100%;height:auto}
+section{padding:56px 0}
+h2{font-size:1.9rem;letter-spacing:-.03em;font-weight:800;margin-bottom:8px}
+.sub{color:var(--dim);max-width:70ch;margin-bottom:28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.card{padding:20px;border:1px solid var(--border);border-radius:var(--radius);background:linear-gradient(180deg,#ffffff05,transparent 50%),var(--card);transition:transform .2s,border-color .2s}
+.card:hover{transform:translateY(-2px);border-color:var(--cyan)}
+.ico{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--cyan-glow);color:var(--cyan);margin-bottom:12px}
+.ico svg{width:18px;height:18px}
+.card h3{font-size:1rem;margin-bottom:6px}
+.card p{font-size:.84rem;color:var(--dim)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;counter-reset:step}
+.step{padding:22px;border:1px solid var(--border);border-radius:var(--radius);background:var(--card);position:relative}
+.step::before{counter-increment:step;content:counter(step,decimal-leading-zero);font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--cyan);font-size:.8rem;letter-spacing:.1em}
+.step h3{margin:8px 0 6px;font-size:1.02rem}.step p{font-size:.85rem;color:var(--dim)}
+.shots{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.shots figure{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card)}
+.shots img{display:block;width:100%;height:auto}
+.shots figcaption{padding:10px 14px;font-size:.78rem;color:var(--dim);border-top:1px solid var(--border)}
+pre{background:var(--bg-deep);border:1px solid var(--border);border-radius:12px;padding:18px 20px;font-size:.8rem;line-height:1.7;overflow:auto;color:var(--text)}
+pre .c{color:var(--muted)}pre .k{color:var(--cyan)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:.84rem}
+.kv dt{font-family:'JetBrains Mono',monospace;color:var(--cyan);font-size:.76rem;white-space:nowrap}
+.kv dd{color:var(--dim)}
+footer{padding:36px 0 44px;border-top:1px solid var(--border);color:var(--muted);font-size:.8rem;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer a{color:var(--dim)}
+.tag{display:inline-block;padding:3px 9px;border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--cyan-glow);color:var(--cyan);border:1px solid #00d4ff55;margin-left:8px;vertical-align:middle}
+@media(max-width:960px){.hero{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.two{grid-template-columns:1fr}.shots{grid-template-columns:1fr}}
+@media(max-width:560px){.stats>div{min-width:0;flex:1 1 40%;padding:12px 14px}nav .links a:not(.btn){display:none}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="wrap">
+  <nav>
+    <a class="brand" href="./"><svg viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5 4.5 5.6v6.2c0 4.7 3.2 9 7.5 10.2 4.3-1.2 7.5-5.5 7.5-10.2V5.6z"/><path d="m9 12 2 2 4-4"/></svg>KWT<span>CyberWatch</span></a>
+    <div class="links">
+      <a href="#features">Features</a><a href="#how">How it works</a><a href="#screens">Screens</a><a href="#selfhost">Self-host</a>
+      <a href="https://github.com/SiteQ8/KWTCyberWatch" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn" href="demo/">Open the console →</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <div class="eyebrow"><span class="dot"></span> Live · open source · runs in your browser</div>
+      <h1>Phishing detection &amp; brand protection for <span class="g">Kuwait</span></h1>
+      <p class="lede">KWTCyberWatch watches Certificate Transparency logs the moment certificates are issued, hunts typosquats of Kuwaiti banks, telecoms and government services, and turns every look-alike into a triaged alert. No third-party feed. Nothing leaves your browser.</p>
+      <div class="cta">
+        <a class="btn" href="demo/">Open the live console</a>
+        <a class="btn ghost" href="https://github.com/SiteQ8/KWTCyberWatch" target="_blank" rel="noopener">Source on GitHub</a>
+      </div>
+      <div class="stats">
+        <div><b>26</b><span>brand profiles</span></div>
+        <div><b>84</b><span>Kuwait keywords</span></div>
+        <div><b>2</b><span>CT log APIs</span></div>
+        <div><b>440+</b><span>tests</span></div>
+      </div>
+    </div>
+    <div class="shot"><img src="docs/screenshots/02-dashboard.png" alt="KWTCyberWatch dashboard" loading="eager"></div>
+  </header>
+
+  <section id="features">
+    <h2>Built for analysts, not demos</h2>
+    <p class="sub">Every number in the console comes from real Certificate Transparency entries, real DNS answers and real registration data. The full detection engine is ported to JavaScript and parity-tested against the Python backend.</p>
+    <div class="grid">
+      <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4M7.8 16.2a6 6 0 0 1 0-8.4M19.1 4.9a10 10 0 0 1 0 14.2M4.9 19.1a10 10 0 0 1 0-14.2"/></svg></div><h3>Direct CT log tailing</h3><p>Reads RFC 6962 and Static CT API logs itself, parses every DER certificate with a built-in reader and scores each hostname as it is logged.</p></div>
+      <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 3v12"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg></div><h3>Typosquat Hunter &amp; Watchtower</h3><p>Generates typos, homoglyphs, leet, combo-squats and TLD swaps for any brand, resolves them over DNS-over-HTTPS and sweeps protected brands on a schedule.</p></div>
+      <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 4a4 4 0 0 0-4 4v1a3 3 0 0 0-2 5 3 3 0 0 0 2 5h1a3 3 0 0 0 3 2 3 3 0 0 0 3-2h1a3 3 0 0 0 2-5 3 3 0 0 0-2-5V8a4 4 0 0 0-4-4z"/></svg></div><h3>IDN &amp; Arabic aware engine</h3><p>Detects Cyrillic homoglyphs such as nbк.com, mixed scripts and Arabic lures like بيتك-تحديث, with a character inspector and a look-alike diff for every verdict.</p></div>
+      <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="m12 3 9.5 16.5H2.5z"/><path d="M12 10v4M12 17.5v.5"/></svg></div><h3>Alert lifecycle</h3><p>Open → investigating → resolved / false positive, notes, assignee, timeline, bulk triage, one-click allowlisting, consolidated per domain.</p></div>
+      <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.5"/><circle cx="9" cy="17" r="2.5"/></svg></div><h3>Custom detection rules</h3><p>Regular-expression rules with severity, tested inline and applied to every certificate and scan. Deep match runs the brand engine on every hostname, keyword or not.</p></div>
+      <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></div><h3>Real enrichment</h3><p>DNS-over-HTTPS (Google, Cloudflare fallback), crt.sh certificate history, RDAP registration age and URLhaus reputation, fetched directly from the browser.</p></div>
+      <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></div><h3>Reports &amp; exports</h3><p>STIX 2.1 bundles, CSV, per-alert and weekly HTML reports, IOC copy, and a JSON backup of the whole workspace.</p></div>
+      <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg></div><h3>Installable console</h3><p>Command palette (Ctrl+K), deep links, keyboard shortcuts, light and dark themes, and a service worker so the console opens offline as a PWA.</p></div>
+    </div>
+  </section>
+
+  <section id="how">
+    <h2>How it works</h2>
+    <p class="sub">Three sources feed one engine. Everything is computed locally, so the console behaves the same on GitHub Pages and on an air-gapped analyst laptop.</p>
+    <div class="steps">
+      <div class="step"><h3>Discover</h3><p>Certificates arrive from the CT logs you tail directly; look-alikes come from the Typosquat Hunter and the scheduled Watchtower sweep; anything else you paste into the scanner or the bulk scanner.</p></div>
+      <div class="step"><h3>Detect</h3><p>The engine parses the registrable domain, folds confusables and leetspeak, checks 26 Kuwaiti brand profiles and 84 keywords, scores lures, risky TLDs, entropy and hosting platforms, then applies your custom rules.</p></div>
+      <div class="step"><h3>Triage</h3><p>Alerts are enriched with DNS and registration age, consolidated per domain, and worked in a drawer with evidence, diff, notes and timeline. Export STIX or a report when you hand off.</p></div>
+    </div>
+  </section>
+
+  <section id="screens">
+    <h2>Inside the console</h2>
+    <p class="sub">Screens captured from the console while tailing a live Certificate Transparency log.</p>
+    <div class="shots">
+      <figure><img src="docs/screenshots/03-certstream.png" alt="Certificate Transparency live feed" loading="lazy"><figcaption>Certificate Transparency live feed with per-log coverage</figcaption></figure>
+      <figure><img src="docs/screenshots/04-scanner.png" alt="Domain scanner verdict" loading="lazy"><figcaption>Domain scanner: risk gauge, indicators, look-alike diff</figcaption></figure>
+      <figure><img src="docs/screenshots/06-alerts.png" alt="Alerts triage" loading="lazy"><figcaption>Alert triage with bulk actions and STIX export</figcaption></figure>
+      <figure><img src="docs/screenshots/05-brands.png" alt="Brand monitor" loading="lazy"><figcaption>26 protected Kuwaiti brands with Arabic aliases</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="selfhost">
+    <h2>Self-host the backend <span class="tag">optional</span></h2>
+    <p class="sub">The browser console needs no server. For 24/7 monitoring, notifications to Slack, Teams, Telegram, e-mail or Syslog/CEF, and a REST API with OpenAPI docs, run the Python backend.</p>
+    <div class="two">
+      <pre><span class="c"># clone and install</span>
+git clone https://github.com/SiteQ8/KWTCyberWatch.git
+cd KWTCyberWatch &amp;&amp; pip install -r requirements.txt
+
+<span class="c"># scan a domain</span>
+python main.py scan nbk-secure-login.xyz
+
+<span class="c"># tail CT logs directly (no third party)</span>
+python main.py monitor
+
+<span class="c"># proactive typosquat watcher + API + dashboard</span>
+python main.py watch-squats
+python main.py api            <span class="c"># http://localhost:5000</span>
+
+<span class="c"># or everything at once</span>
+docker compose up -d</pre>
+      <dl class="kv">
+        <dt>Engine</dt><dd>Python 3.10+, dependency-free X.509 parser, SQLite with migrations</dd>
+        <dt>CT sources</dt><dd>RFC 6962 and Static CT API logs discovered from Google's log list; legacy CertStream WebSocket optional</dd>
+        <dt>Intel</dt><dd>OpenPhish and URLhaus out of the box; VirusTotal, URLScan, PhishTank and Google Safe Browsing with a key</dd>
+        <dt>Outputs</dt><dd>STIX 2.1, CSV, Markdown/JSON reports, Prometheus metrics, Syslog/CEF</dd>
+        <dt>API</dt><dd>Signed bearer tokens, roles, rate limiting, OpenAPI at <code>/api/v1/docs</code></dd>
+        <dt>License</dt><dd>MIT · built by Ali AlEnezi (SiteQ8)</dd>
+      </dl>
+    </div>
+  </section>
+
+  <footer>
+    <span>© Ali AlEnezi (SiteQ8) · KWTCyberWatch is MIT licensed</span>
+    <span><a href="demo/">Console</a> · <a href="https://github.com/SiteQ8/KWTCyberWatch">GitHub</a> · <a href="https://github.com/SiteQ8/KWTCyberWatch/blob/main/CHANGELOG.md">Changelog</a> · <a href="https://github.com/SiteQ8/KWTCyberWatch/blob/main/SECURITY.md">Security policy</a></span>
+  </footer>
+</div>
+</body>
+</html>
