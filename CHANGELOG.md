@@ -5,6 +5,27 @@ All notable changes to KWTCyberWatch will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2026-09-24
+
+### Added
+- **Static CT API (tiled logs)** support in both tailers: `checkpoint` + `tile/data/...`
+  (including partial `.p/W` tiles) with the `TileLeaf` format, tile-path encoding and
+  discovery of `tiled_logs` from the log list. Newer logs from Let's Encrypt, Geomys and others
+  are therefore covered alongside classic RFC 6962 logs; the feed table labels each kind.
+- **Deep match**: the live feed now runs the brand engine on every certificate hostname, not
+  only keyword hits, using a cheap skeleton prefilter (edit distance ≤ 1 or label containment)
+  before the full monitor. Catches homoglyphs (`nbк.com`) and typos (`burgan-bnk.com`) that
+  contain no keyword. Toggle under Settings → Engine & feed.
+- **Custom detection rules**: regular expressions with a severity, managed under Settings,
+  tested inline, applied to every feed hostname and every scan. Matches raise `custom_rule`
+  alerts and add a scored indicator to scan results.
+- **Alert consolidation**: a new alert for the same brand and registrable domain while one is
+  already open increments an occurrence counter and records the extra hostnames (e.g. `www.`)
+  instead of creating a duplicate; the alerts table shows `×N`.
+- **Auto-enrichment**: new feed alerts are resolved over DoH and looked up via RDAP in the
+  background; IPs, registrar and age land in the evidence and a `new` badge flags domains
+  registered less than 30 days ago.
+
 ## [2.3.0] - 2026-09-24
 
 ### Added
@@ -237,6 +258,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Domain logging to text file
 - Exponential backoff retry logic
 
+[2.4.0]: https://github.com/SiteQ8/KWTCyberWatch/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/SiteQ8/KWTCyberWatch/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/SiteQ8/KWTCyberWatch/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/SiteQ8/KWTCyberWatch/compare/v2.0.0...v2.1.0

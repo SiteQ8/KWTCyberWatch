@@ -126,6 +126,36 @@
     parsed.entry_type = kind; parsed.timestamp = ts;
     return parsed;
   }
+  function parseTileLeaf(u8, offset) {
+    if (offset + 10 > u8.length) throw new Error("tile leaf too short");
+    let ts = 0;
+    for (let i = 0; i < 8; i++) ts = ts * 256 + u8[offset + i];
+    const entryType = (u8[offset + 8] << 8) | u8[offset + 9];
+    let pos = offset + 10;
+    const take = (n) => { if (pos + n > u8.length) throw new Error("tile leaf truncated"); let len = 0; for (let i = 0; i < n; i++) len = (len << 8) | u8[pos + i]; pos += n; if (pos + len > u8.length) throw new Error("tile leaf truncated"); const chunk = u8.subarray(pos, pos + len); pos += len; return chunk; };
+    let der, kind;
+    if (entryType === 0) { der = take(3); kind = "x509"; } else if (entryType === 1) { pos += 32; der = take(3); kind = "precert"; } else throw new Error("entry type");
+    take(2);
+    if (entryType === 1) take(3);
+    take(2);
+    const parsed = parseCertificate(der);
+    parsed.entry_type = kind; parsed.timestamp = ts;
+    return { parsed, next: pos };
+  }
+  function parseDataTile(u8) {
+    const out = [];
+    let pos = 0;
+    while (pos < u8.length) { const r = parseTileLeaf(u8, pos); out.push(r.parsed); pos = r.next; }
+    return out;
+  }
+  function tilePath(index) {
+    let d = String(index);
+    d = d.padStart(Math.ceil(d.length / 3) * 3, "0");
+    const groups = d.match(/.{3}/g);
+    return groups.slice(0, -1).map((g) => "x" + g).concat([groups[groups.length - 1]]).join("/");
+  }
+  function parseCheckpoint(text) { const lines = text.trim().split("\n"); if (lines.length < 3) throw new Error("malformed checkpoint"); const n = parseInt(lines[1].trim(), 10); if (!Number.isFinite(n)) throw new Error("bad checkpoint size"); return n; }
+  const TILE_WIDTH = 256;
   const toMessage = (p, logName, index) => ({
     message_type: "certificate_update",
     data: { update_type: p.entry_type === "precert" ? "PrecertLogEntry" : "X509LogEntry", leaf_cert: { subject: { CN: p.subject.CN || "" }, issuer: p.issuer, all_domains: p.all_domains, not_before: p.not_before, not_after: p.not_after, serial_number: p.serial_number, fingerprint: "" }, cert_index: index, seen: p.timestamp / 1000, source: { name: logName, url: "" } },
@@ -142,8 +172,21 @@
     ["Let's Encrypt Oak 2026h2", "https://oak.ct.letsencrypt.org/2026h2/"], ["Let's Encrypt Oak 2027h1", "https://oak.ct.letsencrypt.org/2027h1/"],
     ["DigiCert Wyvern 2026h2", "https://wyvern.ct.digicert.com/2026h2/"], ["DigiCert Sphinx 2026h2", "https://sphinx.ct.digicert.com/2026h2/"],
     ["Sectigo Sabre 2026h2", "https://sabre2026h2.ct.sectigo.com/"], ["Sectigo Mammoth 2026h2", "https://mammoth2026h2.ct.sectigo.com/"],
-  ].map(([name, url]) => ({ name, url }));
+  ].map(([name, url]) => ({ name, url, kind: "rfc6962" }));
+  const FALLBACK_STATIC_LOGS = [
+    ["Geomys Tuscolo 2026h2", "https://tuscolo2026h2.sunlight.geomys.org/"], ["Geomys Tuscolo 2027h1", "https://tuscolo2027h1.sunlight.geomys.org/"],
+    ["Let's Encrypt Sycamore 2026h2", "https://sycamore.ct.letsencrypt.org/2026h2/"], ["Let's Encrypt Willow 2026h2", "https://willow.ct.letsencrypt.org/2026h2/"],
+  ].map(([name, url]) => ({ name, url, kind: "static" }));
 
+  async function getRaw(url, timeout, asText) {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), timeout || 10000);
+    try {
+      const r = await fetch(url, { mode: "cors", cache: "no-store", signal: ctrl.signal });
+      if (!r.ok) { const e = new Error("HTTP " + r.status); e.status = r.status; throw e; }
+      return asText ? await r.text() : new Uint8Array(await r.arrayBuffer());
+    } finally { clearTimeout(t); }
+  }
   async function getJSON(url, timeout) {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), timeout || 10000);
@@ -155,13 +198,17 @@
   }
   function selectLogs(list, now) {
     const out = [];
-    for (const op of list.operators || []) for (const log of op.logs || []) {
-      const state = log.state || {};
-      if (!("usable" in state || "qualified" in state)) continue;
-      const iv = log.temporal_interval;
-      if (iv) { const s = Date.parse(iv.start_inclusive), e = Date.parse(iv.end_exclusive); if (!(s <= now && now < e)) continue; }
-      if (!String(log.url || "").startsWith("https://")) continue;
-      out.push({ name: `${op.name || "log"} ${log.description || ""}`.trim(), url: String(log.url).replace(/\/+$/, "") + "/" });
+    for (const op of list.operators || []) {
+      for (const [kind, key, urlKey] of [["rfc6962", "logs", "url"], ["static", "tiled_logs", "monitoring_url"]]) {
+        for (const log of op[key] || []) {
+          const state = log.state || {};
+          if (!("usable" in state || "qualified" in state)) continue;
+          const iv = log.temporal_interval;
+          if (iv) { const s = Date.parse(iv.start_inclusive), e = Date.parse(iv.end_exclusive); if (!(s <= now && now < e)) continue; }
+          if (!String(log[urlKey] || "").startsWith("https://")) continue;
+          out.push({ name: `${op.name || "log"} ${log.description || ""}`.trim(), url: String(log[urlKey]).replace(/\/+$/, "") + "/", kind });
+        }
+      }
     }
     return out;
   }
@@ -188,18 +235,17 @@
     stop() { this.running = false; this.generation++; clearInterval(this.renderTimer); this.logs.forEach((l) => (l.active = false)); },
     async discover() {
       const gen = this.generation;
-      let cands = (S.ctLogs || []).map((u) => ({ name: u.replace(/^https?:\/\//, "").replace(/\/$/, ""), url: u.replace(/\/+$/, "") + "/" }));
+      let cands = (S.ctLogs || []).map((u) => { const [url, kind] = String(u).split(/\s+/); return { name: url.replace(/^https?:\/\//, "").replace(/\/$/, ""), url: url.replace(/\/+$/, "") + "/", kind: kind === "static" ? "static" : "rfc6962" }; });
       if (!cands.length) {
         try { cands = selectLogs(await getJSON(LOG_LIST_URL, 8000), Date.now()); } catch (e) { cands = []; }
-        if (!cands.length) cands = FALLBACK_LOGS.slice();
+        if (!cands.length) cands = FALLBACK_LOGS.concat(FALLBACK_STATIC_LOGS);
       }
       if (gen !== this.generation) return [];
       const candidates = cands.map((c) => Object.assign({ status: "probing", tree_size: 0, cursor: null, entries: 0, skipped: 0, errors: 0, backoff: 0, active: false, rate: 0, lastCount: 0 }, c));
       this.candidates = candidates;
       await Promise.allSettled(candidates.map(async (log) => {
         try {
-          const sth = await getJSON(log.url + "ct/v1/get-sth", 8000);
-          log.tree_size = Number(sth.tree_size) || 0;
+          log.tree_size = await this.treeSize(log);
           log.cursor = Math.max(0, log.tree_size - this.batch);
           log.status = "live"; log.active = true;
         } catch (e) { log.status = "unreachable"; log.error = e.name === "AbortError" ? "timeout" : e.message; }
@@ -208,27 +254,47 @@
       this.logs = candidates.filter((l) => l.active);
       return this.logs;
     },
+    async treeSize(log) {
+      this.stats.requests++;
+      if (log.kind === "static") return parseCheckpoint(await getRaw(log.url + "checkpoint", 8000, true));
+      const sth = await getJSON(log.url + "ct/v1/get-sth", 8000);
+      return Number(sth.tree_size) || 0;
+    },
+    async fetchEntries(log) {
+      // Returns [{index, parsed}] for the next batch; unparsable entries are counted and skipped.
+      const out = [];
+      this.stats.requests++;
+      if (log.kind === "static") {
+        const tile = Math.floor(log.cursor / TILE_WIDTH), start = tile * TILE_WIDTH;
+        const width = Math.min(TILE_WIDTH, log.tree_size - start);
+        const data = await getRaw(`${log.url}tile/data/${tilePath(tile)}${width === TILE_WIDTH ? "" : ".p/" + width}`, 15000, false);
+        let leaves = [];
+        try { leaves = parseDataTile(data); } catch (e) { this.stats.parseErrors++; }
+        leaves.forEach((parsed, i) => { if (start + i >= log.cursor) out.push({ index: start + i, parsed }); });
+        if (!leaves.length) out.push({ index: start + width - 1, parsed: null });
+        return out;
+      }
+      const end = Math.min(log.cursor + this.batch, log.tree_size) - 1;
+      const payload = await getJSON(`${log.url}ct/v1/get-entries?start=${log.cursor}&end=${end}`, 15000);
+      (payload.entries || []).forEach((e, i) => { let parsed = null; try { parsed = parseLeafInput(e.leaf_input); } catch (err) { this.stats.parseErrors++; } out.push({ index: log.cursor + i, parsed }); });
+      return out;
+    },
     async tail(log, gen) {
       while (this.running && log.active && gen === this.generation) {
         let processed = 0;
         try {
-          this.stats.requests++;
-          const sth = await getJSON(log.url + "ct/v1/get-sth", 8000);
-          log.tree_size = Number(sth.tree_size) || log.tree_size;
+          log.tree_size = await this.treeSize(log);
           if (log.tree_size - log.cursor > this.maxLag) { const skip = log.tree_size - this.batch - log.cursor; log.skipped += skip; this.stats.skipped += skip; log.cursor = log.tree_size - this.batch; }
           if (log.cursor < log.tree_size) {
-            const end = Math.min(log.cursor + this.batch, log.tree_size) - 1;
-            this.stats.requests++;
-            const payload = await getJSON(`${log.url}ct/v1/get-entries?start=${log.cursor}&end=${end}`, 15000);
-            const entries = payload.entries || [];
-            for (let i = 0; i < entries.length; i++) {
-              let parsed;
-              try { parsed = parseLeafInput(entries[i].leaf_input); } catch (e) { this.stats.parseErrors++; continue; }
+            const entries = await this.fetchEntries(log);
+            for (const e of entries) {
+              if (!e.parsed) continue;
               if (!this.running || gen !== this.generation) return;
-              try { await this.feed.handle(toMessage(parsed, log.name, log.cursor + i)); } catch (e) { /* pipeline error */ }
+              try { await this.feed.handle(toMessage(e.parsed, log.name, e.index)); } catch (err) { /* pipeline error */ }
             }
             processed = entries.length;
-            log.cursor += processed; log.entries += processed; this.stats.entries += processed;
+            if (entries.length) log.cursor = entries[entries.length - 1].index + 1;
+            log.entries += processed; this.stats.entries += processed;
           }
           log.backoff = 0; log.status = "live";
         } catch (e) {
@@ -250,7 +316,7 @@
           const rate = l._t ? Math.round(((l.entries - l.lastCount) * 1000) / Math.max(1, now - l._t)) : 0;
           l.lastCount = l.entries; l._t = now;
           const cls = l.status === "live" ? "low" : l.status === "unreachable" ? "clean" : l.status === "rate-limited" ? "medium" : "high";
-          return `<tr><td style="font-size:.75rem"><strong>${esc(l.name)}</strong><div style="font-family:var(--font-mono);font-size:.62rem;color:var(--text-muted)">${esc(l.url)}</div></td><td><span class="badge ${cls}">${esc(l.status)}</span>${l.error && l.status !== "live" ? `<div style="font-size:.62rem;color:var(--text-muted)">${esc(l.error)}</div>` : ""}</td><td style="font-family:var(--font-mono);font-size:.72rem">${l.tree_size ? l.tree_size.toLocaleString() : "—"}</td><td style="font-family:var(--font-mono);font-size:.72rem">${l.entries.toLocaleString()}</td><td style="font-family:var(--font-mono);font-size:.72rem">${l.active ? rate + "/s" : "—"}</td><td style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-muted)">${l.skipped ? l.skipped.toLocaleString() : "0"}</td></tr>`;
+          return `<tr><td style="font-size:.75rem"><strong>${esc(l.name)}</strong> <span class="badge ${l.kind === "static" ? "info" : "clean"}" style="font-size:.55rem">${l.kind === "static" ? "static ct" : "rfc 6962"}</span><div style="font-family:var(--font-mono);font-size:.62rem;color:var(--text-muted)">${esc(l.url)}</div></td><td><span class="badge ${cls}">${esc(l.status)}</span>${l.error && l.status !== "live" ? `<div style="font-size:.62rem;color:var(--text-muted)">${esc(l.error)}</div>` : ""}</td><td style="font-family:var(--font-mono);font-size:.72rem">${l.tree_size ? l.tree_size.toLocaleString() : "—"}</td><td style="font-family:var(--font-mono);font-size:.72rem">${l.entries.toLocaleString()}</td><td style="font-family:var(--font-mono);font-size:.72rem">${l.active ? rate + "/s" : "—"}</td><td style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-muted)">${l.skipped ? l.skipped.toLocaleString() : "0"}</td></tr>`;
         }).join("") : '<tr><td colspan="6" style="color:var(--text-muted);font-size:.75rem;padding:14px">Not started</td></tr>';
       }
       setText("ctCoverage", this.logs.length ? this.coverage() + "%" : "—");
@@ -347,6 +413,6 @@
 
   window.KCW_CT = CT;
   window.KCW_WT = WT;
-  window.KCW_X509 = { parseCertificate, parseLeafInput, parseTBS, readTLV, selectLogs, FALLBACK_LOGS };
+  window.KCW_X509 = { parseCertificate, parseLeafInput, parseTBS, parseTileLeaf, parseDataTile, tilePath, parseCheckpoint, readTLV, selectLogs, FALLBACK_LOGS, FALLBACK_STATIC_LOGS };
   Object.assign(window, { setWatchtower, runWatchtowerNow });
 })();

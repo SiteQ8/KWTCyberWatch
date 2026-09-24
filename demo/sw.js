@@ -1,6 +1,6 @@
 /* KWTCyberWatch service worker: caches the app shell so the console (engine included)
  * opens offline. Live lookups (DoH, crt.sh, RDAP, URLhaus, CertStream) always go to the network. */
-const VERSION = "kcw-2.3.0";
+const VERSION = "kcw-2.4.0";
 const SHELL = ["./", "./index.html", "./engine-data.js", "./engine.js", "./app.js", "./features.js", "./discovery.js", "./manifest.webmanifest", "./icon.svg", "./icon-maskable.svg"];
 
 self.addEventListener("install", (event) => {
