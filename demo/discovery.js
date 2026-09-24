@@ -327,6 +327,55 @@
   };
 
   // ------------------------------------------------------------------ //
+  // Relay feed: matches published by the scheduled backend tailer (same origin)
+  // ------------------------------------------------------------------ //
+  const RELAY = {
+    timer: null, feed: null, last: null, generatedAt: null, rows: 0, seen: new Set(), state: "idle", error: null,
+    url() { return (S.relayUrl && S.relayUrl.trim()) || "feed/latest.json"; },
+    start(feed) {
+      this.stop();
+      if (location.protocol === "file:" && !S.relayUrl) { this.state = "unavailable"; return; }
+      this.feed = feed;
+      this.tick();
+      this.timer = setInterval(() => this.tick(), 5 * 60000);
+    },
+    stop() { clearInterval(this.timer); this.timer = null; },
+    async tick() {
+      try {
+        const data = await getJSON(this.url() + (this.url().includes("?") ? "&" : "?") + "t=" + Date.now(), 10000);
+        this.state = "live"; this.error = null; this.last = Date.now(); this.generatedAt = data.generated_at;
+        const watermark = S.relayWatermark || "";
+        let newest = watermark, added = 0;
+        for (const m of data.matches || []) {
+          const key = m.domain + "|" + m.ts;
+          if (this.seen.has(key) || (m.ts || "") <= watermark) continue;
+          this.seen.add(key);
+          if (m.ts > newest) newest = m.ts;
+          added++;
+          await this.feed.handle({ message_type: "certificate_update", data: { source: { name: "relay:" + (m.log || "ct") }, leaf_cert: { all_domains: [m.domain], issuer: { O: m.issuer || "" }, not_before: m.not_before } } }, false);
+        }
+        this.rows = (data.matches || []).length;
+        if (newest !== watermark) A.saveSetting("relayWatermark", newest);
+        if (added && this.feed.state !== "live") this.feed.setState("live", `relay feed · ${added} new match(es)`);
+      } catch (e) { this.state = e.status === 404 ? "not published yet" : "unreachable"; this.error = e.message; }
+      this.render();
+    },
+    render() {
+      const el = $("relayStatus");
+      if (!el) return;
+      const age = this.generatedAt ? Math.round((Date.now() - Date.parse(this.generatedAt)) / 60000) : null;
+      el.textContent = this.state === "live" ? `Relay feed: ${this.rows} matches · snapshot ${age === null ? "" : age + " min old"}` : this.state === "unavailable" ? "Relay feed: available on the hosted site" : `Relay feed: ${this.state}`;
+      el.style.color = this.state === "live" ? "var(--green)" : "var(--text-muted)";
+    },
+  };
+  const origStart = CT.start.bind(CT), origStop = CT.stop.bind(CT);
+  CT.start = async function (feed) { RELAY.start(feed); return origStart(feed); };
+  CT.stop = function () { RELAY.stop(); return origStop(); };
+  const origRender = CT.render.bind(CT);
+  CT.render = function () { origRender(); RELAY.render(); };
+  window.KCW_RELAY = RELAY;
+
+  // ------------------------------------------------------------------ //
   // Watchtower: scheduled proactive brand sweeps
   // ------------------------------------------------------------------ //
   const WT = {

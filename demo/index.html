@@ -642,10 +642,10 @@ tr.selected td{background:var(--cyan-glow)!important}
         <div><span class="k">Lookups</span><span class="v">dns.google · crt.sh · rdap.org · URLhaus</span></div>
       </div>
       <div id="apiHint" style="display:none;margin-top:10px;padding:10px;background:rgba(0,212,255,.08);border:1px solid var(--cyan-dim);border-radius:var(--radius-sm);font-size:.72rem;color:var(--cyan)"></div>
-      <div class="login-hint" id="loginHint">The JavaScript engine is parity-tested against the Python engine · MIT licensed · <code>v2.4</code></div>
+      <div class="login-hint" id="loginHint">Findings are automated heuristics from public data — candidates for review, not accusations. Verify before acting. <a href="../DISCLAIMER.md" target="_blank" rel="noopener">Disclaimer &amp; terms</a> · MIT · <code>v2.4</code></div>
     </aside>
   </main>
-  <footer class="landing-foot">Built by Ali AlEnezi (SiteQ8) · <a href="https://github.com/SiteQ8/KWTCyberWatch" target="_blank" rel="noopener">Source on GitHub</a> · <a href="https://github.com/SiteQ8/KWTCyberWatch#-quick-start" target="_blank" rel="noopener">Self-host with the API</a></footer>
+  <footer class="landing-foot">Built by Ali AlEnezi (SiteQ8) · <a href="https://github.com/SiteQ8/KWTCyberWatch" target="_blank" rel="noopener">Source on GitHub</a> · <a href="https://github.com/SiteQ8/KWTCyberWatch#-quick-start" target="_blank" rel="noopener">Self-host with the API</a> · <a href="https://github.com/SiteQ8/KWTCyberWatch/blob/main/DISCLAIMER.md" target="_blank" rel="noopener">Disclaimer</a> · No cookies, no tracking, data stays in your browser</footer>
 </div>
 
 <!-- ═══════════ MAIN APP ═══════════ -->
@@ -697,7 +697,7 @@ tr.selected td{background:var(--cyan-glow)!important}
         <div class="nav-item" data-page="notifications" onclick="showPage('notifications',this)"><span class="nav-icon" data-icon="notifications"></span> Notifications</div>
         <div class="nav-item" data-page="settings" onclick="showPage('settings',this)"><span class="nav-icon" data-icon="settings"></span> Settings</div>
       </div>
-      <div class="sidebar-foot"><a href="https://github.com/SiteQ8/KWTCyberWatch" target="_blank" rel="noopener">GitHub ↗</a><span id="sbVersion">v2.4.0</span></div>
+      <div class="sidebar-foot"><a href="https://github.com/SiteQ8/KWTCyberWatch" target="_blank" rel="noopener">GitHub ↗</a><a href="https://github.com/SiteQ8/KWTCyberWatch/blob/main/DISCLAIMER.md" target="_blank" rel="noopener" title="Findings are heuristics, not accusations">Disclaimer</a><span id="sbVersion">v2.4.0</span></div>
     </nav>
 
     <div class="main">
@@ -760,10 +760,11 @@ tr.selected td{background:var(--cyan-glow)!important}
               <span>entries parsed <strong id="ctEntries" style="font-family:var(--font-mono);color:var(--text)">0</strong></span>
               <span title="Share of new log entries this session that were actually read (the rest were skipped to keep up)">coverage <strong id="ctCoverage" style="font-family:var(--font-mono);color:var(--text)">—</strong></span>
               <span id="ctErrors" style="font-family:var(--font-mono)">0 errors</span>
+              <span id="relayStatus" style="font-family:var(--font-mono)" title="Matches published every 30 minutes by the project's own tailer running in GitHub Actions">Relay feed: —</span>
             </div>
           </div>
           <div class="table-wrap"><table><thead><tr><th>Log</th><th>State</th><th>Tree size</th><th>Read</th><th>Rate</th><th>Skipped</th></tr></thead><tbody id="ctLogTable"><tr><td colspan="6" style="color:var(--text-muted);font-size:.75rem;padding:14px">Not started</td></tr></tbody></table></div>
-          <p style="font-size:.7rem;color:var(--text-muted);margin-top:10px">Logs are discovered from Google's public CT log list, falling back to built-in shards. A log that blocks cross-origin requests or is offline is skipped automatically. Add your own log URLs under Settings → Engine &amp; feed.</p>
+          <p style="font-size:.7rem;color:var(--text-muted);margin-top:10px">Logs are discovered from Google's public CT log list, falling back to built-in shards. A log that blocks cross-origin requests or is offline is skipped automatically. Independently, the <strong>relay feed</strong> carries matches found by the project's own tailer running on a schedule in GitHub Actions and published to this site, so Kuwait matches keep arriving even when a browser cannot read a log directly.</p>
         </div>
       </div>
 
@@ -1060,6 +1061,7 @@ tr.selected td{background:var(--cyan-glow)!important}
             <div class="notif-field"><label>Live feed source</label><select class="api-select" id="setFeedSource" style="width:100%" onchange="saveSetting('feedSource',this.value);reconnectFeed()"><option value="ctlogs">Read CT logs directly (recommended, no third party)</option><option value="certstream">CertStream WebSocket (legacy)</option></select></div>
             <div class="notif-field" style="display:flex;align-items:center;gap:10px"><label class="toggle" style="margin:0"><input type="checkbox" id="setDeepMatch" onchange="saveSetting('feedDeepMatch',this.checked)"><span class="toggle-slider"></span></label><span style="font-size:.78rem">Deep match — run the brand engine on every certificate, not only keyword hits (catches typos and homoglyphs such as <code>nbк.com</code>)</span></div>
             <div class="notif-field" style="display:flex;align-items:center;gap:10px"><label class="toggle" style="margin:0"><input type="checkbox" id="setAutoEnrich" onchange="saveSetting('autoEnrich',this.checked)"><span class="toggle-slider"></span></label><span style="font-size:.78rem">Auto-enrich new feed alerts with DNS and registration age (DoH + RDAP)</span></div>
+            <div class="notif-field"><label>Relay feed URL (blank = this site's <code>feed/latest.json</code>)</label><input id="setRelayUrl" placeholder="https://siteq8.github.io/KWTCyberWatch/demo/feed/latest.json" onchange="saveSetting('relayUrl',this.value.trim());reconnectFeed()"></div>
             <div class="notif-field"><label>Extra CT log URLs (one per line; append <code>static</code> for Static CT API logs)</label><textarea class="bulk-textarea" id="setCtLogs" style="min-height:60px" placeholder="https://ct.googleapis.com/logs/us1/argon2026h2/" onchange="saveSetting('ctLogs',this.value.split(/\n/).map(s=>s.trim()).filter(Boolean));reconnectFeed()"></textarea></div>
             <div class="notif-field" style="display:flex;align-items:center;gap:10px"><label class="toggle" style="margin:0"><input type="checkbox" id="setWatchtower" onchange="setWatchtower(this.checked)"><span class="toggle-slider"></span></label><span style="font-size:.78rem">Watchtower brand sweeps every <input class="api-select" id="setWatchtowerMinutes" type="number" min="5" max="720" value="20" style="width:64px" onchange="saveSetting('watchtowerMinutes',Number(this.value)||20)"> min</span></div>
             <div class="notif-field"><label>CertStream URL (legacy source only)</label><input id="setCertstreamUrl" value="wss://certstream.calidog.io/" onchange="saveSetting('certstreamUrl',this.value.trim())"></div>
