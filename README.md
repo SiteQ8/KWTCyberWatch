@@ -4,7 +4,7 @@
     <strong>Kuwait Phishing Detection & Brand Protection Suite</strong>
   </p>
   <p align="center">
-    Real-time Certificate Transparency monitoring, proactive typosquat discovery, IDN/Arabic-aware domain squatting detection, brand impersonation alerting with a full triage lifecycle, and integrated threat intelligence — purpose-built for Kuwait's digital ecosystem.
+    Open-source phishing detection and brand protection for Kuwait: live Certificate Transparency monitoring, IDN/Arabic-aware typosquat and brand-impersonation detection for 26 Kuwaiti banks, telecoms and government services, alert triage, threat-intel enrichment and a fully client-side analyst console you can run from GitHub Pages.
   </p>
   <p align="center">
     <a href="#-features"><img src="https://img.shields.io/badge/version-2.2.0-00d4ff?style=flat-square" alt="Version"></a>
@@ -17,6 +17,10 @@
 </p>
 
 ---
+
+## ✨ What's new in 2.2
+
+- **Real browser console** — the detection engine runs in JavaScript with parity tests against Python; the GitHub Pages demo streams the live CertStream feed, resolves typosquats over DNS-over-HTTPS and enriches with crt.sh, RDAP and URLhaus. No backend, no sample data.
 
 ## ✨ What's new in 2.1
 
