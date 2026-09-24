@@ -55,6 +55,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Database**: schema versioning with automatic migration from 2.0.0 databases, scan history,
   allowlist, squat sightings, key/value state, alert history, daily time series, indicator export
   and retention purge.
+- **Dashboard API mode**: when served by `main.py api` the dashboard detects the backend and uses
+  it for sign-in (server credentials), scans with enrichment, alert triage buttons (investigate,
+  resolve, false-positive + allowlist), a new **Typosquat Sightings** view with triage and
+  on-demand brand checks, live statistics/charts, the stored CertStream feed and CSV/STIX export
+  links. Demo mode (file:// or the demo button) is unchanged.
+- `scripts/screenshots.py` now resolves paths relative to the repository and accepts a base URL.
 - Test suite grew from 14 to 400+ offline tests; `pyproject.toml` / `.flake8` configure black
   (line length 100) and flake8; CI now lints `main.py` and runs a CLI smoke test.
 

@@ -27,6 +27,7 @@
 - **Threat intel that works out of the box** — OpenPhish and URLhaus need no key; VirusTotal, URLScan, PhishTank and Google Safe Browsing plug in with one.
 - **SIEM-ready outputs** — STIX 2.1 bundles, CSV exports, Syslog/CEF and Microsoft Teams channels, Prometheus metrics.
 - **Hardened API** — signed bearer tokens, roles, API keys, rate limiting, OpenAPI docs.
+- **Dashboard connected to the API** — live scans, alert triage, typosquat sightings and monitor status when served by `main.py api`; demo mode unchanged.
 - **400+ offline tests** and a green CI (lint + tests + Docker).
 
 ---
@@ -134,7 +135,10 @@ Minimum severity, per-domain cooldown de-duplication and delivery statistics are
 - **CSV / JSON** alert exports, **Markdown / JSON** activity reports, **Prometheus** `/metrics`.
 
 ### Web dashboard
-The single-page dashboard (`demo/index.html`, also served at `/`) provides login, live CertStream feed, scanner, brand monitor, alerts, threat intel, notification and analytics views. It works stand-alone from the file system in demo mode.
+The single-page dashboard (`demo/index.html`) works in two modes:
+
+- **Demo mode** — open the file directly; every view runs on built-in sample data and client-side heuristics.
+- **API mode** — served at `/` by `python main.py api`, it detects the backend and switches to live data: sign in with the server credentials, scan through the detection engines (with RDAP/DNS enrichment), triage alerts (investigate, resolve, false-positive + allowlist), review and triage **typosquat sightings**, trigger an on-demand permutation check for a brand, follow the stored CertStream matches, and export alerts as CSV or STIX. The "Explore with Demo Account" button keeps showing sample data even when the API is present.
 
 ---
 
@@ -307,7 +311,7 @@ KWTCyberWatch/
 │   │   └── network.py               # DNS, RDAP, WHOIS, TLS enrichment
 │   ├── models/database.py           # SQLite storage with migrations
 │   └── config/settings.py           # dataclass settings, YAML + env loading, validation
-├── demo/index.html                  # Web dashboard
+├── demo/index.html                  # Web dashboard (demo mode or API-connected)
 ├── tests/                           # 400+ offline tests
 ├── docs/screenshots/
 ├── Dockerfile · docker-compose.yml  # api + monitor + watcher
@@ -343,7 +347,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Areas needing help:
 - Additional Kuwait and GCC brand profiles (`brands:` in `config.yaml` is a great way to prototype)
 - More threat-intelligence feeds
 - Machine-learning detection models
-- Dashboard integration with the new alert-lifecycle and sightings endpoints
+- Dashboard polish: charts for the new endpoints, dark/light theme, Arabic UI
 - Documentation and translations
 
 ---
