@@ -23,6 +23,7 @@
   const levelOf = (v) => KCW.scoreToLevel(v);
   const SEV_RANK = { critical: 4, high: 3, medium: 2, low: 1 };
   const setText = (id, v) => { const el = $(id); if (el) el.textContent = v; };
+  const emit = (name, detail) => { try { window.dispatchEvent(new CustomEvent("kcw:" + name, { detail })); } catch (e) { /* ignore */ } };
 
   // ------------------------------------------------------------------ //
   // IndexedDB
@@ -72,6 +73,7 @@
   // Settings & engine
   // ------------------------------------------------------------------ //
   const DEFAULTS = {
+    soundAlerts: false, retentionDays: 90,
     keywords: KCW.data.certstream_keywords.slice(),
     allowlist: [],
     customBrands: [],
@@ -203,7 +205,7 @@
       stored++;
       maybeNotify(a);
     }
-    if (stored) { refreshCounts(); if (window.__lastAlertForPreview !== undefined) window.__lastAlertForPreview = alerts[alerts.length - 1]; }
+    if (stored) { refreshCounts(); if (window.__lastAlertForPreview !== undefined) window.__lastAlertForPreview = alerts[alerts.length - 1]; emit("alerts", { alerts, source }); }
     return stored;
   }
   function maybeNotify(alert) {
@@ -259,6 +261,7 @@
     analytics: svg('<path d="M4 20h16"/><path d="M6 16v-5M11 16V7M16 16v-3M21 16V4" stroke-width="2.2"/>'),
     notifications: svg('<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 21a2 2 0 0 0 4 0"/>'),
     settings: svg('<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.5"/><circle cx="9" cy="17" r="2.5"/>'),
+    help: svg('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/>'),
   };
   function paintIcons(root) {
     (root || document).querySelectorAll("[data-icon]").forEach((el) => {
@@ -320,6 +323,7 @@
     if (page) page.classList.add("active");
     (el || document.querySelector(`[data-page="${id}"]`))?.classList.add("active");
     if (PAGE_HOOKS[id]) PAGE_HOOKS[id]();
+    emit("page", { id });
     toggleSidebar(false);
     const main = document.querySelector(".main");
     if (main) main.scrollTo({ top: 0, behavior: "smooth" });
@@ -336,6 +340,7 @@
     await refreshCounts();
     renderDashboard();
     feed.connect();
+    emit("enter", { analyst: name });
   }
   function leaveDashboard() {
     try { sessionStorage.removeItem("kcw_open"); } catch (e) { /* ignore */ }
@@ -364,8 +369,8 @@
     setText("sightingCount", sightings.filter((s) => s.status === "new").length);
     setText("feedCount", certs);
     setText("matchedToday", certs);
-    return { alerts, scans, sightings, certs };
     syncNavBadges();
+    return { alerts, scans, sightings, certs };
   }
   async function renderDashboard() {
     const [scans, certs, alerts] = await Promise.all([dbAll("scans"), dbAll("certs"), dbAll("alerts")]);
@@ -507,7 +512,10 @@
     render(row, synthetic) {
       const el = $("liveFeed");
       if (!el) return;
+      emit("cert", { row, synthetic });
       if ($("feedOnlyRisky").checked && row.score < 40) return;
+      const bf = $("feedBrandFilter");
+      if (bf && bf.value && !(row.brands || []).includes(bf.value)) return;
       if (el.firstElementChild && !el.firstElementChild.classList.contains("feed-row")) el.innerHTML = "";
       const level = levelOf(row.score);
       const div = document.createElement("div");
@@ -647,6 +655,7 @@
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button class="btn-sm" onclick="quickIntel('${esc(result.domain)}')">🧠 Investigate</button><button class="btn-sm" onclick="quickSquat('${esc(parsed.registrable || result.domain)}')">🧬 Hunt look-alikes</button><button class="btn-sm" onclick="addAllowlistDomain('${esc(result.domain)}')">✅ Allowlist</button></div></div>`;
     panel.innerHTML = html;
     panel.classList.add("show");
+    emit("scan", { result, opts });
   }
   async function renderRecentScans() {
     const scans = (await dbAll("scans")).sort((a, b) => (b.ts > a.ts ? 1 : -1)).slice(0, 12);
@@ -784,12 +793,14 @@
     const sevFilter = $("alertSeverityFilter").value;
     const rows = all.filter((a) => (!statuses.length || statuses.includes(a.status)) && (!sevFilter || a.severity === sevFilter)).slice(0, 300);
     const tb = $("alertTable");
-    if (!rows.length) { tb.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="ico">🚨</div><div class="title">No alerts</div><div class="sub">Scan a look-alike domain or let the live feed run</div></div></td></tr>`; return; }
+    if (!rows.length) { tb.innerHTML = `<tr><td colspan="10"><div class="empty-state"><div class="ico">🚨</div><div class="title">No alerts</div><div class="sub">Scan a look-alike domain or let the live feed run</div></div></td></tr>`; return; }
     const badge = (s) => (s === "open" ? "high" : s === "investigating" ? "info" : s === "false_positive" ? "clean" : "low");
-    tb.innerHTML = rows.map((a) => `<tr>
-      <td style="font-family:var(--font-mono);font-size:.7rem;color:var(--text-dim)" title="${esc(a.description)}">${esc(a.alert_id)}</td>
+    if (window.alertSelectionChanged) setTimeout(alertSelectionChanged, 0);
+    tb.innerHTML = rows.map((a) => `<tr data-alert="${esc(a.alert_id)}">
+      <td onclick="event.stopPropagation()"><input type="checkbox" class="al-sel" value="${esc(a.alert_id)}" onchange="window.alertSelectionChanged&&alertSelectionChanged()"></td>
+      <td style="font-family:var(--font-mono);font-size:.7rem;color:var(--cyan);cursor:pointer" title="Open alert" onclick="openAlert('${esc(a.alert_id)}')">${esc(a.alert_id)}</td>
       <td><span class="badge ${esc(a.severity)}">${esc(a.severity)}</span></td>
-      <td><strong>${esc(a.brand_short || a.brand_name)}</strong></td>
+      <td style="cursor:pointer" onclick="openAlert('${esc(a.alert_id)}')"><strong>${esc(a.brand_short || a.brand_name)}</strong></td>
       <td style="font-family:var(--font-mono);font-size:.75rem;cursor:pointer" onclick="quickScan('${esc(a.domain)}')">${esc(a.domain)}</td>
       <td>${esc((a.alert_type || "").replace(/_/g, " "))}</td>
       <td style="font-size:.7rem;color:var(--text-dim)">${esc(a.source || "")}</td>
@@ -800,16 +811,17 @@
         ${a.status === "open" || a.status === "investigating" ? `<button class="act-btn" onclick="alertAction('${esc(a.alert_id)}','resolved')">Resolve</button><button class="act-btn danger" onclick="alertAction('${esc(a.alert_id)}','false_positive',true)">FP + allowlist</button>` : `<button class="act-btn" onclick="alertAction('${esc(a.alert_id)}','open')">Reopen</button>`}
       </td></tr>`).join("");
   }
-  async function alertAction(id, status, allowlist) {
+  async function alertAction(id, status, allowlist, quiet) {
     const a = await dbGet("alerts", id);
     if (!a) return;
-    if (allowlist && !confirm(`Mark as false positive and allowlist ${a.domain} (and its subdomains)?`)) return;
-    a.status = status; a.assignee = S.analyst; a.updated_at = new Date().toISOString();
+    if (allowlist && !quiet && !confirm(`Mark as false positive and allowlist ${a.domain} (and its subdomains)?`)) return;
+    a.status = status; a.assignee = a.assignee || S.analyst; a.updated_at = new Date().toISOString();
     a.history = (a.history || []).concat([{ at: a.updated_at, by: S.analyst, status }]);
     await dbPut("alerts", a);
     if (allowlist) await addAllowlistDomain(a.domain, true);
-    toast(`${id} → ${status.replace("_", " ")}`, "ok");
-    renderAlerts(); refreshCounts();
+    if (!quiet) toast(`${id} → ${status.replace("_", " ")}`, "ok");
+    emit("alert-updated", { alert: a });
+    if (!quiet) { renderAlerts(); refreshCounts(); }
   }
   async function exportAlertsCSV() {
     const rows = (await dbAll("alerts")).map((a) => ({ alert_id: a.alert_id, detected_at: a.detected_at, severity: a.severity, status: a.status, alert_type: a.alert_type, brand: a.brand_name, domain: a.domain, source: a.source, description: a.description, assignee: a.assignee || "", risk_score: a.risk_score }));
@@ -1115,5 +1127,11 @@
     try { reopen = sessionStorage.getItem("kcw_open") === "1"; } catch (e) { /* ignore */ }
     if (reopen) enterDashboard();
   });
-  window.KCW_APP = { feed, engine: () => engine, settings: S, db: { all: dbAll, put: dbPut, clear: dbClear }, investigate, buildStixBundle };
+  window.KCW_APP = {
+    feed, engine: () => engine, settings: S, DEFAULTS, PAGE_HOOKS, SEV_RANK,
+    db: { all: dbAll, put: dbPut, add: dbAdd, get: dbGet, del: dbDel, clear: dbClear, count: dbCount },
+    investigate, buildStixBundle, saveSetting, refreshCounts, renderAlerts, renderDashboard, renderSightings, renderHistory, renderAnalytics,
+    persistBrandAlerts, addAllowlistDomain, upsertSighting, resolveQuick, fetchCrtSh, fetchRDAP, parseRDAP, fetchURLhaus, dohAll,
+    esc, ago, fmtTime, scoreColor, levelOf, setText, downloadBlob, emit,
+  };
 })();
