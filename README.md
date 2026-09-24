@@ -7,7 +7,7 @@
     Real-time Certificate Transparency monitoring, proactive typosquat discovery, IDN/Arabic-aware domain squatting detection, brand impersonation alerting with a full triage lifecycle, and integrated threat intelligence — purpose-built for Kuwait's digital ecosystem.
   </p>
   <p align="center">
-    <a href="#-features"><img src="https://img.shields.io/badge/version-2.1.0-00d4ff?style=flat-square" alt="Version"></a>
+    <a href="#-features"><img src="https://img.shields.io/badge/version-2.2.0-00d4ff?style=flat-square" alt="Version"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License"></a>
     <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square" alt="Python"></a>
     <a href="https://github.com/SiteQ8/KWTCyberWatch/actions"><img src="https://img.shields.io/badge/tests-420%2B-brightgreen?style=flat-square" alt="Tests"></a>
@@ -27,7 +27,7 @@
 - **Threat intel that works out of the box** — OpenPhish and URLhaus need no key; VirusTotal, URLScan, PhishTank and Google Safe Browsing plug in with one.
 - **SIEM-ready outputs** — STIX 2.1 bundles, CSV exports, Syslog/CEF and Microsoft Teams channels, Prometheus metrics.
 - **Hardened API** — signed bearer tokens, roles, API keys, rate limiting, OpenAPI docs.
-- **Dashboard connected to the API** — live scans, alert triage, typosquat sightings and monitor status when served by `main.py api`; demo mode unchanged.
+- **A real browser dashboard** — the full detection engine is ported to JavaScript (parity-tested against Python), so the [GitHub Pages demo](https://siteq8.github.io/KWTCyberWatch/demo/) scans for real, follows the live CertStream feed, resolves typosquats over DNS-over-HTTPS and enriches with crt.sh, RDAP and URLhaus. No backend, no sample data.
 - **400+ offline tests** and a green CI (lint + tests + Docker).
 
 ---
@@ -135,17 +135,34 @@ Minimum severity, per-domain cooldown de-duplication and delivery statistics are
 - **CSV / JSON** alert exports, **Markdown / JSON** activity reports, **Prometheus** `/metrics`.
 
 ### Web dashboard
-The single-page dashboard (`demo/index.html`) works in two modes:
+The single-page dashboard in `demo/` is a **real client-side analyst console**, not a mock-up.
+Try it live at <https://siteq8.github.io/KWTCyberWatch/demo/>.
 
-- **Demo mode** — open the file directly; every view runs on built-in sample data and client-side heuristics.
-- **API mode** — served at `/` by `python main.py api`, it detects the backend and switches to live data: sign in with the server credentials, scan through the detection engines (with RDAP/DNS enrichment), triage alerts (investigate, resolve, false-positive + allowlist), review and triage **typosquat sightings**, trigger an on-demand permutation check for a brand, follow the stored CertStream matches, and export alerts as CSV or STIX. The "Explore with Demo Account" button keeps showing sample data even when the API is present.
+- **Browser-native detection engine** — `demo/engine.js` is a line-for-line port of the Python
+  phishing detector, brand monitor and domain analyzer (26 Kuwaiti brand profiles, IDN/Arabic
+  aware, permutation generator). Its data tables are generated from the Python source by
+  `scripts/export_engine_data.py`, and `tests/test_js_engine.py` proves both engines return
+  identical verdicts on a 90-domain corpus.
+- **Live CertStream feed** — a WebSocket to `certstream.calidog.io` streams newly issued
+  certificates; every hostname is scored by the engine, keyword hits are stored, and brand alerts
+  are raised in the browser (desktop notifications optional).
+- **Real enrichment** — DNS via Google DNS-over-HTTPS, Certificate Transparency history via
+  crt.sh, registration data via RDAP (`rdap.org`) and URLhaus reputation, all fetched directly
+  from the browser.
+- **Typosquat Hunter** — generates permutations for any brand domain and resolves them live,
+  recording resolving look-alikes as **sightings** with triage status.
+- **Alert lifecycle, history, analytics, STIX 2.1 export** — everything persists in IndexedDB,
+  so the console keeps state between visits; settings (keywords, allowlist, custom brands) rebuild
+  the engine on the fly, and the whole workspace can be exported/imported as JSON.
+- When served at `/` by `python main.py api` the dashboard also detects the backend and reports
+  its version; scans still run locally, so the demo behaves the same online and offline.
 
 ---
 
 ## 🚀 Quick Start
 
 ### Demo (no installation)
-Open `demo/index.html` in a browser and use the **Demo** button (or `admin` / `admin`).
+Visit <https://siteq8.github.io/KWTCyberWatch/demo/> or open `demo/index.html` locally — the engine, feed and lookups all run in your browser.
 
 ### Installation
 
@@ -311,8 +328,8 @@ KWTCyberWatch/
 │   │   └── network.py               # DNS, RDAP, WHOIS, TLS enrichment
 │   ├── models/database.py           # SQLite storage with migrations
 │   └── config/settings.py           # dataclass settings, YAML + env loading, validation
-├── demo/index.html                  # Web dashboard (demo mode or API-connected)
-├── tests/                           # 400+ offline tests
+├── demo/                            # Browser console: index.html, engine.js (JS port), engine-data.js (generated), app.js
+├── tests/                           # 420+ offline tests (incl. Python↔JS engine parity)
 ├── docs/screenshots/
 ├── Dockerfile · docker-compose.yml  # api + monitor + watcher
 └── .github/workflows/               # CI (tests, lint, Docker) and security scanning

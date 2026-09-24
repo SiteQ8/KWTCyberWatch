@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KWTCyberWatch v2.1 — Kuwait Phishing Detection Suite</title>
+<meta name="description" content="KWTCyberWatch — Kuwait phishing detection & brand protection. Live Certificate Transparency monitoring, domain squatting detection and brand impersonation alerts, running entirely in your browser.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Cpath d=%27M16 2 4 7v9c0 7.5 5.1 14 12 16 6.9-2 12-8.5 12-16V7z%27 fill=%27%2300d4ff%27/%3E%3Cpath d=%27M16 6 8 9.3V16c0 5.2 3.4 9.9 8 11.6 4.6-1.7 8-6.4 8-11.6V9.3z%27 fill=%27%230a0e17%27/%3E%3C/svg%3E">
+<title>KWTCyberWatch v2.2 — Kuwait Phishing Detection Suite</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -197,14 +199,14 @@ tr:hover td{background:var(--bg-card-hover)}
 .notif-field input:focus{outline:none;border-color:var(--cyan)}
 
 /* ── Chart placeholders ── */
-.chart-area{height:200px;background:var(--bg-deep);border:1px solid var(--border);
+.chart-area{height:240px;background:var(--bg-deep);border:1px solid var(--border);
   border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;
   position:relative;overflow:hidden}
-.chart-bars{display:flex;align-items:flex-end;gap:6px;height:160px;padding:0 20px}
-.chart-bar{width:28px;border-radius:4px 4px 0 0;transition:height .6s ease;position:relative}
+.chart-bars{display:flex;align-items:flex-end;justify-content:space-around;gap:10px;width:100%;height:100%;box-sizing:border-box;padding:14px 20px 44px}
+.chart-bar{flex:1;max-width:56px;min-width:18px;border-radius:4px 4px 0 0;transition:height .6s ease;position:relative}
 .chart-bar:hover{opacity:.8}
-.chart-bar::after{content:attr(data-label);position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);
-  font-size:.55rem;color:var(--text-muted);white-space:nowrap}
+.chart-bar::after{content:attr(data-label);position:absolute;top:100%;left:50%;transform:translate(-50%,6px) rotate(-32deg);transform-origin:top center;
+  font-size:.58rem;color:var(--text-muted);white-space:nowrap;max-width:110px;overflow:hidden;text-overflow:ellipsis}
 
 /* ── Responsive ── */
 @media(max-width:768px){
@@ -224,11 +226,11 @@ tr:hover td{background:var(--bg-card-hover)}
 .mode-badge.live{background:rgba(0,230,118,.15);color:var(--green);border:1px solid var(--green-dim)}
 .mode-badge.demo{background:rgba(179,136,255,.15);color:var(--purple);border:1px solid var(--purple-dim)}
 .mode-badge.pulse-dot::before{content:'●';margin-right:5px;animation:pulse 1.5s infinite}
-.mode-badge.api{background:rgba(0,212,255,.15);color:var(--cyan);border:1px solid var(--cyan-dim)}
-.act-btn{padding:3px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-deep);color:var(--text-dim);font-size:.65rem;cursor:pointer;margin:1px;font-family:var(--font-mono)}
-.act-btn:hover{border-color:var(--cyan);color:var(--cyan)}
-.act-btn.danger:hover{border-color:var(--red);color:var(--red)}
-.api-select{background:var(--bg-input);border:1px solid var(--border);color:var(--text);border-radius:var(--radius-sm);padding:5px 8px;font-family:var(--font-mono);font-size:.72rem}
+
+
+
+
+
 
 /* ── Real-scan loading ── */
 .scan-progress{background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-top:14px;font-family:var(--font-mono);font-size:.75rem}
@@ -323,504 +325,163 @@ tr:hover td{background:var(--bg-card-hover)}
 .history-row{cursor:pointer;transition:background .1s}
 .history-row:hover{background:var(--bg-card-hover)}
 
+/* ── v2.1 additions ── */
+.mode-badge.api{background:rgba(0,212,255,.15);color:var(--cyan);border:1px solid var(--cyan-dim)}
+.act-btn{padding:3px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-deep);color:var(--text-dim);font-size:.65rem;cursor:pointer;margin:1px;font-family:var(--font-mono)}
+.act-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.act-btn.danger:hover{border-color:var(--red);color:var(--red)}
+.api-select{background:var(--bg-input);border:1px solid var(--border);color:var(--text);border-radius:var(--radius-sm);padding:5px 8px;font-family:var(--font-mono);font-size:.72rem}
+.page-desc code,.login-hint code,.notif-card code{background:var(--bg-deep);padding:1px 5px;border-radius:3px;color:var(--cyan);font-family:var(--font-mono);font-size:.9em}
+.card-sub{font-size:.72rem;color:var(--text-dim)}
 </style>
 </head>
 <body>
 
-<!-- ═══════════ LOGIN PAGE ═══════════ -->
+<!-- ═══════════ LOGIN / LANDING ═══════════ -->
 <div id="loginPage" class="login-page">
   <div class="login-box">
     <div class="login-logo">
       <h1>🛡️ KWTCyberWatch</h1>
-      <p>Phishing &amp; Brand Abuse Detection</p>
-    </div>
-    <div class="login-tabs">
-      <div class="login-tab on" data-auth-tab="signin" onclick="switchAuthTab('signin')">Sign In</div>
-      <div class="login-tab" data-auth-tab="register" onclick="switchAuthTab('register')">Create Account</div>
+      <p>Kuwait Phishing Detection &amp; Brand Protection</p>
     </div>
     <div class="form-group">
-      <label>Username</label>
-      <input type="text" id="loginUser" placeholder="Enter username" autocomplete="off">
+      <label>Analyst name (shown on triage actions)</label>
+      <input type="text" id="analystName" placeholder="e.g. Ali" autocomplete="off">
     </div>
-    <div class="form-group">
-      <label>Password</label>
-      <input type="password" id="loginPass" placeholder="Enter password (min 4)">
-    </div>
-    <button class="login-btn" onclick="doLogin()" id="loginBtn">Sign In</button>
+    <button class="login-btn" onclick="enterDashboard()" id="enterBtn">Open Dashboard</button>
     <div class="login-error" id="loginError"></div>
-    <div class="login-divider">or</div>
-    <button class="login-demo-btn" onclick="loginDemo()">
-      <span>👁️</span>
-      <span>Explore with Demo Account</span>
-    </button>
-    <div class="login-hint" style="margin-top:16px">
-      Real accounts perform <code>live scans</code> via crt.sh, DNS-over-HTTPS, and RDAP. Demo uses pre-seeded data.
+    <div class="login-hint" id="loginHint">
+      Everything on this page runs for real in your browser: the <code>v2.2</code> detection engine (26 Kuwaiti brand profiles, IDN/Arabic aware),
+      a live <code>CertStream</code> Certificate Transparency feed, DNS-over-HTTPS, crt.sh and RDAP lookups. Results are stored locally in IndexedDB; nothing is sent to a server.
     </div>
+    <div id="apiHint" style="display:none;margin-top:10px;padding:10px;background:rgba(0,212,255,.08);border:1px solid var(--cyan-dim);border-radius:var(--radius-sm);font-size:.72rem;color:var(--cyan)"></div>
   </div>
 </div>
 
 <!-- ═══════════ MAIN APP ═══════════ -->
 <div id="app" class="app">
-  <!-- Topbar -->
   <div class="topbar">
     <div class="topbar-brand">
       <h1>🛡️ KWT<span>CyberWatch</span></h1>
-      <span class="topbar-badge">v2.1.0</span>
-      <span style="display:flex;align-items:center;margin-left:12px;font-size:.75rem;color:var(--green)">
-        <span class="glow-dot"></span>System Online
+      <span class="topbar-badge" id="versionBadge">v2.2.0</span>
+      <span style="display:flex;align-items:center;margin-left:12px;font-size:.75rem;color:var(--text-dim)">
+        <span class="glow-dot" id="feedDot"></span><span id="feedStatusText">CertStream: connecting…</span>
       </span>
     </div>
     <div class="topbar-right">
-      <span class="topbar-user">Signed in as <strong id="currentUser">admin</strong><span class="mode-badge demo pulse-dot" id="modeBadge">DEMO</span></span>
-      <button class="btn-sm" onclick="doLogout()">Logout</button>
+      <span class="topbar-user">Analyst <strong id="currentUser">—</strong><span class="mode-badge live pulse-dot" id="modeBadge">LOCAL ENGINE</span></span>
+      <button class="btn-sm" onclick="leaveDashboard()">Exit</button>
     </div>
   </div>
 
   <div class="layout">
-    <!-- Sidebar -->
     <nav class="sidebar">
       <div class="sidebar-section">
         <div class="sidebar-section-title">Main</div>
-        <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard',this)">
-          <span class="nav-icon">📊</span> Dashboard
-        </div>
-        <div class="nav-item" data-page="certstream" onclick="showPage('certstream',this)">
-          <span class="nav-icon">📡</span> CertStream
-          <span class="nav-badge" id="feedCount">0</span>
-        </div>
-        <div class="nav-item" data-page="scanner" onclick="showPage('scanner',this)">
-          <span class="nav-icon">🔍</span> Domain Scanner
-        </div>
-        <div class="nav-item" data-page="bulk" onclick="showPage('bulk',this)">
-          <span class="nav-icon">📋</span> Bulk Scanner
-        </div>
-        <div class="nav-item" data-page="squatgen" onclick="showPage('squatgen',this)">
-          <span class="nav-icon">🧬</span> Squat Generator
-        </div>
+        <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard',this)"><span class="nav-icon">📊</span> Dashboard</div>
+        <div class="nav-item" data-page="certstream" onclick="showPage('certstream',this)"><span class="nav-icon">📡</span> CertStream Live <span class="nav-badge" id="feedCount">0</span></div>
+        <div class="nav-item" data-page="scanner" onclick="showPage('scanner',this)"><span class="nav-icon">🔍</span> Domain Scanner</div>
+        <div class="nav-item" data-page="bulk" onclick="showPage('bulk',this)"><span class="nav-icon">📋</span> Bulk Scanner</div>
+        <div class="nav-item" data-page="squatgen" onclick="showPage('squatgen',this)"><span class="nav-icon">🧬</span> Typosquat Hunter</div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-section-title">Intelligence</div>
-        <div class="nav-item" data-page="ctlog" onclick="showPage('ctlog',this)">
-          <span class="nav-icon">📜</span> CT Log Explorer
-        </div>
-        <div class="nav-item" data-page="dnslookup" onclick="showPage('dnslookup',this)">
-          <span class="nav-icon">🌐</span> DNS Lookup
-        </div>
-        <div class="nav-item" data-page="rdap" onclick="showPage('rdap',this)">
-          <span class="nav-icon">📇</span> RDAP / WHOIS
-        </div>
-        <div class="nav-item" data-page="history" onclick="showPage('history',this)">
-          <span class="nav-icon">📚</span> Scan History
-        </div>
+        <div class="nav-item" data-page="threatintel" onclick="showPage('threatintel',this)"><span class="nav-icon">🧠</span> Domain Intel</div>
+        <div class="nav-item" data-page="ctlog" onclick="showPage('ctlog',this)"><span class="nav-icon">📜</span> CT Log Explorer</div>
+        <div class="nav-item" data-page="dnslookup" onclick="showPage('dnslookup',this)"><span class="nav-icon">🌐</span> DNS Lookup</div>
+        <div class="nav-item" data-page="rdap" onclick="showPage('rdap',this)"><span class="nav-icon">📇</span> RDAP / WHOIS</div>
+        <div class="nav-item" data-page="history" onclick="showPage('history',this)"><span class="nav-icon">📚</span> Scan History</div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-section-title">Protection</div>
-        <div class="nav-item" data-page="brands" onclick="showPage('brands',this)">
-          <span class="nav-icon">🏦</span> Brand Monitor
-        </div>
-        <div class="nav-item" data-page="alerts" onclick="showPage('alerts',this)">
-          <span class="nav-icon">🚨</span> Alerts
-          <span class="nav-badge" id="alertCount">12</span>
-        </div>
-        <div class="nav-item" data-page="sightings" onclick="showPage('sightings',this)">
-          <span class="nav-icon">🎯</span> Typosquat Sightings
-          <span class="nav-badge" id="sightingCount">0</span>
-        </div>
-        <div class="nav-item" data-page="threatintel" onclick="showPage('threatintel',this)">
-          <span class="nav-icon">🧠</span> Threat Intel
-        </div>
+        <div class="nav-item" data-page="brands" onclick="showPage('brands',this)"><span class="nav-icon">🏦</span> Brand Monitor</div>
+        <div class="nav-item" data-page="alerts" onclick="showPage('alerts',this)"><span class="nav-icon">🚨</span> Alerts <span class="nav-badge" id="alertCount">0</span></div>
+        <div class="nav-item" data-page="sightings" onclick="showPage('sightings',this)"><span class="nav-icon">🎯</span> Sightings <span class="nav-badge" id="sightingCount">0</span></div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-section-title">System</div>
-        <div class="nav-item" data-page="notifications" onclick="showPage('notifications',this)">
-          <span class="nav-icon">🔔</span> Notifications
-        </div>
-        <div class="nav-item" data-page="analytics" onclick="showPage('analytics',this)">
-          <span class="nav-icon">📈</span> Analytics
-        </div>
-        <div class="nav-item" data-page="settings" onclick="showPage('settings',this)">
-          <span class="nav-icon">⚙️</span> Settings
-        </div>
+        <div class="nav-item" data-page="analytics" onclick="showPage('analytics',this)"><span class="nav-icon">📈</span> Analytics</div>
+        <div class="nav-item" data-page="notifications" onclick="showPage('notifications',this)"><span class="nav-icon">🔔</span> Notifications</div>
+        <div class="nav-item" data-page="settings" onclick="showPage('settings',this)"><span class="nav-icon">⚙️</span> Settings</div>
       </div>
     </nav>
 
-    <!-- Main Content -->
     <div class="main">
 
       <!-- ──── DASHBOARD ──── -->
       <div id="page-dashboard" class="page active">
         <h2 class="page-title">Dashboard</h2>
-        <p class="page-desc">Real-time phishing detection overview for Kuwait's digital ecosystem</p>
+        <p class="page-desc">Live overview — every number below is computed from real feed events, scans and alerts stored in this browser.</p>
         <div class="stats-grid">
-          <div class="stat-card cyan">
-            <div class="stat-label">Certificates Scanned</div>
-            <div class="stat-value cyan" id="statCerts">1,247,893</div>
-            <div class="stat-sub" id="statCertsSub">+12,456 last hour</div>
-          </div>
-          <div class="stat-card red">
-            <div class="stat-label">Phishing Detected</div>
-            <div class="stat-value red" id="statPhishing">847</div>
-            <div class="stat-sub" id="statPhishingSub">+23 today</div>
-          </div>
-          <div class="stat-card orange">
-            <div class="stat-label">Active Alerts</div>
-            <div class="stat-value orange" id="statAlerts">12</div>
-            <div class="stat-sub" id="statAlertsSub">4 critical</div>
-          </div>
-          <div class="stat-card green">
-            <div class="stat-label">Brands Protected</div>
-            <div class="stat-value green" id="statBrands">14</div>
-            <div class="stat-sub" id="statBrandsSub">Kuwait financial & gov</div>
-          </div>
-          <div class="stat-card purple">
-            <div class="stat-label">Domains Watchlisted</div>
-            <div class="stat-value purple" id="statDomains">2,341</div>
-            <div class="stat-sub" id="statDomainsSub">156 high-risk</div>
-          </div>
+          <div class="stat-card cyan"><div class="stat-label">Certificates Seen</div><div class="stat-value cyan" id="statCerts">0</div><div class="stat-sub" id="statCertsSub">this session · live CT feed</div></div>
+          <div class="stat-card red"><div class="stat-label">Phishing Detected</div><div class="stat-value red" id="statPhishing">0</div><div class="stat-sub" id="statPhishingSub">score ≥ 50 in scans &amp; feed</div></div>
+          <div class="stat-card orange"><div class="stat-label">Open Alerts</div><div class="stat-value orange" id="statAlerts">0</div><div class="stat-sub" id="statAlertsSub">0 critical</div></div>
+          <div class="stat-card green"><div class="stat-label">Brands Protected</div><div class="stat-value green" id="statBrands">26</div><div class="stat-sub" id="statBrandsSub">Kuwait banking, telecom, government</div></div>
+          <div class="stat-card purple"><div class="stat-label">Domains Analysed</div><div class="stat-value purple" id="statDomains">0</div><div class="stat-sub" id="statDomainsSub">0 live typosquats</div></div>
         </div>
-
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
           <div class="card">
-            <div class="card-header">
-              <span class="card-title">🔴 Recent Critical Threats</span>
-            </div>
-            <div class="table-wrap">
-              <table>
-                <thead><tr><th>Domain</th><th>Type</th><th>Score</th><th>Time</th></tr></thead>
-                <tbody id="recentThreats"></tbody>
-              </table>
-            </div>
+            <div class="card-header"><span class="card-title">🔴 Highest-risk Domains</span><span class="card-sub" id="recentThreatsSub">from your scans and the live feed</span></div>
+            <div class="table-wrap"><table><thead><tr><th>Domain</th><th>Signal</th><th>Score</th><th>When</th></tr></thead><tbody id="recentThreats"></tbody></table></div>
           </div>
           <div class="card">
-            <div class="card-header">
-              <span class="card-title">📊 Detection by Category</span>
-            </div>
-            <div class="chart-area">
-              <div class="chart-bars" id="categoryChart"></div>
-            </div>
+            <div class="card-header"><span class="card-title">📊 Detection Categories</span></div>
+            <div class="chart-area"><div class="chart-bars" id="categoryChart"></div></div>
           </div>
         </div>
-
         <div class="card">
-          <div class="card-header">
-            <span class="card-title">🗺️ Threat Geography</span>
-            <span class="badge info">Last 24 hours</span>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
-            <div style="background:var(--bg-deep);padding:12px;border-radius:var(--radius-sm);text-align:center">
-              <div style="font-size:1.4rem;margin-bottom:4px">🇷🇺</div>
-              <div style="font-family:var(--font-mono);font-weight:700;color:var(--red)">234</div>
-              <div style="font-size:.65rem;color:var(--text-dim)">Russia</div>
-            </div>
-            <div style="background:var(--bg-deep);padding:12px;border-radius:var(--radius-sm);text-align:center">
-              <div style="font-size:1.4rem;margin-bottom:4px">🇨🇳</div>
-              <div style="font-family:var(--font-mono);font-weight:700;color:var(--orange)">189</div>
-              <div style="font-size:.65rem;color:var(--text-dim)">China</div>
-            </div>
-            <div style="background:var(--bg-deep);padding:12px;border-radius:var(--radius-sm);text-align:center">
-              <div style="font-size:1.4rem;margin-bottom:4px">🇳🇬</div>
-              <div style="font-family:var(--font-mono);font-weight:700;color:var(--yellow)">156</div>
-              <div style="font-size:.65rem;color:var(--text-dim)">Nigeria</div>
-            </div>
-            <div style="background:var(--bg-deep);padding:12px;border-radius:var(--radius-sm);text-align:center">
-              <div style="font-size:1.4rem;margin-bottom:4px">🇮🇳</div>
-              <div style="font-family:var(--font-mono);font-weight:700;color:var(--yellow)">98</div>
-              <div style="font-size:.65rem;color:var(--text-dim)">India</div>
-            </div>
-            <div style="background:var(--bg-deep);padding:12px;border-radius:var(--radius-sm);text-align:center">
-              <div style="font-size:1.4rem;margin-bottom:4px">🇧🇷</div>
-              <div style="font-family:var(--font-mono);font-weight:700;color:var(--green)">67</div>
-              <div style="font-size:.65rem;color:var(--text-dim)">Brazil</div>
-            </div>
-            <div style="background:var(--bg-deep);padding:12px;border-radius:var(--radius-sm);text-align:center">
-              <div style="font-size:1.4rem;margin-bottom:4px">🌍</div>
-              <div style="font-family:var(--font-mono);font-weight:700;color:var(--text-dim)">103</div>
-              <div style="font-size:.65rem;color:var(--text-dim)">Others</div>
-            </div>
-          </div>
+          <div class="card-header"><span class="card-title">🔑 Keyword Hits in the Live Feed</span><span class="badge info" id="keywordHitsSub">this session</span></div>
+          <div id="keywordHits" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px"></div>
         </div>
       </div>
 
       <!-- ──── CERTSTREAM ──── -->
       <div id="page-certstream" class="page">
         <h2 class="page-title">CertStream Live Feed</h2>
-        <p class="page-desc">Real-time Certificate Transparency log monitoring</p>
+        <p class="page-desc">Direct WebSocket to <code>certstream.calidog.io</code>. Every certificate is matched against your keywords and scored by the detection engine in this browser.</p>
         <div class="stats-grid" style="margin-bottom:16px">
-          <div class="stat-card cyan">
-            <div class="stat-label">Certs/Second</div>
-            <div class="stat-value cyan" id="certsPerSec">~45</div>
-          </div>
-          <div class="stat-card green">
-            <div class="stat-label">Matched Today</div>
-            <div class="stat-value green" id="matchedToday">342</div>
-          </div>
-          <div class="stat-card red">
-            <div class="stat-label" id="csHighRiskLabel">High Risk</div>
-            <div class="stat-value red" id="csHighRisk">28</div>
-          </div>
+          <div class="stat-card cyan"><div class="stat-label">Feed Status</div><div class="stat-value cyan" id="csStatus" style="font-size:1.2rem">connecting</div><div class="stat-sub" id="csStatusSub">—</div></div>
+          <div class="stat-card green"><div class="stat-label">Certs / second</div><div class="stat-value green" id="certsPerSec">0</div><div class="stat-sub" id="csTotalSub">0 seen</div></div>
+          <div class="stat-card orange"><div class="stat-label">Keyword Matches</div><div class="stat-value orange" id="matchedToday">0</div><div class="stat-sub" id="csMatchedSub">stored locally</div></div>
+          <div class="stat-card red"><div class="stat-label">High Risk (≥60)</div><div class="stat-value red" id="csHighRisk">0</div><div class="stat-sub">scored by the engine</div></div>
         </div>
         <div class="card">
           <div class="card-header">
-            <span class="card-title"><span class="glow-dot"></span> Live Certificate Feed — Kuwait Keywords</span>
-            <button class="btn-sm" onclick="toggleFeed()" id="feedToggle" style="border-color:var(--green);color:var(--green)">⏸ Pause</button>
+            <span class="card-title"><span class="glow-dot"></span> Matched Certificates</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <label class="checkbox" style="display:flex;align-items:center;gap:6px;color:var(--text-dim);font-size:.72rem"><input type="checkbox" id="feedOnlyRisky"> only score ≥ 40</label>
+              <button class="btn-sm" onclick="toggleFeed()" id="feedToggle" style="border-color:var(--green);color:var(--green)">⏸ Pause</button>
+              <button class="btn-sm" onclick="reconnectFeed()">↻ Reconnect</button>
+              <button class="btn-sm" onclick="replayFeed()" id="replayBtn" title="Replays a bundled synthetic sample when the live feed is unreachable">▶ Replay sample</button>
+            </div>
           </div>
-          <div class="feed-container" id="liveFeed"></div>
+          <div class="feed-container" id="liveFeed"><div style="padding:16px;color:var(--text-muted)">Waiting for the first matching certificate…</div></div>
         </div>
       </div>
 
-      <!-- ──── DOMAIN SCANNER ──── -->
+      <!-- ──── SCANNER ──── -->
       <div id="page-scanner" class="page">
         <h2 class="page-title">Domain Scanner</h2>
-        <p class="page-desc">Analyze any domain for phishing indicators, brand impersonation, and domain squatting</p>
+        <p class="page-desc">Phishing heuristics, brand impersonation and squatting analysis by the v2.2 engine, enriched live with DNS, Certificate Transparency and RDAP.</p>
         <div class="scanner-box">
-          <input class="scanner-input" id="scanInput" placeholder="Enter domain to scan (e.g., nbk-secure-login.xyz)" onkeydown="if(event.key==='Enter')scanDomain()">
+          <input class="scanner-input" id="scanInput" placeholder="Enter a domain or URL (e.g., nbk-secure-login.xyz, nbк.com)" onkeydown="if(event.key==='Enter')scanDomain()">
           <button class="scan-btn" id="scanBtn" onclick="scanDomain()">🔍 Analyze</button>
+        </div>
+        <div style="display:flex;gap:16px;margin:-6px 0 14px;flex-wrap:wrap;font-size:.75rem;color:var(--text-dim)">
+          <label class="checkbox" style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="scanEnrich" checked> Live enrichment (DoH · crt.sh · RDAP)</label>
+          <span>Try: <a href="#" onclick="quickScan('nbk-secure-login.xyz');return false">nbk-secure-login.xyz</a> · <a href="#" onclick="quickScan('nbк.com');return false">nbк.com</a> · <a href="#" onclick="quickScan('بيتك-تحديث.com');return false">بيتك-تحديث.com</a> · <a href="#" onclick="quickScan('knetpay.info');return false">knetpay.info</a> · <a href="#" onclick="quickScan('login.nbk.com');return false">login.nbk.com</a></span>
         </div>
         <div class="result-panel" id="scanResult"></div>
         <div class="card">
-          <div class="card-header">
-            <span class="card-title">📋 Recent Scans</span>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Domain</th><th>Risk Score</th><th>Level</th><th>Categories</th><th>Scanned</th></tr></thead>
-              <tbody id="recentScans"></tbody>
-            </table>
-          </div>
+          <div class="card-header"><span class="card-title">📋 Recent Scans</span></div>
+          <div class="table-wrap"><table><thead><tr><th>Domain</th><th>Risk Score</th><th>Level</th><th>Categories</th><th>Scanned</th></tr></thead><tbody id="recentScans"></tbody></table></div>
         </div>
       </div>
 
-      <!-- ──── BRAND MONITOR ──── -->
-      <div id="page-brands" class="page">
-        <h2 class="page-title">Brand Protection Monitor</h2>
-        <p class="page-desc">Protecting Kuwait's critical financial, telecom, and government brands</p>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Brand</th><th>Protected Domains</th><th>Industry</th><th>Priority</th><th>Alerts</th><th>Status</th></tr></thead>
-            <tbody id="brandTable"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ──── ALERTS ──── -->
-      <div id="page-alerts" class="page">
-        <h2 class="page-title">Security Alerts</h2>
-        <p class="page-desc">Active phishing and brand impersonation alerts</p>
-        <div class="stats-grid" style="margin-bottom:16px">
-          <div class="stat-card red"><div class="stat-label">Critical</div><div class="stat-value red" id="alertCritical">4</div></div>
-          <div class="stat-card orange"><div class="stat-label">High</div><div class="stat-value orange" id="alertHigh">5</div></div>
-          <div class="stat-card cyan"><div class="stat-label">Medium</div><div class="stat-value cyan" id="alertMedium">3</div></div>
-          <div class="stat-card green"><div class="stat-label" id="alertResolvedLabel">Resolved Today</div><div class="stat-value green" id="alertResolved">8</div></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">🚨 Active Alerts</span>
-            <div id="alertControls" style="display:none;gap:8px;align-items:center">
-              <select class="api-select" id="alertStatusFilter" onchange="apiLoadAlerts()">
-                <option value="open,investigating">Open + investigating</option>
-                <option value="open">Open</option>
-                <option value="investigating">Investigating</option>
-                <option value="resolved">Resolved</option>
-                <option value="false_positive">False positives</option>
-                <option value="">All</option>
-              </select>
-              <button class="btn-sm" onclick="apiLoadAlerts()">↻ Refresh</button>
-              <a class="btn-sm" href="/api/v1/alerts/export?format=csv" style="text-decoration:none">↧ CSV</a>
-              <a class="btn-sm" href="/api/v1/alerts/export?format=stix" target="_blank" style="text-decoration:none">↧ STIX</a>
-            </div>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>ID</th><th>Severity</th><th>Brand</th><th>Domain</th><th>Type</th><th>Detected</th><th>Status</th><th id="alertActionsHead" style="display:none">Actions</th></tr></thead>
-              <tbody id="alertTable"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- ──── TYPOSQUAT SIGHTINGS ──── -->
-      <div id="page-sightings" class="page">
-        <h2 class="page-title">🎯 Typosquat Sightings</h2>
-        <p class="page-desc">Look-alike domains of protected brands that currently resolve. Populated by <code>main.py watch-squats</code> (or the watcher container) and on-demand checks.</p>
-        <div class="stats-grid" style="margin-bottom:16px">
-          <div class="stat-card red"><div class="stat-label">New</div><div class="stat-value red" id="sgNew">0</div></div>
-          <div class="stat-card orange"><div class="stat-label">Monitoring</div><div class="stat-value orange" id="sgMonitoring">0</div></div>
-          <div class="stat-card cyan"><div class="stat-label">Total Live</div><div class="stat-value cyan" id="sgTotal">0</div></div>
-          <div class="stat-card green"><div class="stat-label">Last Watcher Run</div><div class="stat-value green" id="sgLastRun" style="font-size:1rem">—</div></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">Check a brand now</span></div>
-          <div style="display:grid;grid-template-columns:1fr auto;gap:10px">
-            <input class="scanner-input" id="sgBrandInput" placeholder="protected brand domain, e.g. nbk.com" onkeydown="if(event.key==='Enter')apiRunSquatCheck()">
-            <button class="btn" id="sgCheckBtn" onclick="apiRunSquatCheck()">▶ Resolve permutations</button>
-          </div>
-          <div class="scan-progress" id="sgProgress" style="display:none"></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">Live sightings</span>
-            <div style="display:flex;gap:8px;align-items:center">
-              <select class="api-select" id="sgStatusFilter" onchange="apiLoadSightings()">
-                <option value="">All statuses</option>
-                <option value="new">New</option>
-                <option value="monitoring">Monitoring</option>
-                <option value="takedown_requested">Takedown requested</option>
-                <option value="resolved">Resolved</option>
-                <option value="benign">Benign</option>
-              </select>
-              <button class="btn-sm" onclick="apiLoadSightings()">↻ Refresh</button>
-            </div>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Domain</th><th>Brand</th><th>Technique</th><th>IPs</th><th>First seen</th><th>Seen</th><th>Status</th><th>Actions</th></tr></thead>
-              <tbody id="sightingTable"><tr><td colspan="8"><div class="empty-state"><div class="ico">🎯</div><div class="title">No sightings</div><div class="sub">Serve the dashboard from <code>python main.py api</code> and run the squat watcher to populate this view</div></div></td></tr></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- ──── THREAT INTEL ──── -->
-      <div id="page-threatintel" class="page">
-        <h2 class="page-title">Threat Intelligence</h2>
-        <p class="page-desc">Integrated threat intelligence from multiple sources</p>
-        <div class="stats-grid">
-          <div class="stat-card cyan">
-            <div class="stat-label">Intel Sources</div>
-            <div class="stat-value cyan">6</div>
-            <div class="stat-sub">VT, URLScan, PhishTank, GSB, OpenPhish, Shodan</div>
-          </div>
-          <div class="stat-card red">
-            <div class="stat-label">Known Malicious</div>
-            <div class="stat-value red">1,247</div>
-          </div>
-          <div class="stat-card orange">
-            <div class="stat-label">IOCs Tracked</div>
-            <div class="stat-value orange">5,892</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">🧠 Recent Threat Intel Hits</span></div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Domain</th><th>Source</th><th>Verdict</th><th>Tags</th><th>First Seen</th></tr></thead>
-              <tbody id="tiTable"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- ──── NOTIFICATIONS ──── -->
-      <div id="page-notifications" class="page">
-        <h2 class="page-title">Notification Settings</h2>
-        <p class="page-desc">Configure alert delivery channels</p>
-        <div class="notif-grid">
-          <div class="notif-card">
-            <div class="notif-card-title">
-              📧 Email (SMTP)
-              <label class="toggle" style="margin-left:auto"><input type="checkbox"><span class="toggle-slider"></span></label>
-            </div>
-            <div class="notif-field"><label>SMTP Server</label><input placeholder="smtp.gmail.com"></div>
-            <div class="notif-field"><label>Port</label><input placeholder="587" value="587"></div>
-            <div class="notif-field"><label>Username</label><input placeholder="you@gmail.com"></div>
-            <div class="notif-field"><label>Password</label><input type="password" placeholder="••••••••"></div>
-            <div class="notif-field"><label>Recipients</label><input placeholder="soc@company.com, admin@company.com"></div>
-          </div>
-          <div class="notif-card">
-            <div class="notif-card-title">
-              💬 Slack
-              <label class="toggle" style="margin-left:auto"><input type="checkbox" checked><span class="toggle-slider"></span></label>
-            </div>
-            <div class="notif-field"><label>Webhook URL</label><input placeholder="https://hooks.slack.com/services/..." value="https://hooks.slack.com/services/T00/B00/xxxx"></div>
-            <div class="notif-field"><label>Channel</label><input placeholder="#phishing-alerts" value="#phishing-alerts"></div>
-            <div style="margin-top:12px;padding:10px;background:var(--bg-deep);border-radius:var(--radius-sm);font-size:.75rem;color:var(--green)">✅ Connected — Last alert sent 4m ago</div>
-          </div>
-          <div class="notif-card">
-            <div class="notif-card-title">
-              ✈️ Telegram
-              <label class="toggle" style="margin-left:auto"><input type="checkbox" checked><span class="toggle-slider"></span></label>
-            </div>
-            <div class="notif-field"><label>Bot Token</label><input type="password" placeholder="123456:ABC-DEF..." value="••••••••••••"></div>
-            <div class="notif-field"><label>Chat ID</label><input placeholder="-1001234567890" value="-100198765432"></div>
-            <div style="margin-top:12px;padding:10px;background:var(--bg-deep);border-radius:var(--radius-sm);font-size:.75rem;color:var(--green)">✅ Connected — Bot active</div>
-          </div>
-          <div class="notif-card">
-            <div class="notif-card-title">
-              🔗 Webhook (SIEM)
-              <label class="toggle" style="margin-left:auto"><input type="checkbox"><span class="toggle-slider"></span></label>
-            </div>
-            <div class="notif-field"><label>Endpoint URL</label><input placeholder="https://siem.company.com/api/webhook"></div>
-            <div class="notif-field"><label>HMAC Secret</label><input type="password" placeholder="webhook-signing-secret"></div>
-            <div style="margin-top:12px;padding:10px;background:var(--bg-deep);border-radius:var(--radius-sm);font-size:.75rem;color:var(--text-dim)">⚪ Not configured</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ──── ANALYTICS ──── -->
-      <div id="page-analytics" class="page">
-        <h2 class="page-title">Analytics</h2>
-        <p class="page-desc">Detection trends and performance metrics</p>
-        <div class="stats-grid">
-          <div class="stat-card cyan"><div class="stat-label">Avg Scan Time</div><div class="stat-value cyan">1.2s</div></div>
-          <div class="stat-card green"><div class="stat-label">True Positive Rate</div><div class="stat-value green">94.7%</div></div>
-          <div class="stat-card orange"><div class="stat-label">False Positive Rate</div><div class="stat-value orange">2.1%</div></div>
-          <div class="stat-card purple"><div class="stat-label">Uptime</div><div class="stat-value purple">99.8%</div></div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-          <div class="card">
-            <div class="card-header"><span class="card-title">📈 Weekly Detection Trend</span></div>
-            <div class="chart-area"><div class="chart-bars" id="weeklyChart"></div></div>
-          </div>
-          <div class="card">
-            <div class="card-header"><span class="card-title">🎯 Top Targeted Brands</span></div>
-            <div class="chart-area"><div class="chart-bars" id="brandChart"></div></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">🕐 Detection Timeline (Last 24h)</span></div>
-          <div class="chart-area" style="height:120px"><div class="chart-bars" id="hourlyChart"></div></div>
-        </div>
-      </div>
-
-      <!-- ──── SETTINGS ──── -->
-      <div id="page-settings" class="page">
-        <h2 class="page-title">Settings</h2>
-        <p class="page-desc">System configuration and keyword management</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-          <div class="card">
-            <div class="card-header"><span class="card-title">🔑 CertStream Keywords</span></div>
-            <div style="font-family:var(--font-mono);font-size:.8rem;line-height:2" id="keywordList"></div>
-          </div>
-          <div class="card">
-            <div class="card-header"><span class="card-title">⚙️ Detection Thresholds</span></div>
-            <div class="notif-field"><label>Homoglyph Similarity Threshold</label><input value="0.85"></div>
-            <div class="notif-field"><label>Levenshtein Distance Max</label><input value="3"></div>
-            <div class="notif-field"><label>Entropy Threshold</label><input value="3.5"></div>
-            <div class="notif-field"><label>Minimum Risk Score for Alert</label><input value="50"></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">🔌 API Configuration</span></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-            <div class="notif-field"><label>API Host</label><input value="0.0.0.0" disabled></div>
-            <div class="notif-field"><label>API Port</label><input value="5000" disabled></div>
-            <div class="notif-field"><label>Rate Limit</label><input value="100/hour"></div>
-            <div class="notif-field"><label>CORS Origins</label><input value="*"></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">🔐 Threat Intelligence API Keys</span></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-            <div class="notif-field"><label>VirusTotal</label><input type="password" placeholder="Enter API key" value="••••••••••••"></div>
-            <div class="notif-field"><label>URLScan.io</label><input type="password" placeholder="Enter API key" value="••••••••••••"></div>
-            <div class="notif-field"><label>Shodan</label><input type="password" placeholder="Enter API key"></div>
-            <div class="notif-field"><label>Google Safe Browsing</label><input type="password" placeholder="Enter API key" value="••••••••••••"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ──── BULK SCANNER ──── -->
+      <!-- ──── BULK ──── -->
       <div id="page-bulk" class="page">
         <h2 class="page-title">📋 Bulk Domain Scanner</h2>
-        <p class="page-desc">Paste a list of domains to scan them all against phishing heuristics. In real-user mode, live DNS and CT lookups augment each result.</p>
+        <p class="page-desc">Paste a list of domains. Each one runs through the full engine; optionally each is resolved via DNS-over-HTTPS.</p>
         <div class="card">
           <div class="card-header"><span class="card-title">Input</span><span class="card-sub" id="bulkCount">0 domains</span></div>
           <textarea class="bulk-textarea" id="bulkInput" placeholder="One domain per line&#10;nbk-secure-login.xyz&#10;kfh-verify.top&#10;zain-rewards.club" oninput="updateBulkCount()"></textarea>
@@ -829,126 +490,258 @@ tr:hover td{background:var(--bg-card-hover)}
             <button class="btn secondary" onclick="loadBulkSample()">Load Sample</button>
             <button class="btn secondary" onclick="clearBulk()">Clear</button>
             <button class="btn secondary" onclick="exportBulkCSV()" id="bulkExport" disabled>↧ Export CSV</button>
-            <label class="checkbox" style="display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:.8rem;margin-left:auto"><input type="checkbox" id="bulkDns" checked> Resolve DNS (live mode)</label>
+            <label class="checkbox" style="display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:.8rem;margin-left:auto"><input type="checkbox" id="bulkDns" checked> Resolve DNS</label>
           </div>
           <div class="scan-progress" id="bulkProgress" style="display:none"></div>
         </div>
         <div class="card">
           <div class="card-header"><span class="card-title">Results</span><span class="card-sub" id="bulkResultCount">—</span></div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Domain</th><th>Score</th><th>Level</th><th>Categories</th><th>DNS</th><th>Indicators</th></tr></thead>
-              <tbody id="bulkResults"><tr><td colspan="6"><div class="empty-state"><div class="ico">📋</div><div class="title">No scans yet</div><div class="sub">Paste domains above and click Scan All</div></div></td></tr></tbody>
-            </table>
-          </div>
+          <div class="table-wrap"><table><thead><tr><th>Domain</th><th>Score</th><th>Level</th><th>Brands</th><th>Categories</th><th>DNS</th></tr></thead>
+            <tbody id="bulkResults"><tr><td colspan="6"><div class="empty-state"><div class="ico">📋</div><div class="title">No scans yet</div><div class="sub">Paste domains above and click Scan All</div></div></td></tr></tbody></table></div>
         </div>
       </div>
 
-      <!-- ──── SQUAT GENERATOR ──── -->
+      <!-- ──── TYPOSQUAT HUNTER ──── -->
       <div id="page-squatgen" class="page">
-        <h2 class="page-title">🧬 Squat Domain Generator</h2>
-        <p class="page-desc">Generate typosquat, combosquat, homoglyph and TLD-swap permutations of a brand, then check which are registered. In live mode, each candidate is resolved via DNS over HTTPS to detect active impersonation.</p>
+        <h2 class="page-title">🧬 Typosquat Hunter</h2>
+        <p class="page-desc">Generates technique-tagged permutations of a brand (typos, homoglyphs, leetspeak, combo-squats, TLD swaps) and resolves them over DNS-over-HTTPS. Anything that resolves becomes a <strong>sighting</strong>.</p>
         <div class="card">
           <div class="card-header"><span class="card-title">Target Brand</span></div>
           <div style="display:grid;grid-template-columns:1fr auto;gap:10px">
-            <input class="scanner-input" id="squatInput" placeholder="e.g., nbk.com or kfh" onkeydown="if(event.key==='Enter')runSquatGen()">
-            <button class="btn" onclick="runSquatGen()" id="squatBtn">Generate &amp; Check</button>
+            <input class="scanner-input" id="squatInput" list="brandList" placeholder="e.g. nbk.com, knet.com.kw, kfh.com" onkeydown="if(event.key==='Enter')runSquatGen()">
+            <datalist id="brandList"></datalist>
+            <button class="btn" onclick="runSquatGen()" id="squatBtn">Generate &amp; Resolve</button>
           </div>
-          <div style="display:flex;gap:16px;margin-top:14px;flex-wrap:wrap">
-            <label class="checkbox" style="display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:.78rem"><input type="checkbox" id="squatCharSwap" checked> Char swap</label>
-            <label class="checkbox" style="display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:.78rem"><input type="checkbox" id="squatCharOmit" checked> Omission</label>
-            <label class="checkbox" style="display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:.78rem"><input type="checkbox" id="squatRepeat" checked> Repetition</label>
-            <label class="checkbox" style="display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:.78rem"><input type="checkbox" id="squatHomo" checked> Homoglyph</label>
-            <label class="checkbox" style="display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:.78rem"><input type="checkbox" id="squatTld" checked> TLD swap</label>
-            <label class="checkbox" style="display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:.78rem"><input type="checkbox" id="squatCombo" checked> Combosquat</label>
+          <div style="display:flex;gap:16px;margin-top:14px;flex-wrap:wrap;align-items:center">
+            <span style="font-size:.75rem;color:var(--text-dim)">Suffixes:</span>
+            <input class="api-select" id="squatTlds" value="com, net, kw, com.kw, xyz, top, online, site, icu, club" style="flex:1;min-width:240px">
+            <label class="checkbox" style="display:flex;align-items:center;gap:6px;color:var(--text-dim);font-size:.75rem"><input type="checkbox" id="squatCombos" checked> combo-squats</label>
+            <label class="checkbox" style="display:flex;align-items:center;gap:6px;color:var(--text-dim);font-size:.75rem"><input type="checkbox" id="squatHomo" checked> homoglyphs</label>
+            <label class="checkbox" style="display:flex;align-items:center;gap:6px;color:var(--text-dim);font-size:.75rem"><input type="checkbox" id="squatResolve" checked> resolve via DoH</label>
+            <span style="font-size:.75rem;color:var(--text-dim)">max <input class="api-select" id="squatLimit" value="400" style="width:70px"></span>
           </div>
           <div class="scan-progress" id="squatProgress" style="display:none"></div>
         </div>
-        <div class="stats-grid" id="squatStats" style="display:none">
+        <div class="stats-grid" id="squatStats" style="display:none;margin-bottom:16px">
           <div class="stat-card cyan"><div class="stat-label">Generated</div><div class="stat-value cyan" id="sqsGen">0</div></div>
-          <div class="stat-card red"><div class="stat-label">Registered</div><div class="stat-value red" id="sqsReg">0</div></div>
-          <div class="stat-card green"><div class="stat-label">Available</div><div class="stat-value green" id="sqsAvail">0</div></div>
-          <div class="stat-card orange"><div class="stat-label">Unknown</div><div class="stat-value orange" id="sqsUnk">0</div></div>
+          <div class="stat-card red"><div class="stat-label">Resolving (registered)</div><div class="stat-value red" id="sqsReg">0</div></div>
+          <div class="stat-card green"><div class="stat-label">Not resolving</div><div class="stat-value green" id="sqsAvail">0</div></div>
+          <div class="stat-card orange"><div class="stat-label">Unknown / errors</div><div class="stat-value orange" id="sqsUnk">0</div></div>
         </div>
         <div class="card" id="squatResults" style="display:none">
           <div class="card-header"><span class="card-title">Permutations</span>
             <div style="display:flex;gap:6px">
-              <button class="btn-sm" onclick="filterSquat('all')">All</button>
-              <button class="btn-sm" onclick="filterSquat('registered')" style="border-color:var(--red);color:var(--red)">Registered</button>
-              <button class="btn-sm" onclick="filterSquat('available')" style="border-color:var(--green);color:var(--green)">Available</button>
+              <button class="btn-sm" onclick="filterSquat('all')">All</button><button class="btn-sm" onclick="filterSquat('registered')" style="border-color:var(--red);color:var(--red)">Registered</button><button class="btn-sm" onclick="filterSquat('available')">Not resolving</button><button class="btn-sm" onclick="exportSquatCSV()">↧ CSV</button>
             </div>
           </div>
-          <div id="squatList"></div>
+          <div id="squatList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;max-height:520px;overflow:auto"></div>
+        </div>
+      </div>
+
+      <!-- ──── DOMAIN INTEL ──── -->
+      <div id="page-threatintel" class="page">
+        <h2 class="page-title">🧠 Domain Intelligence</h2>
+        <p class="page-desc">Real lookups from the browser: DNS-over-HTTPS resolution, Certificate Transparency history (crt.sh), RDAP registration age and URLhaus reputation. Feeds that require an API key (VirusTotal, Google Safe Browsing, PhishTank) run in the Python backend.</p>
+        <div class="scanner-box">
+          <input class="scanner-input" id="intelInput" placeholder="domain to investigate" onkeydown="if(event.key==='Enter')runIntel()">
+          <button class="scan-btn" id="intelBtn" onclick="runIntel()">🧠 Investigate</button>
+        </div>
+        <div class="result-panel" id="intelResult"></div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Recent investigations</span><button class="btn-sm" onclick="intelOpenAlerts()">Investigate open alerts</button></div>
+          <div class="table-wrap"><table><thead><tr><th>Domain</th><th>Resolves</th><th>CT certs</th><th>Registered</th><th>Age</th><th>URLhaus</th><th>Verdict</th><th>When</th></tr></thead>
+            <tbody id="tiTable"><tr><td colspan="8"><div class="empty-state"><div class="ico">🧠</div><div class="title">No investigations yet</div></div></td></tr></tbody></table></div>
         </div>
       </div>
 
       <!-- ──── CT LOG EXPLORER ──── -->
       <div id="page-ctlog" class="page">
-        <h2 class="page-title">📜 Certificate Transparency Explorer</h2>
-        <p class="page-desc">Query public CT logs via crt.sh. Every certificate ever issued for a domain is public; this view surfaces the full history so you can find unauthorized subdomains and impersonators.</p>
-        <div class="card">
-          <div class="card-header"><span class="card-title">Query</span></div>
-          <div style="display:grid;grid-template-columns:1fr auto;gap:10px">
-            <input class="scanner-input" id="ctInput" placeholder="e.g., nbk.com or %.nbk.com" onkeydown="if(event.key==='Enter')runCTLookup()">
-            <button class="btn" onclick="runCTLookup()" id="ctBtn">Search crt.sh</button>
-          </div>
-          <div style="margin-top:10px;font-size:.72rem;color:var(--text-muted)">
-            Tip: use <code class="mono" style="background:var(--bg-deep);padding:2px 6px;border-radius:4px;color:var(--cyan)">%.domain.com</code> for wildcard subdomain search
-          </div>
+        <h2 class="page-title">📜 CT Log Explorer</h2>
+        <p class="page-desc">Query crt.sh for every certificate ever logged for a domain or wildcard pattern (e.g. <code>%.nbk.com</code>).</p>
+        <div class="scanner-box">
+          <input class="scanner-input" id="ctInput" placeholder="nbk.com or %.nbk.com" onkeydown="if(event.key==='Enter')runCTLookup()">
+          <button class="scan-btn" id="ctBtn" onclick="runCTLookup()">📜 Search</button>
         </div>
-        <div class="card" id="ctResultsCard" style="display:none">
-          <div class="card-header"><span class="card-title">Results</span><span class="card-sub" id="ctResultCount">—</span></div>
-          <div id="ctResults"></div>
-        </div>
+        <div class="result-panel" id="ctResult"></div>
       </div>
 
-      <!-- ──── DNS LOOKUP ──── -->
+      <!-- ──── DNS ──── -->
       <div id="page-dnslookup" class="page">
-        <h2 class="page-title">🌐 DNS Lookup (DoH)</h2>
-        <p class="page-desc">Full DNS resolution via Google Public DNS over HTTPS. Resolves A, AAAA, MX, NS, TXT, CNAME, SOA, CAA — useful for validating a suspected phishing domain actually resolves.</p>
-        <div class="card">
-          <div class="card-header"><span class="card-title">Query</span></div>
-          <div style="display:grid;grid-template-columns:1fr auto;gap:10px">
-            <input class="scanner-input" id="dnsInput" placeholder="e.g., kfh.com" onkeydown="if(event.key==='Enter')runDnsLookup()">
-            <button class="btn" onclick="runDnsLookup()" id="dnsBtn">Resolve</button>
-          </div>
+        <h2 class="page-title">🌐 DNS Lookup</h2>
+        <p class="page-desc">A, AAAA, MX, NS, TXT, CNAME and SOA records via Google DNS-over-HTTPS.</p>
+        <div class="scanner-box">
+          <input class="scanner-input" id="dnsInput" placeholder="domain" onkeydown="if(event.key==='Enter')runDnsLookup()">
+          <button class="scan-btn" id="dnsBtn" onclick="runDnsLookup()">🌐 Resolve</button>
         </div>
-        <div id="dnsResults"></div>
+        <div class="result-panel" id="dnsResult"></div>
       </div>
 
-      <!-- ──── RDAP / WHOIS ──── -->
+      <!-- ──── RDAP ──── -->
       <div id="page-rdap" class="page">
-        <h2 class="page-title">📇 RDAP / WHOIS Lookup</h2>
-        <p class="page-desc">Real registration data via RDAP (modern replacement for WHOIS). Shows registrar, creation/expiry dates, nameservers, and DNSSEC status directly from authoritative RDAP servers.</p>
-        <div class="card">
-          <div class="card-header"><span class="card-title">Query</span></div>
-          <div style="display:grid;grid-template-columns:1fr auto;gap:10px">
-            <input class="scanner-input" id="rdapInput" placeholder="e.g., nbk.com" onkeydown="if(event.key==='Enter')runRdap()">
-            <button class="btn" onclick="runRdap()" id="rdapBtn">Lookup</button>
-          </div>
+        <h2 class="page-title">📇 RDAP / WHOIS</h2>
+        <p class="page-desc">Registration data (registrar, dates, nameservers, status, abuse contact) via the IANA RDAP bootstrap.</p>
+        <div class="scanner-box">
+          <input class="scanner-input" id="rdapInput" placeholder="domain" onkeydown="if(event.key==='Enter')runRdap()">
+          <button class="scan-btn" id="rdapBtn" onclick="runRdap()">📇 Lookup</button>
         </div>
-        <div id="rdapResults"></div>
+        <div class="result-panel" id="rdapResult"></div>
       </div>
 
-      <!-- ──── SCAN HISTORY ──── -->
+      <!-- ──── HISTORY ──── -->
       <div id="page-history" class="page">
         <h2 class="page-title">📚 Scan History</h2>
-        <p class="page-desc">Every scan run by this account is stored locally in IndexedDB. Click any row to view the full result, or export the entire history.</p>
+        <p class="page-desc">Every scan is stored locally (IndexedDB). Click a row to re-run it.</p>
         <div class="card">
-          <div class="card-header">
-            <span class="card-title">Your Scans</span>
-            <div style="display:flex;gap:8px">
-              <button class="btn-sm" onclick="exportHistoryJSON()">↧ JSON</button>
-              <button class="btn-sm" onclick="exportHistoryCSV()">↧ CSV</button>
-              <button class="btn-sm" onclick="clearHistory()" style="border-color:var(--red);color:var(--red)">Clear</button>
+          <div class="card-header"><span class="card-title">Your Scans</span>
+            <div style="display:flex;gap:8px"><button class="btn-sm" onclick="exportHistoryJSON()">↧ JSON</button><button class="btn-sm" onclick="exportHistoryCSV()">↧ CSV</button><button class="btn-sm" onclick="clearHistory()" style="border-color:var(--red);color:var(--red)">Clear</button></div>
+          </div>
+          <div class="table-wrap"><table><thead><tr><th>Domain</th><th>Score</th><th>Level</th><th>Brands</th><th>Categories</th><th>Time</th></tr></thead>
+            <tbody id="historyTable"></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- ──── BRANDS ──── -->
+      <div id="page-brands" class="page">
+        <h2 class="page-title">Brand Protection Monitor</h2>
+        <p class="page-desc">Protected profiles with aliases and Arabic keywords. Alert counts come from your local alerts. Add your own profiles in Settings.</p>
+        <div class="table-wrap"><table><thead><tr><th>Brand</th><th>Protected Domains</th><th>Aliases / Arabic</th><th>Industry</th><th>Priority</th><th>Alerts</th><th></th></tr></thead><tbody id="brandTable"></tbody></table></div>
+      </div>
+
+      <!-- ──── ALERTS ──── -->
+      <div id="page-alerts" class="page">
+        <h2 class="page-title">Security Alerts</h2>
+        <p class="page-desc">Brand-impersonation alerts raised by scans and the live feed. Triage them here; false positives can be allowlisted in one click.</p>
+        <div class="stats-grid" style="margin-bottom:16px">
+          <div class="stat-card red"><div class="stat-label">Critical</div><div class="stat-value red" id="alertCritical">0</div></div>
+          <div class="stat-card orange"><div class="stat-label">High</div><div class="stat-value orange" id="alertHigh">0</div></div>
+          <div class="stat-card cyan"><div class="stat-label">Medium</div><div class="stat-value cyan" id="alertMedium">0</div></div>
+          <div class="stat-card green"><div class="stat-label">Resolved</div><div class="stat-value green" id="alertResolved">0</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">🚨 Alerts</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <select class="api-select" id="alertStatusFilter" onchange="renderAlerts()">
+                <option value="open,investigating">Open + investigating</option><option value="open">Open</option><option value="investigating">Investigating</option><option value="resolved">Resolved</option><option value="false_positive">False positives</option><option value="">All</option>
+              </select>
+              <select class="api-select" id="alertSeverityFilter" onchange="renderAlerts()"><option value="">Any severity</option><option value="critical">Critical</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+              <button class="btn-sm" onclick="exportAlertsCSV()">↧ CSV</button><button class="btn-sm" onclick="exportAlertsSTIX()">↧ STIX 2.1</button>
             </div>
           </div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Domain</th><th>Score</th><th>Level</th><th>Mode</th><th>Categories</th><th>Time</th></tr></thead>
-              <tbody id="historyTable"><tr><td colspan="6"><div class="empty-state"><div class="ico">📚</div><div class="title">No scans yet</div><div class="sub">Run a scan to populate history</div></div></td></tr></tbody>
-            </table>
+          <div class="table-wrap"><table><thead><tr><th>ID</th><th>Severity</th><th>Brand</th><th>Domain</th><th>Type</th><th>Source</th><th>Detected</th><th>Status</th><th>Actions</th></tr></thead><tbody id="alertTable"></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- ──── SIGHTINGS ──── -->
+      <div id="page-sightings" class="page">
+        <h2 class="page-title">🎯 Typosquat Sightings</h2>
+        <p class="page-desc">Look-alike domains of protected brands that resolved when checked by the Typosquat Hunter.</p>
+        <div class="stats-grid" style="margin-bottom:16px">
+          <div class="stat-card red"><div class="stat-label">New</div><div class="stat-value red" id="sgNew">0</div></div>
+          <div class="stat-card orange"><div class="stat-label">Monitoring</div><div class="stat-value orange" id="sgMonitoring">0</div></div>
+          <div class="stat-card cyan"><div class="stat-label">Total</div><div class="stat-value cyan" id="sgTotal">0</div></div>
+          <div class="stat-card green"><div class="stat-label">Last check</div><div class="stat-value green" id="sgLastRun" style="font-size:1rem">—</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Live sightings</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <select class="api-select" id="sgStatusFilter" onchange="renderSightings()"><option value="">All statuses</option><option value="new">New</option><option value="monitoring">Monitoring</option><option value="takedown_requested">Takedown requested</option><option value="resolved">Resolved</option><option value="benign">Benign</option></select>
+              <button class="btn-sm" onclick="recheckSightings()">↻ Re-resolve all</button><button class="btn-sm" onclick="exportSightingsCSV()">↧ CSV</button>
+            </div>
           </div>
+          <div class="table-wrap"><table><thead><tr><th>Domain</th><th>Brand</th><th>Technique</th><th>IPs</th><th>First seen</th><th>Seen</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="sightingTable"></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- ──── ANALYTICS ──── -->
+      <div id="page-analytics" class="page">
+        <h2 class="page-title">Analytics</h2>
+        <p class="page-desc">Computed from the scans, alerts and feed matches stored in this browser.</p>
+        <div class="stats-grid">
+          <div class="stat-card cyan"><div class="stat-label">Scans (7 days)</div><div class="stat-value cyan" id="anScans">0</div></div>
+          <div class="stat-card red"><div class="stat-label">Alerts (7 days)</div><div class="stat-value red" id="anAlerts">0</div></div>
+          <div class="stat-card orange"><div class="stat-label">Feed matches (7 days)</div><div class="stat-value orange" id="anCerts">0</div></div>
+          <div class="stat-card green"><div class="stat-label">False-positive rate</div><div class="stat-value green" id="anFpRate">—</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div class="card"><div class="card-header"><span class="card-title">📈 Daily activity (scans + alerts)</span></div><div class="chart-area"><div class="chart-bars" id="weeklyChart"></div></div></div>
+          <div class="card"><div class="card-header"><span class="card-title">🎯 Most-targeted brands</span></div><div class="chart-area"><div class="chart-bars" id="brandChart"></div></div></div>
+        </div>
+        <div class="card"><div class="card-header"><span class="card-title">🕐 Feed matches by hour (UTC)</span></div><div class="chart-area" style="height:120px"><div class="chart-bars" id="hourlyChart"></div></div></div>
+      </div>
+
+      <!-- ──── NOTIFICATIONS ──── -->
+      <div id="page-notifications" class="page">
+        <h2 class="page-title">Notifications</h2>
+        <p class="page-desc">Browser notifications work right here. Email, Slack, Teams, Telegram, webhook and Syslog/CEF delivery are performed by the Python backend (<code>python main.py monitor</code>), which cannot run inside a static page.</p>
+        <div class="notif-grid">
+          <div class="notif-card">
+            <div class="notif-card-title">🔔 Browser notifications <label class="toggle" style="margin-left:auto"><input type="checkbox" id="notifEnabled" onchange="toggleNotifications(this.checked)"><span class="toggle-slider"></span></label></div>
+            <div class="notif-field"><label>Minimum severity</label>
+              <select class="api-select" id="notifMinSeverity" onchange="saveSetting('notifMinSeverity',this.value)" style="width:100%"><option value="critical">Critical only</option><option value="high" selected>High and above</option><option value="medium">Medium and above</option></select></div>
+            <div id="notifStatus" style="margin-top:12px;padding:10px;background:var(--bg-deep);border-radius:var(--radius-sm);font-size:.75rem;color:var(--text-dim)">Permission: unknown</div>
+            <button class="btn-sm" style="margin-top:10px" onclick="testNotification()">Send test notification</button>
+          </div>
+          <div class="notif-card">
+            <div class="notif-card-title">🔗 Webhook payload preview</div>
+            <p style="font-size:.75rem;color:var(--text-dim);margin-bottom:8px">This is the exact JSON the backend posts to Slack/Teams/webhook targets for the most recent alert.</p>
+            <pre id="webhookPreview" style="font-family:var(--font-mono);font-size:.68rem;background:var(--bg-deep);padding:10px;border-radius:var(--radius-sm);max-height:260px;overflow:auto;color:var(--text-dim)">No alerts yet.</pre>
+          </div>
+          <div class="notif-card">
+            <div class="notif-card-title">🖥️ Server-side channels</div>
+            <p style="font-size:.75rem;color:var(--text-dim);line-height:1.6">Configure in <code>config.yaml</code> → <code>notifications:</code><br>
+              • Email (SMTP) &nbsp;• Slack Block Kit &nbsp;• Microsoft Teams<br>• Telegram &nbsp;• HMAC-signed webhook &nbsp;• Syslog / CEF<br><br>
+              Then run <code>python main.py test-notify</code> to verify every channel.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ──── SETTINGS ──── -->
+      <div id="page-settings" class="page">
+        <h2 class="page-title">Settings</h2>
+        <p class="page-desc">Everything here is stored locally and applied immediately to the engine and the live feed.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div class="card">
+            <div class="card-header"><span class="card-title">🔑 CertStream Keywords</span><button class="btn-sm" onclick="resetKeywords()">Reset defaults</button></div>
+            <div id="keywordList" style="font-family:var(--font-mono);font-size:.8rem;line-height:2"></div>
+            <div style="display:flex;gap:8px;margin-top:10px"><input class="api-select" id="newKeyword" placeholder="add keyword" style="flex:1" onkeydown="if(event.key==='Enter')addKeyword()"><button class="btn-sm" onclick="addKeyword()">Add</button></div>
+            <p style="font-size:.7rem;color:var(--text-muted);margin-top:8px">Keywords shorter than 3 characters only match whole tokens (so <code>kw</code> does not match <code>hawkwind</code>).</p>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">✅ Allowlist</span></div>
+            <div id="allowlistList" style="font-family:var(--font-mono);font-size:.8rem;line-height:2"></div>
+            <div style="display:flex;gap:8px;margin-top:10px"><input class="api-select" id="newAllow" placeholder="domain (subdomains included)" style="flex:1" onkeydown="if(event.key==='Enter')addAllowlist()"><button class="btn-sm" onclick="addAllowlist()">Add</button></div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div class="card">
+            <div class="card-header"><span class="card-title">🏦 Custom brand profile</span></div>
+            <div class="notif-field"><label>Name</label><input id="cbName" placeholder="My Bank"></div>
+            <div class="notif-field"><label>Short name</label><input id="cbShort" placeholder="MYB"></div>
+            <div class="notif-field"><label>Domains (comma separated)</label><input id="cbDomains" placeholder="mybank.com.kw, mybank.com"></div>
+            <div class="notif-field"><label>Keywords / aliases</label><input id="cbKeywords" placeholder="mybank, my bank kuwait"></div>
+            <div class="notif-field"><label>Arabic keywords</label><input id="cbArabic" placeholder="بنكي"></div>
+            <div class="notif-field"><label>Priority</label><select class="api-select" id="cbPriority" style="width:100%"><option>critical</option><option selected>high</option><option>medium</option></select></div>
+            <button class="btn-sm" onclick="addCustomBrand()">Add profile</button>
+            <div id="customBrandList" style="margin-top:10px;font-size:.78rem"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">⚙️ Engine &amp; feed</span></div>
+            <div class="notif-field"><label>Store feed matches with score ≥</label><input id="setFeedMinScore" type="number" min="0" max="100" value="0" onchange="saveSetting('feedMinScore',Number(this.value))"></div>
+            <div class="notif-field"><label>Raise alerts from feed for severity ≥</label><select class="api-select" id="setFeedAlertSeverity" style="width:100%" onchange="saveSetting('feedAlertSeverity',this.value)"><option value="critical">critical</option><option value="high" selected>high</option><option value="medium">medium</option><option value="low">low</option></select></div>
+            <div class="notif-field"><label>CertStream URL</label><input id="setCertstreamUrl" value="wss://certstream.calidog.io/" onchange="saveSetting('certstreamUrl',this.value.trim())"></div>
+            <div class="notif-field"><label>Backend API base URL (optional)</label><input id="setApiUrl" placeholder="http://localhost:5000" onchange="saveSetting('apiUrl',this.value.trim());checkApi()"></div>
+            <div id="apiStatus" style="font-size:.72rem;color:var(--text-dim);margin-top:4px">API: not configured</div>
+            <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+              <button class="btn-sm" onclick="exportAllData()">↧ Backup data (JSON)</button>
+              <label class="btn-sm" style="cursor:pointer">↥ Restore<input type="file" accept="application/json" style="display:none" onchange="importAllData(this.files[0])"></label>
+              <button class="btn-sm" onclick="clearAllData()" style="border-color:var(--red);color:var(--red)">Clear all local data</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">ℹ️ About</span></div>
+          <p style="font-size:.78rem;color:var(--text-dim);line-height:1.7" id="aboutText"></p>
         </div>
       </div>
 
@@ -958,1610 +751,8 @@ tr:hover td{background:var(--bg-card-hover)}
 
 <div class="toast" id="toast"></div>
 
-<script>
-// ═══════════ DEMO DATA ═══════════
-
-const DEMO_THREATS = [
-  {domain:"nbk-secure-login.xyz",type:"Brand Impersonation",score:92,time:"2m ago",level:"critical"},
-  {domain:"kfh-verify-account.top",type:"Combo-squatting",score:88,time:"5m ago",level:"critical"},
-  {domain:"e-gov-kw-update.club",type:"Government Spoof",score:85,time:"8m ago",level:"critical"},
-  {domain:"kuwait-moi-portal.online",type:"Typosquatting",score:81,time:"12m ago",level:"high"},
-  {domain:"zain-kw-rewards.xyz",type:"Brand Impersonation",score:78,time:"15m ago",level:"high"},
-  {domain:"cbk-banking-secure.icu",type:"Homoglyph",score:76,time:"22m ago",level:"high"},
-  {domain:"burgan-online-login.tk",type:"Combo-squatting",score:73,time:"35m ago",level:"high"},
-  {domain:"boubyan-mobile-app.ga",type:"Brand Impersonation",score:70,time:"1h ago",level:"medium"},
-];
-
-const DEMO_BRANDS = [
-  {name:"National Bank of Kuwait (NBK)",domains:"nbk.com, nbk.com.kw",industry:"Banking",priority:"critical",alerts:4,status:"active"},
-  {name:"Kuwait Finance House (KFH)",domains:"kfh.com, kfh.com.kw",industry:"Banking",priority:"critical",alerts:3,status:"active"},
-  {name:"Central Bank of Kuwait (CBK)",domains:"cbk.gov.kw",industry:"Government",priority:"critical",alerts:2,status:"active"},
-  {name:"Burgan Bank",domains:"burgan.com, burgan.com.kw",industry:"Banking",priority:"high",alerts:1,status:"active"},
-  {name:"Gulf Bank",domains:"e-gulfbank.com",industry:"Banking",priority:"high",alerts:1,status:"active"},
-  {name:"Boubyan Bank",domains:"bankboubyan.com",industry:"Banking",priority:"high",alerts:1,status:"active"},
-  {name:"Warba Bank",domains:"warbabank.com",industry:"Banking",priority:"high",alerts:0,status:"active"},
-  {name:"Zain Kuwait",domains:"kw.zain.com",industry:"Telecom",priority:"high",alerts:2,status:"active"},
-  {name:"Ooredoo Kuwait",domains:"ooredoo.com.kw",industry:"Telecom",priority:"high",alerts:0,status:"active"},
-  {name:"Kuwait eGovernment",domains:"e.gov.kw",industry:"Government",priority:"critical",alerts:1,status:"active"},
-  {name:"Ministry of Interior",domains:"moi.gov.kw",industry:"Government",priority:"critical",alerts:1,status:"active"},
-  {name:"Kuwait Airways",domains:"kuwaitairways.com",industry:"Aviation",priority:"medium",alerts:0,status:"active"},
-  {name:"KNPC",domains:"knpc.com",industry:"Oil & Gas",priority:"medium",alerts:0,status:"active"},
-  {name:"KPC",domains:"kpc.com.kw",industry:"Oil & Gas",priority:"medium",alerts:0,status:"active"},
-];
-
-const DEMO_ALERTS = [
-  {id:"BA-000001",severity:"critical",brand:"NBK",domain:"nbk-secure-login.xyz",type:"domain_squat",time:"2m ago",status:"open"},
-  {id:"BA-000002",severity:"critical",brand:"KFH",domain:"kfh-verify-account.top",type:"combo-squatting",time:"5m ago",status:"open"},
-  {id:"BA-000003",severity:"critical",brand:"eGov Kuwait",domain:"e-gov-kw-update.club",type:"brand_impersonation",time:"8m ago",status:"investigating"},
-  {id:"BA-000004",severity:"critical",brand:"MOI",domain:"kuwait-moi-portal.online",type:"typosquatting",time:"12m ago",status:"open"},
-  {id:"BA-000005",severity:"high",brand:"Zain",domain:"zain-kw-rewards.xyz",type:"brand_impersonation",time:"15m ago",status:"open"},
-  {id:"BA-000006",severity:"high",brand:"CBK",domain:"cbk-banking-secure.icu",type:"homoglyph",time:"22m ago",status:"open"},
-  {id:"BA-000007",severity:"high",brand:"Burgan",domain:"burgan-online-login.tk",type:"combo-squatting",time:"35m ago",status:"investigating"},
-  {id:"BA-000008",severity:"high",brand:"NBK",domain:"nbk-account-verify.ga",type:"brand_keyword",time:"45m ago",status:"open"},
-  {id:"BA-000009",severity:"high",brand:"KFH",domain:"kfh-mobile-banking.ml",type:"brand_impersonation",time:"1h ago",status:"open"},
-  {id:"BA-000010",severity:"medium",brand:"Boubyan",domain:"boubyan-mobile-app.ga",type:"brand_keyword",time:"1h ago",status:"open"},
-  {id:"BA-000011",severity:"medium",brand:"Gulf Bank",domain:"gulfbank-login-kw.xyz",type:"combo-squatting",time:"2h ago",status:"investigating"},
-  {id:"BA-000012",severity:"medium",brand:"eGov Kuwait",domain:"egov-kw-services.top",type:"typosquatting",time:"3h ago",status:"open"},
-];
-
-const DEMO_TI = [
-  {domain:"nbk-secure-login.xyz",source:"VirusTotal",verdict:"Malicious (14/87)",tags:["phishing","brand-abuse"],seen:"2026-03-08"},
-  {domain:"kfh-verify-account.top",source:"URLScan.io",verdict:"Malicious",tags:["phishing"],seen:"2026-03-08"},
-  {domain:"e-gov-kw-update.club",source:"PhishTank",verdict:"Confirmed Phish",tags:["government-spoof"],seen:"2026-03-07"},
-  {domain:"kuwait-moi-portal.online",source:"Google SafeBrowsing",verdict:"Social Engineering",tags:["deceptive"],seen:"2026-03-07"},
-  {domain:"zain-kw-rewards.xyz",source:"VirusTotal",verdict:"Malicious (8/87)",tags:["phishing","telecom"],seen:"2026-03-07"},
-  {domain:"cbk-banking-secure.icu",source:"OpenPhish",verdict:"Active Phishing",tags:["banking","homoglyph"],seen:"2026-03-06"},
-];
-
-const CERTSTREAM_DEMO = [
-  {domain:"nbk-online-banking.xyz",score:89,kw:["nbk"],risk:"critical"},
-  {domain:"*.kuwait-visa-services.com",score:52,kw:["kuwait"],risk:"medium"},
-  {domain:"kfh-rewards-portal.top",score:85,kw:["kfh"],risk:"critical"},
-  {domain:"q8-telecom-offer.club",score:68,kw:["q8"],risk:"high"},
-  {domain:"kwt-government-portal.online",score:72,kw:["kwt"],risk:"high"},
-  {domain:"zain-kw-promo.xyz",score:77,kw:["zain","kw"],risk:"high"},
-  {domain:"nbk-verify-identity.ga",score:91,kw:["nbk"],risk:"critical"},
-  {domain:"*.kw-shopping-deals.site",score:41,kw:["kw"],risk:"medium"},
-  {domain:"cbk-gov-kw-auth.tk",score:88,kw:["cbk","kw"],risk:"critical"},
-  {domain:"kuwait-airways-booking.buzz",score:65,kw:["kuwait"],risk:"high"},
-  {domain:"e-gov-kw-renewal.icu",score:83,kw:["kw"],risk:"critical"},
-  {domain:"burgan-bank-login.ml",score:86,kw:["burgan"],risk:"critical"},
-  {domain:"moi-kw-traffic-fines.online",score:79,kw:["moi","kw"],risk:"high"},
-  {domain:"*.kwi-jobs-portal.xyz",score:38,kw:["kwi"],risk:"low"},
-  {domain:"kfh-mobile-update.cf",score:87,kw:["kfh"],risk:"critical"},
-  {domain:"q8-university-apply.com",score:25,kw:["q8"],risk:"low"},
-  {domain:"warba-bank-secure.tk",score:82,kw:["warba"],risk:"critical"},
-  {domain:"ooredoo-kw-offer.top",score:71,kw:["ooredoo","kw"],risk:"high"},
-  {domain:"paci-kw-civil-id.club",score:80,kw:["paci","kw"],risk:"high"},
-  {domain:"nbk-credit-card-apply.xyz",score:90,kw:["nbk"],risk:"critical"},
-];
-
-const SCAN_DEMO = [
-  {domain:"nbk-secure-login.xyz",score:92,level:"critical",categories:["brand_impersonation","keyword_abuse","suspicious_tld"],time:"2m ago"},
-  {domain:"kfh-verify.top",score:85,level:"critical",categories:["brand_impersonation","combo-squatting"],time:"10m ago"},
-  {domain:"e.gov.kw",score:0,level:"clean",categories:[],time:"15m ago"},
-  {domain:"kuwait-bank-promo.tk",score:72,level:"high",categories:["keyword_abuse","suspicious_tld"],time:"25m ago"},
-  {domain:"google.com",score:0,level:"clean",categories:[],time:"30m ago"},
-];
-
-const KEYWORDS = [
-  "kuwait","kw","kwt","kwi","q8","nbk","kfh","cbk","burgan",
-  "gulf-bank","warba","boubyan","ahli-united","zain-kw",
-  "ooredoo-kw","stc-kw","moi-kw","e-gov-kw","paci-kw"
-];
-
-// ═══════════ GLOBAL MODE ═══════════
-let LIVE_MODE = false; // false = demo mode (baked data, no network calls), true = real logged-in user
-let CURRENT_USER = null;
-let AUTH_MODE = 'signin';
-
-// ═══════════ INDEXEDDB ═══════════
-const DB_NAME = 'kwtcyberwatch_db';
-const DB_VERSION = 1;
-let _db = null;
-function openDB(){
-  return new Promise((resolve,reject)=>{
-    if(_db){resolve(_db);return}
-    const req=indexedDB.open(DB_NAME,DB_VERSION);
-    req.onerror=()=>reject(req.error);
-    req.onsuccess=()=>{_db=req.result;resolve(_db)};
-    req.onupgradeneeded=(e)=>{
-      const db=e.target.result;
-      if(!db.objectStoreNames.contains('users'))db.createObjectStore('users',{keyPath:'username'});
-      if(!db.objectStoreNames.contains('scans')){
-        const s=db.createObjectStore('scans',{keyPath:'id'});
-        s.createIndex('owner','owner',{unique:false});
-        s.createIndex('ts','ts',{unique:false});
-      }
-    };
-  });
-}
-async function dbPut(store,obj){
-  const db=await openDB();
-  return new Promise((res,rej)=>{const t=db.transaction([store],'readwrite');const r=t.objectStore(store).put(obj);r.onsuccess=()=>res(obj);r.onerror=()=>rej(r.error)});
-}
-async function dbGet(store,key){
-  const db=await openDB();
-  return new Promise((res,rej)=>{const t=db.transaction([store],'readonly');const r=t.objectStore(store).get(key);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
-}
-async function dbAllBy(store,index,value){
-  const db=await openDB();
-  return new Promise((res,rej)=>{
-    const t=db.transaction([store],'readonly');
-    const src=index?t.objectStore(store).index(index):t.objectStore(store);
-    const results=[];
-    const req=value!==undefined?src.openCursor(IDBKeyRange.only(value)):src.openCursor();
-    req.onsuccess=(e)=>{const c=e.target.result;if(c){results.push(c.value);c.continue()}else res(results)};
-    req.onerror=()=>rej(req.error);
-  });
-}
-async function dbClearOwner(store,index,value){
-  const items=await dbAllBy(store,index,value);
-  const db=await openDB();
-  const t=db.transaction([store],'readwrite');
-  const s=t.objectStore(store);
-  for(const it of items)s.delete(it.id);
-  return items.length;
-}
-
-// ═══════════ PASSWORD HASHING ═══════════
-async function hashPassword(password,salt){
-  const enc=new TextEncoder();
-  const buf=await crypto.subtle.digest('SHA-256',enc.encode(password+':kwt:'+salt));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-function genSalt(){
-  const a=new Uint8Array(16);crypto.getRandomValues(a);
-  return Array.from(a).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-
-// ═══════════ AUTH ═══════════
-function switchAuthTab(mode){
-  AUTH_MODE=mode;
-  document.querySelectorAll('[data-auth-tab]').forEach(el=>el.classList.toggle('on',el.dataset.authTab===mode));
-  document.getElementById('loginBtn').textContent=mode==='signin'?'Sign In':'Create Account';
-  document.getElementById('loginError').textContent='';
-}
-
-async function doLogin(){
-  const u=document.getElementById('loginUser').value.trim();
-  const p=document.getElementById('loginPass').value;
-  const errEl=document.getElementById('loginError');
-  errEl.textContent='';
-  if(!u||p.length<4){errEl.textContent='Username required, password minimum 4 characters';return}
-  if(u==='demo'){errEl.textContent='Use the Demo button below to explore the demo';return}
-  try{
-    if(AUTH_MODE==='register'){
-      const existing=await dbGet('users',u);
-      if(existing){errEl.textContent='Username already exists';return}
-      const salt=genSalt();
-      const hash=await hashPassword(p,salt);
-      await dbPut('users',{username:u,salt,hash,created:new Date().toISOString()});
-      toast('Account created — signing in','ok');
-      await completeLogin(u,true);
-    }else{
-      const user=await dbGet('users',u);
-      if(!user){errEl.textContent='Account not found — create one first';return}
-      const hash=await hashPassword(p,user.salt);
-      if(hash!==user.hash){errEl.textContent='Invalid password';return}
-      await completeLogin(u,true);
-    }
-  }catch(e){
-    console.error(e);
-    errEl.textContent='Error: '+e.message;
-  }
-}
-
-async function loginDemo(){
-  await completeLogin('demo',false);
-}
-
-async function completeLogin(username,liveMode){
-  CURRENT_USER=username;
-  LIVE_MODE=liveMode;
-  sessionStorage.setItem('kwt_session',JSON.stringify({username,liveMode}));
-  document.getElementById('loginPage').style.display='none';
-  document.getElementById('app').style.display='block';
-  document.getElementById('currentUser').textContent=username;
-  const badge=document.getElementById('modeBadge');
-  if(liveMode){
-    badge.className='mode-badge live pulse-dot';
-    badge.textContent='LIVE';
-  }else{
-    badge.className='mode-badge demo pulse-dot';
-    badge.textContent='DEMO';
-  }
-  initApp();
-}
-
-function doLogout(){
-  CURRENT_USER=null;
-  LIVE_MODE=false;
-  sessionStorage.removeItem('kwt_session');
-  document.getElementById('app').style.display='none';
-  document.getElementById('loginPage').style.display='flex';
-  document.getElementById('loginUser').value='';
-  document.getElementById('loginPass').value='';
-  document.getElementById('loginError').textContent='';
-  if(feedInterval){clearInterval(feedInterval);feedInterval=null}
-}
-
-async function restoreSession(){
-  try{
-    const s=JSON.parse(sessionStorage.getItem('kwt_session')||'null');
-    if(s&&s.username){await completeLogin(s.username,s.liveMode);return true}
-  }catch(e){}
-  return false;
-}
-
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('loginPage').style.display!=='none')doLogin()});
-window.addEventListener('DOMContentLoaded',()=>{restoreSession()});
-
-// ═══════════ NAVIGATION ═══════════
-function showPage(id,el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  if(el)el.classList.add('active');
-}
-
-// ═══════════ INIT ═══════════
-function initApp(){
-  renderRecentThreats();
-  renderBrandTable();
-  renderAlertTable();
-  renderTITable();
-  renderRecentScans();
-  renderCategoryChart();
-  renderWeeklyChart();
-  renderBrandChart();
-  renderHourlyChart();
-  renderKeywords();
-  startCertStreamDemo();
-}
-
-function renderRecentThreats(){
-  const tb=document.getElementById('recentThreats');
-  tb.innerHTML=DEMO_THREATS.map(t=>`<tr>
-    <td style="font-family:var(--font-mono);font-size:.75rem">${t.domain}</td>
-    <td><span class="badge ${t.level}">${t.type}</span></td>
-    <td><span style="font-family:var(--font-mono);font-weight:700;color:${t.score>=80?'var(--red)':t.score>=60?'var(--orange)':'var(--yellow)'}">${t.score}</span></td>
-    <td style="color:var(--text-dim);font-size:.75rem">${t.time}</td>
-  </tr>`).join('');
-}
-
-function renderBrandTable(){
-  const tb=document.getElementById('brandTable');
-  tb.innerHTML=DEMO_BRANDS.map(b=>`<tr>
-    <td><strong>${b.name}</strong></td>
-    <td style="font-family:var(--font-mono);font-size:.75rem">${b.domains}</td>
-    <td>${b.industry}</td>
-    <td><span class="badge ${b.priority}">${b.priority}</span></td>
-    <td style="font-family:var(--font-mono);font-weight:700;color:${b.alerts>0?'var(--red)':'var(--green)'}">${b.alerts}</td>
-    <td><span style="color:var(--green)">● Active</span></td>
-  </tr>`).join('');
-}
-
-function renderAlertTable(){
-  const tb=document.getElementById('alertTable');
-  tb.innerHTML=DEMO_ALERTS.map(a=>`<tr>
-    <td style="font-family:var(--font-mono);font-size:.75rem;color:var(--text-dim)">${a.id}</td>
-    <td><span class="badge ${a.severity}">${a.severity}</span></td>
-    <td><strong>${a.brand}</strong></td>
-    <td style="font-family:var(--font-mono);font-size:.75rem">${a.domain}</td>
-    <td>${a.type.replace(/_/g,' ')}</td>
-    <td style="color:var(--text-dim);font-size:.75rem">${a.time}</td>
-    <td><span class="badge ${a.status==='open'?'high':a.status==='investigating'?'info':'clean'}">${a.status}</span></td>
-  </tr>`).join('');
-}
-
-function renderTITable(){
-  const tb=document.getElementById('tiTable');
-  tb.innerHTML=DEMO_TI.map(t=>`<tr>
-    <td style="font-family:var(--font-mono);font-size:.75rem">${t.domain}</td>
-    <td><span class="badge info">${t.source}</span></td>
-    <td style="color:var(--red);font-weight:600;font-size:.8rem">${t.verdict}</td>
-    <td>${t.tags.map(tg=>'<span class="badge high" style="margin-right:4px">'+tg+'</span>').join('')}</td>
-    <td style="font-family:var(--font-mono);color:var(--text-dim);font-size:.75rem">${t.seen}</td>
-  </tr>`).join('');
-}
-
-function renderRecentScans(){
-  const tb=document.getElementById('recentScans');
-  tb.innerHTML=SCAN_DEMO.map(s=>`<tr>
-    <td style="font-family:var(--font-mono);font-size:.75rem">${s.domain}</td>
-    <td><span style="font-family:var(--font-mono);font-weight:700;color:${s.score>=80?'var(--red)':s.score>=50?'var(--orange)':s.score>0?'var(--yellow)':'var(--green)'}">${s.score}/100</span></td>
-    <td><span class="badge ${s.level}">${s.level}</span></td>
-    <td>${s.categories.map(c=>'<span class="badge info" style="margin:1px 2px;font-size:.6rem">'+c+'</span>').join('')||'<span style="color:var(--green)">—</span>'}</td>
-    <td style="color:var(--text-dim);font-size:.75rem">${s.time}</td>
-  </tr>`).join('');
-}
-
-// ═══════════ CHARTS ═══════════
-function renderCategoryChart(){
-  const data=[
-    {label:'Brand\nImpersonation',val:234,color:'var(--red)'},
-    {label:'Combo\nSquat',val:189,color:'var(--orange)'},
-    {label:'Typo\nSquat',val:156,color:'var(--yellow)'},
-    {label:'Keyword\nAbuse',val:134,color:'var(--cyan)'},
-    {label:'Homoglyph',val:67,color:'var(--purple)'},
-    {label:'TLD Swap',val:45,color:'var(--green)'},
-    {label:'Subdomain\nAbuse',val:22,color:'var(--text-dim)'},
-  ];
-  renderBarChart('categoryChart',data,180);
-}
-function renderWeeklyChart(){
-  const data=[
-    {label:'Mon',val:112,color:'var(--cyan)'},{label:'Tue',val:145,color:'var(--cyan)'},
-    {label:'Wed',val:98,color:'var(--cyan)'},{label:'Thu',val:167,color:'var(--red)'},
-    {label:'Fri',val:134,color:'var(--cyan)'},{label:'Sat',val:78,color:'var(--cyan)'},
-    {label:'Sun',val:56,color:'var(--cyan)'},
-  ];
-  renderBarChart('weeklyChart',data,170);
-}
-function renderBrandChart(){
-  const data=[
-    {label:'NBK',val:234,color:'var(--red)'},{label:'KFH',val:189,color:'var(--orange)'},
-    {label:'eGov',val:145,color:'var(--yellow)'},{label:'CBK',val:98,color:'var(--cyan)'},
-    {label:'Zain',val:87,color:'var(--purple)'},{label:'Burgan',val:56,color:'var(--green)'},
-  ];
-  renderBarChart('brandChart',data,170);
-}
-function renderHourlyChart(){
-  const el=document.getElementById('hourlyChart');
-  let html='';
-  for(let i=0;i<24;i++){
-    const v=Math.floor(Math.random()*80)+10;
-    const c=v>60?'var(--red)':v>40?'var(--orange)':'var(--cyan)';
-    html+=`<div class="chart-bar" style="height:${v}%;background:${c};width:16px" data-label="${i}h"></div>`;
-  }
-  el.innerHTML=html;
-}
-function renderBarChart(id,data,maxH){
-  const el=document.getElementById(id);
-  const maxVal=Math.max(...data.map(d=>d.val));
-  el.innerHTML=data.map(d=>{
-    const h=Math.max((d.val/maxVal)*maxH,8);
-    return`<div class="chart-bar" style="height:${h}px;background:${d.color}" data-label="${d.label.split('\n')[0]}"></div>`;
-  }).join('');
-}
-
-function renderKeywords(){
-  document.getElementById('keywordList').innerHTML=KEYWORDS.map(k=>
-    `<span style="display:inline-block;padding:4px 12px;margin:3px;background:var(--cyan-glow);border:1px solid var(--cyan-dim);border-radius:99px;color:var(--cyan)">${k}</span>`
-  ).join('');
-}
-
-// ═══════════ CERTSTREAM LIVE FEED ═══════════
-let feedRunning=true;
-let feedIdx=0;
-let feedInterval;
-function startCertStreamDemo(){
-  const feed=document.getElementById('liveFeed');
-  feedInterval=setInterval(()=>{
-    if(!feedRunning)return;
-    const item=CERTSTREAM_DEMO[feedIdx%CERTSTREAM_DEMO.length];
-    feedIdx++;
-    const now=new Date();
-    const time=now.toTimeString().slice(0,8);
-    const scoreColor=item.score>=80?'var(--red)':item.score>=60?'var(--orange)':item.score>=40?'var(--yellow)':'var(--green)';
-    const row=document.createElement('div');
-    row.className='feed-row';
-    row.innerHTML=`
-      <span class="feed-time">${time}</span>
-      <span class="badge ${item.risk}" style="font-size:.6rem">${item.risk}</span>
-      <span class="feed-domain">${item.domain}</span>
-      <span class="feed-keywords">${item.kw.join(', ')}</span>
-      <span class="feed-score" style="color:${scoreColor}">${item.score}</span>
-    `;
-    feed.insertBefore(row,feed.firstChild);
-    if(feed.children.length>100)feed.removeChild(feed.lastChild);
-    document.getElementById('feedCount').textContent=feedIdx;
-    // Increment matched today
-    const mt=document.getElementById('matchedToday');
-    mt.textContent=parseInt(mt.textContent)+1;
-  },1800);
-}
-function toggleFeed(){
-  feedRunning=!feedRunning;
-  const btn=document.getElementById('feedToggle');
-  if(feedRunning){btn.textContent='⏸ Pause';btn.style.borderColor='var(--green)';btn.style.color='var(--green)'}
-  else{btn.textContent='▶ Resume';btn.style.borderColor='var(--orange)';btn.style.color='var(--orange)'}
-}
-
-// ═══════════ OPENSQUAT-STYLE DETECTION (ported from atenreiro/opensquat) ═══════════
-// Levenshtein with early exit — same approach as opensquat/validations.py
-function levenshtein(a, b, threshold){
-  const la=a.length, lb=b.length;
-  if(threshold!=null && Math.abs(la-lb)>threshold) return threshold+1;
-  if(a===b) return 0;
-  if(la===0) return lb;
-  if(lb===0) return la;
-  let v0=new Array(lb+1), v1=new Array(lb+1);
-  for(let i=0;i<=lb;i++) v0[i]=i;
-  for(let i=0;i<la;i++){
-    v1[0]=i+1;
-    let rowMin=v1[0];
-    const ci=a[i];
-    for(let j=0;j<lb;j++){
-      const cost = ci===b[j] ? 0 : 1;
-      const val = Math.min(v1[j]+1, v0[j+1]+1, v0[j]+cost);
-      v1[j+1]=val;
-      if(val<rowMin) rowMin=val;
-    }
-    if(threshold!=null && rowMin>threshold) return threshold+1;
-    [v0,v1]=[v1,v0];
-  }
-  return v0[lb];
-}
-
-// Homoglyph confusables — subset of confusable_homoglyphs dangerous chars
-const HOMOGLYPH_MAP = {
-  'а':'a','е':'e','о':'o','р':'p','с':'c','х':'x','у':'y','і':'i','ѕ':'s','ԁ':'d','Ι':'I','І':'I','Ӏ':'l',
-  'ο':'o','ρ':'p','α':'a','ϲ':'c','ԝ':'w','ɡ':'g','ʟ':'l','ɑ':'a','ɒ':'a','ɕ':'c','ɔ':'o','ʜ':'h',
-  'ı':'i','Ɩ':'I','ⅼ':'l','ⅰ':'i','ⅴ':'v','ⅹ':'x','ⲟ':'o','ⲣ':'p','ⲥ':'c','ⲭ':'x',
-  '0':'o','1':'l','3':'e','5':'s','6':'g','7':'t'
-};
-function containsHomoglyph(s){
-  for(const ch of s){
-    const code=ch.charCodeAt(0);
-    if(code>127) return true; // any non-ASCII in a domain label is suspicious
-  }
-  return false;
-}
-function homoglyphToLatin(s){
-  return [...s].map(c => HOMOGLYPH_MAP[c] || c).join('');
-}
-
-// Kuwait-focused keyword list (analogous to opensquat keywords.txt)
-const KWT_BRANDS = ['nbk','kfh','cbk','burgan','gulfbank','boubyan','warba','abk','kib','bbkonline',
-                    'zain','ooredoo','stc','vivakw','viva',
-                    'egov','moi','moe','moh','paci','kuna','kockw','kgoc','kpc','knpc','kafco',
-                    'kuwaitairways','jazeeraair','kuwait','alahli','commercial'];
-const PHISH_KEYWORDS = ['login','signin','sign-in','verify','secure','update','confirm','account','password',
-                        'banking','online','portal','support','service','wallet','pay','ebank','auth',
-                        'reset','otp','mobile','app','rewards','bonus','free','win','claim'];
-const RISKY_TLDS = ['.xyz','.top','.club','.online','.site','.icu','.buzz','.tk','.ml','.ga','.cf','.gq',
-                    '.rest','.click','.loan','.work','.win','.cam','.bar','.monster','.fit','.mom'];
-
-// Shannon entropy for domain randomness detection
-function shannonEntropy(s){
-  const f={};
-  for(const c of s) f[c]=(f[c]||0)+1;
-  let h=0;
-  const n=s.length;
-  for(const c in f){const p=f[c]/n;h-=p*Math.log2(p)}
-  return h;
-}
-
-// Core squat analyzer — ports opensquat detection + adds structural heuristics
-function analyzeDomain(domain){
-  const d = domain.toLowerCase().replace(/^https?:\/\//,'').replace(/\/.*/,'').trim();
-  const parts = d.split('.');
-  const label = parts[0];
-  const tld = parts.length>1 ? '.'+parts.slice(1).join('.') : '';
-  const indicators=[], categories=new Set();
-  let score=0;
-
-  // 1. Homoglyph check (opensquat-style)
-  if(containsHomoglyph(label)){
-    const latin = homoglyphToLatin(label);
-    score+=25;
-    indicators.push({type:'homoglyph',detail:`Non-ASCII chars detected; normalized to '${latin}'`,w:25});
-    categories.add('homoglyph');
-  }
-
-  // 2. Levenshtein against brands (opensquat confidence levels)
-  const normalizedLabel = homoglyphToLatin(label);
-  for(const brand of KWT_BRANDS){
-    if(normalizedLabel===brand) continue; // exact match = legit
-    const dist = levenshtein(brand, normalizedLabel, 3);
-    if(dist>0 && dist<=2 && normalizedLabel.length>=3){
-      const confidence = dist===1?'very high':dist===2?'high':'medium';
-      score+=22;
-      indicators.push({type:'levenshtein_squat',detail:`'${normalizedLabel}' is ${dist} edit${dist>1?'s':''} from brand '${brand}' (${confidence} confidence)`,w:22});
-      categories.add('typosquatting');
-    } else if(normalizedLabel.includes(brand) && normalizedLabel!==brand){
-      score+=20;
-      indicators.push({type:'brand_impersonation',detail:`Contains brand '${brand}' as substring`,w:20});
-      categories.add('brand_impersonation');
-    }
-  }
-
-  // 3. Phishing keywords (opensquat keyword containment)
-  const kwFound=[];
-  for(const kw of PHISH_KEYWORDS){
-    if(d.includes(kw)) kwFound.push(kw);
-  }
-  if(kwFound.length){
-    const w = Math.min(kwFound.length*8, 24);
-    score+=w;
-    indicators.push({type:'phishing_keywords',detail:`Contains: ${kwFound.join(', ')}`,w});
-    categories.add('keyword_abuse');
-  }
-
-  // 4. Suspicious TLD
-  for(const t of RISKY_TLDS){
-    if(d.endsWith(t)){
-      score+=18;
-      indicators.push({type:'suspicious_tld',detail:`High-risk TLD: ${t}`,w:18});
-      categories.add('suspicious_tld');
-      break;
-    }
-  }
-
-  // 5. Combosquat — brand + phish keyword together
-  const hasBrand = categories.has('brand_impersonation') || categories.has('typosquatting');
-  if(hasBrand && kwFound.length){
-    score+=10;
-    indicators.push({type:'combosquat',detail:'Brand name + phishing keyword together',w:10});
-    categories.add('combosquat');
-  }
-
-  // 6. Excessive hyphens
-  const hc=(label.match(/-/g)||[]).length;
-  if(hc>=3){
-    score+=10;
-    indicators.push({type:'excessive_hyphens',detail:`${hc} hyphens in label`,w:10});
-    categories.add('structural_anomaly');
-  }
-
-  // 7. Long domain label
-  if(label.length>25){
-    score+=8;
-    indicators.push({type:'long_label',detail:`Label is ${label.length} chars`,w:8});
-    categories.add('structural_anomaly');
-  }
-
-  // 8. Deep subdomain nesting
-  if(parts.length>4){
-    score+=12;
-    indicators.push({type:'subdomain_abuse',detail:`${parts.length} labels deep`,w:12});
-    categories.add('structural_anomaly');
-  }
-
-  // 9. Shannon entropy — DGA detection
-  const ent=shannonEntropy(label);
-  if(ent>3.8 && label.length>=10){
-    score+=12;
-    indicators.push({type:'high_entropy',detail:`Entropy ${ent.toFixed(2)} suggests DGA or random`,w:12});
-    categories.add('dga_like');
-  }
-
-  // 10. Digit ratio
-  const digits=(label.match(/\d/g)||[]).length;
-  if(digits>=4 || (label.length>=5 && digits/label.length>0.4)){
-    score+=6;
-    indicators.push({type:'numeric_heavy',detail:`${digits} digits in label`,w:6});
-    categories.add('structural_anomaly');
-  }
-
-  score = Math.min(score, 100);
-  const level = score>=80?'critical':score>=60?'high':score>=40?'medium':score>=20?'low':'clean';
-  const rec = {
-    critical: 'IMMEDIATE ACTION: Block at DNS/proxy and file takedown with registrar and hosting provider.',
-    high: 'HIGH PRIORITY: Add to blocklist, notify brand owner, and investigate infrastructure.',
-    medium: 'MONITOR: Add to watchlist and re-scan daily for activity changes.',
-    low: 'LOW RISK: Log for reference; review if reports surface.',
-    clean: 'No significant threats detected by static analysis.'
-  }[level];
-  return {score,level,indicators,categories:[...categories],recommendation:rec,isPhishing:score>=50};
-}
-
-// Keep old name as alias for any existing callers
-function analyzeDemo(d){return analyzeDomain(d)}
-
-// ═══════════ LIVE API CALLS (crt.sh, DNS-over-HTTPS, RDAP) ═══════════
-async function fetchCrtSh(query){
-  const url='https://crt.sh/?q='+encodeURIComponent(query)+'&output=json';
-  const r=await fetch(url,{cache:'no-store'});
-  if(!r.ok) throw new Error('crt.sh returned '+r.status);
-  const text=await r.text();
-  // crt.sh sometimes returns non-JSON; guard
-  try{return JSON.parse(text)}catch(e){throw new Error('crt.sh returned invalid JSON')}
-}
-
-async function fetchDNS(domain, type){
-  const url='https://dns.google/resolve?name='+encodeURIComponent(domain)+'&type='+encodeURIComponent(type);
-  const r=await fetch(url);
-  if(!r.ok) throw new Error('DoH returned '+r.status);
-  return r.json();
-}
-
-async function fetchDNSAll(domain){
-  const types=['A','AAAA','MX','NS','TXT','CNAME','SOA','CAA'];
-  const results={};
-  await Promise.all(types.map(async t=>{
-    try{
-      const j=await fetchDNS(domain,t);
-      results[t]=(j.Answer||[]).map(a=>({name:a.name,ttl:a.TTL,data:a.data}));
-    }catch(e){results[t]=[]}
-  }));
-  return results;
-}
-
-async function resolveQuick(domain){
-  // Returns true/false/null (null=unknown/error)
-  try{
-    const j=await fetchDNS(domain,'A');
-    if(j.Status===0 && j.Answer && j.Answer.length>0) return true;
-    if(j.Status===3) return false; // NXDOMAIN
-    return null;
-  }catch(e){return null}
-}
-
-async function fetchRDAP(domain){
-  const url='https://rdap.org/domain/'+encodeURIComponent(domain);
-  const r=await fetch(url);
-  if(r.status===404) return null;
-  if(!r.ok) throw new Error('RDAP returned '+r.status);
-  return r.json();
-}
-
-// ═══════════ DOMAIN SCANNER (ENHANCED) ═══════════
-async function scanDomain(){
-  const input=document.getElementById('scanInput');
-  const domain=input.value.trim().toLowerCase();
-  if(!domain){toast('Enter a domain','crit');return}
-  const btn=document.getElementById('scanBtn');
-  const panel=document.getElementById('scanResult');
-  btn.disabled=true;btn.textContent='Scanning...';
-
-  // Immediate static analysis
-  const result=analyzeDomain(domain);
-
-  // Render initial result with loader for live portion
-  renderScanResult(domain,result,{pending:LIVE_MODE});
-
-  if(LIVE_MODE){
-    // Real enrichment: DNS + crt.sh + RDAP in parallel
-    const live={dns:null,certs:null,rdap:null,errors:[]};
-    const steps=[
-      {id:'dns',label:'DNS resolution via Google DoH'},
-      {id:'crt',label:'Certificate Transparency via crt.sh'},
-      {id:'rdap',label:'RDAP registration lookup'}
-    ];
-    renderLiveProgress(domain,steps);
-
-    const [dnsRes,ctRes,rdapRes]=await Promise.allSettled([
-      fetchDNSAll(domain),
-      fetchCrtSh(domain),
-      fetchRDAP(domain)
-    ]);
-
-    if(dnsRes.status==='fulfilled') live.dns=dnsRes.value; else live.errors.push('DNS: '+dnsRes.reason.message);
-    if(ctRes.status==='fulfilled') live.certs=ctRes.value; else live.errors.push('CT: '+ctRes.reason.message);
-    if(rdapRes.status==='fulfilled') live.rdap=rdapRes.value; else live.errors.push('RDAP: '+rdapRes.reason.message);
-
-    // Enrich score based on live findings
-    if(live.dns){
-      const hasA=(live.dns.A||[]).length>0;
-      if(!hasA){
-        result.indicators.push({type:'no_dns',detail:'Domain does not resolve (no A record)',w:-10});
-      }else{
-        result.indicators.push({type:'dns_live',detail:'Resolves to '+live.dns.A.map(a=>a.data).join(', '),w:0});
-      }
-    }
-    if(live.rdap){
-      const events=live.rdap.events||[];
-      const reg=events.find(e=>e.eventAction==='registration');
-      if(reg&&reg.eventDate){
-        const age=Date.now()-new Date(reg.eventDate).getTime();
-        const days=Math.floor(age/86400000);
-        if(days<30){
-          result.score=Math.min(100,result.score+15);
-          result.indicators.push({type:'newly_registered',detail:`Registered ${days} days ago`,w:15});
-          if(!result.categories.includes('newly_registered'))result.categories.push('newly_registered');
-        }else if(days<180){
-          result.score=Math.min(100,result.score+5);
-          result.indicators.push({type:'recent_registration',detail:`Registered ${days} days ago`,w:5});
-        }else{
-          result.indicators.push({type:'established_domain',detail:`Registered ${Math.floor(days/365)} years ago`,w:0});
-        }
-      }
-    }
-    if(live.certs && Array.isArray(live.certs)){
-      const ctCount=live.certs.length;
-      result.indicators.push({type:'ct_history',detail:`${ctCount} certificate(s) logged in CT`,w:0});
-    }
-
-    // Recompute level with new score
-    result.level = result.score>=80?'critical':result.score>=60?'high':result.score>=40?'medium':result.score>=20?'low':'clean';
-    result.isPhishing = result.score>=50;
-    renderScanResult(domain,result,{live});
-  }
-
-  // Save to history
-  await saveScanHistory({domain,result,live:LIVE_MODE});
-
-  // Add to recent scans table
-  const tb=document.getElementById('recentScans');
-  if(tb){
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml(domain)}</td><td><span style="font-family:var(--font-mono);font-weight:700;color:${result.score>=80?'var(--red)':result.score>=50?'var(--orange)':result.score>0?'var(--yellow)':'var(--green)'}">${result.score}/100</span></td><td><span class="badge ${result.level}">${result.level}</span></td><td>${result.categories.map(c=>'<span class="badge info" style="margin:1px 2px;font-size:.6rem">'+escapeHtml(c)+'</span>').join('')||'<span style="color:var(--green)">—</span>'}</td><td style="color:var(--text-dim);font-size:.75rem">Just now</td>`;
-    tb.insertBefore(tr,tb.firstChild);
-  }
-
-  btn.disabled=false;btn.textContent='🔍 Analyze';
-}
-
-function renderLiveProgress(domain, steps){
-  // Appended inside the scan result panel — reference ids set in renderScanResult
-  const el=document.getElementById('liveSteps');
-  if(!el) return;
-  el.innerHTML = steps.map(s=>`<div class="scan-step running" id="ls-${s.id}"><span class="step-ico">⏳</span><span>${escapeHtml(s.label)}</span><span class="step-meta">running...</span></div>`).join('');
-}
-
-function renderScanResult(domain,r,opts){
-  opts=opts||{};
-  const panel=document.getElementById('scanResult');
-  const sc=r.score>=80?'var(--red)':r.score>=60?'var(--orange)':r.score>=40?'var(--yellow)':r.score>0?'var(--text-dim)':'var(--green)';
-  const ctHtml = opts.live && opts.live.certs && Array.isArray(opts.live.certs) && opts.live.certs.length ? `
-    <div style="margin-top:16px">
-      <div style="font-size:.75rem;font-weight:600;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">CT Certificates (${opts.live.certs.length})</div>
-      ${opts.live.certs.slice(0,5).map(c=>`<div class="cert-card"><div class="cert-cn">${escapeHtml(c.common_name||c.name_value||'(no CN)')}</div><div class="cert-meta">Logged: ${escapeHtml((c.entry_timestamp||'').slice(0,10))} · Valid: ${escapeHtml((c.not_before||'').slice(0,10))} → ${escapeHtml((c.not_after||'').slice(0,10))}</div><div class="cert-issuer">${escapeHtml(c.issuer_name||'')}</div></div>`).join('')}
-      ${opts.live.certs.length>5?`<div style="font-size:.7rem;color:var(--text-muted);margin-top:6px">+${opts.live.certs.length-5} more — see CT Log Explorer</div>`:''}
-    </div>
-  ` : '';
-  const dnsHtml = opts.live && opts.live.dns ? `
-    <div style="margin-top:16px">
-      <div style="font-size:.75rem;font-weight:600;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">DNS Records</div>
-      <div class="record-list">
-        ${Object.entries(opts.live.dns).filter(([t,recs])=>recs.length).map(([t,recs])=>recs.map(r=>`<div class="record-line"><span class="record-type">${t}</span><span class="record-val">${escapeHtml(r.data)}</span><span class="record-ttl">TTL ${r.ttl}</span></div>`).join('')).join('')||'<div style="color:var(--text-muted);font-size:.7rem">No DNS records resolved</div>'}
-      </div>
-    </div>
-  ` : '';
-  const rdapHtml = opts.live && opts.live.rdap ? (()=>{
-    const rd=opts.live.rdap;
-    const evts=rd.events||[];
-    const reg=evts.find(e=>e.eventAction==='registration');
-    const exp=evts.find(e=>e.eventAction==='expiration');
-    const changed=evts.find(e=>e.eventAction==='last changed');
-    const registrar=(rd.entities||[]).find(e=>(e.roles||[]).includes('registrar'));
-    const regName=registrar?((registrar.vcardArray||[[],[]])[1].find(v=>v[0]==='fn')||[,,,''])[3]:null;
-    const ns=(rd.nameservers||[]).map(n=>n.ldhName||n.unicodeName).filter(Boolean);
-    return `
-    <div style="margin-top:16px">
-      <div style="font-size:.75rem;font-weight:600;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Registration (RDAP)</div>
-      <dl class="kv-grid">
-        <dt>Registrar</dt><dd class="wrap">${escapeHtml(regName||'—')}</dd>
-        <dt>Created</dt><dd>${escapeHtml(reg?reg.eventDate.slice(0,10):'—')}</dd>
-        <dt>Expires</dt><dd>${escapeHtml(exp?exp.eventDate.slice(0,10):'—')}</dd>
-        <dt>Last Changed</dt><dd>${escapeHtml(changed?changed.eventDate.slice(0,10):'—')}</dd>
-        <dt>Nameservers</dt><dd>${ns.length?ns.map(n=>escapeHtml(n)).join('<br>'):'—'}</dd>
-        <dt>Status</dt><dd class="wrap">${(rd.status||[]).map(s=>'<span class="badge info" style="margin:2px">'+escapeHtml(s)+'</span>').join('')||'—'}</dd>
-      </dl>
-    </div>`;
-  })() : '';
-  const errHtml = opts.live && opts.live.errors && opts.live.errors.length ? `<div style="margin-top:12px;padding:10px;background:rgba(255,140,0,.08);border:1px solid var(--orange-dim);border-radius:var(--radius-sm);font-size:.7rem;color:var(--orange)">⚠ Partial live data: ${opts.live.errors.map(e=>escapeHtml(e)).join(' · ')}</div>` : '';
-  const pendingHtml = opts.pending ? '<div class="scan-progress" id="liveSteps"></div>' : '';
-  panel.innerHTML=`
-    <div class="card" style="border-left:4px solid ${sc}">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-        <div>
-          <div style="font-size:.75rem;color:var(--text-dim);margin-bottom:4px">Scan Result ${LIVE_MODE?'<span class="mode-badge live">LIVE</span>':'<span class="mode-badge demo">STATIC</span>'}</div>
-          <div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700">${escapeHtml(domain)}</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-family:var(--font-mono);font-size:2.5rem;font-weight:800;color:${sc};line-height:1">${r.score}</div>
-          <div style="font-size:.7rem;color:var(--text-dim)">/100 Risk Score</div>
-        </div>
-      </div>
-      <div class="risk-meter"><div class="risk-meter-fill" style="width:${r.score}%;background:${sc}"></div></div>
-      <div style="display:flex;gap:8px;margin:12px 0;flex-wrap:wrap">
-        <span class="badge ${r.level}" style="font-size:.8rem;padding:5px 14px">${r.level.toUpperCase()}</span>
-        ${r.isPhishing?'<span class="badge critical" style="font-size:.8rem;padding:5px 14px">⚠ PHISHING LIKELY</span>':'<span class="badge clean" style="font-size:.8rem;padding:5px 14px">✓ No Strong Signal</span>'}
-      </div>
-      ${r.categories.length?`<div style="margin:8px 0">${r.categories.map(c=>'<span class="badge info" style="margin:2px">'+escapeHtml(c)+'</span>').join('')}</div>`:''}
-      ${r.indicators.length?`
-        <div style="margin-top:16px">
-          <div style="font-size:.75rem;font-weight:600;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Indicators (${r.indicators.length})</div>
-          <ul class="indicator-list">
-            ${r.indicators.map(i=>`<li class="${i.w>=15?'high-weight':i.w>=10?'med-weight':'low-weight'}">
-              <strong style="color:var(--text)">${escapeHtml(i.type)}</strong>: ${escapeHtml(i.detail)}
-              <span style="float:right;font-family:var(--font-mono);font-size:.7rem;color:var(--text-muted)">weight: ${i.w}</span>
-            </li>`).join('')}
-          </ul>
-        </div>
-      `:''}
-      ${dnsHtml}${ctHtml}${rdapHtml}${errHtml}${pendingHtml}
-      <div style="margin-top:16px;padding:12px;background:var(--bg-deep);border-radius:var(--radius-sm);font-size:.85rem">
-        <strong>Recommendation:</strong> ${escapeHtml(r.recommendation)}
-      </div>
-    </div>
-  `;
-  panel.classList.add('show');
-}
-
-function escapeHtml(s){
-  return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-// ═══════════ BULK SCANNER ═══════════
-let BULK_RESULTS=[];
-function updateBulkCount(){
-  const lines=document.getElementById('bulkInput').value.split('\n').map(l=>l.trim()).filter(Boolean);
-  document.getElementById('bulkCount').textContent=lines.length+' domain'+(lines.length===1?'':'s');
-}
-function loadBulkSample(){
-  document.getElementById('bulkInput').value=[
-    'nbk-secure-login.xyz','kfh-verify-account.top','zain-kw-rewards.club',
-    'burgan-online-login.tk','boubyan-mobile-app.ga','e-gov-kw-update.club',
-    'google.com','github.com','nbk.com','kfh.com'
-  ].join('\n');
-  updateBulkCount();
-}
-function clearBulk(){
-  document.getElementById('bulkInput').value='';
-  updateBulkCount();
-  document.getElementById('bulkResults').innerHTML='<tr><td colspan="6"><div class="empty-state"><div class="ico">📋</div><div class="title">No scans yet</div><div class="sub">Paste domains above and click Scan All</div></div></td></tr>';
-  document.getElementById('bulkResultCount').textContent='—';
-  document.getElementById('bulkExport').disabled=true;
-  BULK_RESULTS=[];
-}
-async function runBulkScan(){
-  const lines=document.getElementById('bulkInput').value.split('\n').map(l=>l.trim().toLowerCase()).filter(Boolean);
-  if(!lines.length){toast('Enter at least one domain','crit');return}
-  const doDns=LIVE_MODE && document.getElementById('bulkDns').checked;
-  const btn=document.getElementById('bulkBtn');
-  btn.disabled=true;btn.textContent='Scanning...';
-  const progress=document.getElementById('bulkProgress');
-  progress.style.display='block';
-  const tb=document.getElementById('bulkResults');
-  tb.innerHTML='';
-  BULK_RESULTS=[];
-  let done=0;
-  for(const d of lines){
-    progress.innerHTML=`<div class="scan-step running"><span class="step-ico">⏳</span><span>Scanning ${escapeHtml(d)}</span><span class="step-meta">${done+1}/${lines.length}</span></div>`;
-    const result=analyzeDomain(d);
-    let dnsInfo=null;
-    if(doDns){
-      dnsInfo=await resolveQuick(d);
-      if(dnsInfo===true)result.indicators.push({type:'dns_live',detail:'Resolves',w:0});
-      else if(dnsInfo===false){result.score=Math.max(0,result.score-15);result.indicators.push({type:'nxdomain',detail:'Does not resolve',w:-15})}
-    }
-    BULK_RESULTS.push({domain:d,result,dns:dnsInfo});
-    const dnsCell=dnsInfo===true?'<span class="sev-crit">● LIVE</span>':dnsInfo===false?'<span style="color:var(--text-muted)">○ NX</span>':'<span style="color:var(--text-muted)">—</span>';
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml(d)}</td><td><span style="font-family:var(--font-mono);font-weight:700;color:${result.score>=80?'var(--red)':result.score>=50?'var(--orange)':result.score>0?'var(--yellow)':'var(--green)'}">${result.score}</span></td><td><span class="badge ${result.level}">${result.level}</span></td><td>${result.categories.slice(0,3).map(c=>'<span class="badge info" style="margin:1px;font-size:.6rem">'+escapeHtml(c)+'</span>').join('')}</td><td>${dnsCell}</td><td style="font-size:.7rem;color:var(--text-dim)">${result.indicators.length}</td>`;
-    tb.appendChild(tr);
-    await saveScanHistory({domain:d,result,live:LIVE_MODE});
-    done++;
-  }
-  progress.innerHTML=`<div class="scan-step done"><span class="step-ico">✓</span><span>Complete</span><span class="step-meta">${done} scanned</span></div>`;
-  setTimeout(()=>progress.style.display='none',2500);
-  document.getElementById('bulkResultCount').textContent=`${done} scanned · ${BULK_RESULTS.filter(r=>r.result.score>=60).length} high-risk`;
-  document.getElementById('bulkExport').disabled=false;
-  btn.disabled=false;btn.textContent='▶ Scan All';
-  toast(`Scanned ${done} domains`,'ok');
-}
-function exportBulkCSV(){
-  if(!BULK_RESULTS.length){toast('Nothing to export','crit');return}
-  const rows=BULK_RESULTS.map(b=>({domain:b.domain,score:b.result.score,level:b.result.level,categories:b.result.categories.join('|'),indicators:b.result.indicators.length,dns:b.dns===true?'live':b.dns===false?'nxdomain':'unknown'}));
-  downloadCSV(rows,'kwtcyberwatch_bulk_'+new Date().toISOString().slice(0,10)+'.csv');
-}
-
-// ═══════════ SQUAT GENERATOR ═══════════
-let SQUAT_RESULTS=[];
-function generateSquats(brand,opts){
-  const out=[];
-  const base=brand.toLowerCase().replace(/\.[^.]+$/,'');
-  const origTld=(brand.match(/\.([^.]+)$/)||['',''])[1]||'com';
-  const seen=new Set();
-  const push=(d,type)=>{if(!seen.has(d)){seen.add(d);out.push({domain:d,type})}};
-
-  // Char omission
-  if(opts.charOmit){
-    for(let i=0;i<base.length;i++){
-      push(base.slice(0,i)+base.slice(i+1)+'.'+origTld,'omission');
-    }
-  }
-  // Char repetition
-  if(opts.repeat){
-    for(let i=0;i<base.length;i++){
-      push(base.slice(0,i)+base[i]+base[i]+base.slice(i+1)+'.'+origTld,'repetition');
-    }
-  }
-  // Char swap (adjacent)
-  if(opts.charSwap){
-    for(let i=0;i<base.length-1;i++){
-      const arr=base.split('');
-      [arr[i],arr[i+1]]=[arr[i+1],arr[i]];
-      push(arr.join('')+'.'+origTld,'swap');
-    }
-  }
-  // Homoglyph
-  if(opts.homo){
-    const HG={'a':['а','@','4'],'e':['е','3'],'o':['о','0'],'i':['1','l','і'],'l':['1','I','ⅼ'],'s':['5','$','ѕ'],'b':['6'],'g':['9'],'c':['ϲ','с'],'p':['р'],'n':['п'],'k':['κ']};
-    for(let i=0;i<base.length;i++){
-      const alts=HG[base[i]];
-      if(alts){
-        for(const a of alts){
-          push(base.slice(0,i)+a+base.slice(i+1)+'.'+origTld,'homoglyph');
-        }
-      }
-    }
-  }
-  // TLD swap
-  if(opts.tld){
-    ['xyz','top','club','online','site','icu','tk','ml','ga','cf','info','net','co','link','shop'].forEach(t=>{
-      push(base+'.'+t,'tld-swap');
-    });
-  }
-  // Combosquat
-  if(opts.combo){
-    ['login','secure','verify','account','online','support','app','mobile','bank','portal','update'].forEach(kw=>{
-      push(base+'-'+kw+'.'+origTld,'combo-prefix');
-      push(base+kw+'.'+origTld,'combo-suffix');
-    });
-  }
-  return out;
-}
-
-async function runSquatGen(){
-  const brand=document.getElementById('squatInput').value.trim();
-  if(!brand){toast('Enter a brand/domain','crit');return}
-  const opts={
-    charSwap:document.getElementById('squatCharSwap').checked,
-    charOmit:document.getElementById('squatCharOmit').checked,
-    repeat:document.getElementById('squatRepeat').checked,
-    homo:document.getElementById('squatHomo').checked,
-    tld:document.getElementById('squatTld').checked,
-    combo:document.getElementById('squatCombo').checked
-  };
-  const btn=document.getElementById('squatBtn');
-  btn.disabled=true;btn.textContent='Generating...';
-  const perms=generateSquats(brand,opts);
-  const progress=document.getElementById('squatProgress');
-  progress.style.display='block';
-  document.getElementById('squatStats').style.display='grid';
-  document.getElementById('squatResults').style.display='block';
-  document.getElementById('sqsGen').textContent=perms.length;
-  document.getElementById('sqsReg').textContent='0';
-  document.getElementById('sqsAvail').textContent='0';
-  document.getElementById('sqsUnk').textContent=LIVE_MODE?'0':perms.length.toString();
-  SQUAT_RESULTS=perms.map(p=>({...p,status:LIVE_MODE?'checking':'unknown'}));
-  renderSquatList();
-
-  if(!LIVE_MODE){
-    progress.innerHTML='<div class="scan-step done"><span class="step-ico">✓</span><span>Generated '+perms.length+' permutations (static mode — sign in to check DNS)</span></div>';
-    setTimeout(()=>progress.style.display='none',3500);
-    btn.disabled=false;btn.textContent='Generate & Check';
-    return;
-  }
-
-  // Live: resolve all permutations in parallel batches
-  let reg=0,avail=0,unk=0;
-  const BATCH=8;
-  let i=0;
-  while(i<SQUAT_RESULTS.length){
-    const batch=SQUAT_RESULTS.slice(i,i+BATCH);
-    progress.innerHTML=`<div class="scan-step running"><span class="step-ico">⏳</span><span>Resolving DNS</span><span class="step-meta">${i}/${SQUAT_RESULTS.length}</span></div>`;
-    await Promise.all(batch.map(async (p,idx)=>{
-      const r=await resolveQuick(p.domain);
-      const real=SQUAT_RESULTS[i+idx];
-      if(r===true){real.status='registered';reg++}
-      else if(r===false){real.status='available';avail++}
-      else{real.status='unknown';unk++}
-    }));
-    document.getElementById('sqsReg').textContent=reg;
-    document.getElementById('sqsAvail').textContent=avail;
-    document.getElementById('sqsUnk').textContent=unk;
-    renderSquatList();
-    i+=BATCH;
-  }
-  progress.innerHTML=`<div class="scan-step done"><span class="step-ico">✓</span><span>Complete — ${reg} registered, ${avail} available</span></div>`;
-  setTimeout(()=>progress.style.display='none',3500);
-  btn.disabled=false;btn.textContent='Generate & Check';
-  if(reg>0)toast(`⚠ ${reg} squat domains are REGISTERED`,'crit');
-}
-
-let SQUAT_FILTER='all';
-function filterSquat(f){SQUAT_FILTER=f;renderSquatList()}
-function renderSquatList(){
-  const el=document.getElementById('squatList');
-  const filtered=SQUAT_FILTER==='all'?SQUAT_RESULTS:SQUAT_RESULTS.filter(r=>r.status===SQUAT_FILTER);
-  el.innerHTML=filtered.map(p=>`<div class="perm-card ${p.status}"><span class="perm-domain">${escapeHtml(p.domain)}</span><span class="perm-type">${escapeHtml(p.type)}</span><span class="perm-status ${p.status}">${escapeHtml(p.status)}</span></div>`).join('')||'<div class="empty-state"><div class="sub">No permutations match filter</div></div>';
-}
-
-// ═══════════ CT LOG EXPLORER ═══════════
-async function runCTLookup(){
-  const q=document.getElementById('ctInput').value.trim();
-  if(!q){toast('Enter a domain','crit');return}
-  const btn=document.getElementById('ctBtn');
-  const card=document.getElementById('ctResultsCard');
-  const resEl=document.getElementById('ctResults');
-  btn.disabled=true;btn.textContent='Searching...';
-  card.style.display='block';
-  resEl.innerHTML='<div class="scan-progress"><div class="scan-step running"><span class="step-ico">⏳</span><span>Querying crt.sh...</span></div></div>';
-
-  if(!LIVE_MODE){
-    // Demo data
-    const demo=[
-      {common_name:q,issuer_name:"Let's Encrypt Authority X3",not_before:'2026-01-15',not_after:'2026-04-15',entry_timestamp:'2026-01-15'},
-      {common_name:'*.'+q,issuer_name:'DigiCert Global Root CA',not_before:'2025-11-08',not_after:'2026-11-08',entry_timestamp:'2025-11-08'},
-      {common_name:'www.'+q,issuer_name:"Let's Encrypt Authority X3",not_before:'2025-09-02',not_after:'2025-12-02',entry_timestamp:'2025-09-02'},
-    ];
-    document.getElementById('ctResultCount').textContent=`${demo.length} certs (demo)`;
-    resEl.innerHTML=demo.map(c=>`<div class="cert-card"><div class="cert-cn">${escapeHtml(c.common_name)}</div><div class="cert-meta">Logged: ${c.entry_timestamp} · Valid: ${c.not_before} → ${c.not_after}</div><div class="cert-issuer">${escapeHtml(c.issuer_name)}</div></div>`).join('');
-    btn.disabled=false;btn.textContent='Search crt.sh';
-    return;
-  }
-
-  try{
-    const certs=await fetchCrtSh(q);
-    if(!Array.isArray(certs)||!certs.length){
-      resEl.innerHTML='<div class="empty-state"><div class="ico">📜</div><div class="title">No certificates found</div><div class="sub">crt.sh returned no results for this query</div></div>';
-      document.getElementById('ctResultCount').textContent='0 certs';
-    }else{
-      // Dedupe by common_name + issuer
-      const seen=new Set();
-      const unique=certs.filter(c=>{const k=c.common_name+'|'+c.issuer_name+'|'+c.not_before;if(seen.has(k))return false;seen.add(k);return true}).slice(0,200);
-      document.getElementById('ctResultCount').textContent=`${unique.length} unique · ${certs.length} total`;
-      resEl.innerHTML=unique.map(c=>`<div class="cert-card"><div class="cert-cn">${escapeHtml(c.common_name||c.name_value||'(no CN)')}</div><div class="cert-meta">Logged: ${escapeHtml((c.entry_timestamp||'').slice(0,10))} · Valid: ${escapeHtml((c.not_before||'').slice(0,10))} → ${escapeHtml((c.not_after||'').slice(0,10))}</div><div class="cert-issuer">${escapeHtml(c.issuer_name||'')}</div></div>`).join('');
-    }
-  }catch(e){
-    resEl.innerHTML=`<div class="empty-state"><div class="ico">⚠</div><div class="title">crt.sh error</div><div class="sub">${escapeHtml(e.message)}</div></div>`;
-  }
-  btn.disabled=false;btn.textContent='Search crt.sh';
-}
-
-// ═══════════ DNS LOOKUP ═══════════
-async function runDnsLookup(){
-  const domain=document.getElementById('dnsInput').value.trim();
-  if(!domain){toast('Enter a domain','crit');return}
-  const btn=document.getElementById('dnsBtn');
-  const resEl=document.getElementById('dnsResults');
-  btn.disabled=true;btn.textContent='Resolving...';
-  resEl.innerHTML='<div class="card"><div class="scan-progress"><div class="scan-step running"><span class="step-ico">⏳</span><span>Querying Google DoH...</span></div></div></div>';
-
-  let dns;
-  if(!LIVE_MODE){
-    dns={A:[{data:'93.184.216.34',ttl:3600}],AAAA:[{data:'2606:2800:220:1:248:1893:25c8:1946',ttl:3600}],MX:[{data:'10 mail.'+domain,ttl:3600}],NS:[{data:'ns1.'+domain,ttl:86400},{data:'ns2.'+domain,ttl:86400}],TXT:[{data:'"v=spf1 include:_spf.google.com ~all"',ttl:3600}],CNAME:[],SOA:[],CAA:[]};
-  }else{
-    try{dns=await fetchDNSAll(domain)}catch(e){resEl.innerHTML=`<div class="card"><div class="empty-state"><div class="ico">⚠</div><div class="title">DNS error</div><div class="sub">${escapeHtml(e.message)}</div></div></div>`;btn.disabled=false;btn.textContent='Resolve';return}
-  }
-
-  const sections=Object.entries(dns).map(([t,recs])=>recs.length?`<div class="card"><div class="card-header"><span class="card-title">${t} Records</span><span class="card-sub">${recs.length}</span></div><div class="record-list">${recs.map(r=>`<div class="record-line"><span class="record-type">${t}</span><span class="record-val">${escapeHtml(r.data)}</span><span class="record-ttl">TTL ${r.ttl}</span></div>`).join('')}</div></div>`:'').filter(Boolean).join('');
-  resEl.innerHTML=sections||'<div class="card"><div class="empty-state"><div class="ico">🌐</div><div class="title">No records found</div></div></div>';
-  btn.disabled=false;btn.textContent='Resolve';
-}
-
-// ═══════════ RDAP ═══════════
-async function runRdap(){
-  const domain=document.getElementById('rdapInput').value.trim();
-  if(!domain){toast('Enter a domain','crit');return}
-  const btn=document.getElementById('rdapBtn');
-  const resEl=document.getElementById('rdapResults');
-  btn.disabled=true;btn.textContent='Looking up...';
-  resEl.innerHTML='<div class="card"><div class="scan-progress"><div class="scan-step running"><span class="step-ico">⏳</span><span>Querying RDAP...</span></div></div></div>';
-
-  let rd;
-  if(!LIVE_MODE){
-    rd={ldhName:domain,status:['client transfer prohibited','server delete prohibited'],events:[{eventAction:'registration',eventDate:'2001-03-05T15:00:00Z'},{eventAction:'expiration',eventDate:'2027-03-05T15:00:00Z'},{eventAction:'last changed',eventDate:'2024-11-12T09:22:00Z'}],entities:[{roles:['registrar'],vcardArray:[[],[ ['version',{},'text','4.0'],['fn',{},'text','Demo Registrar Inc'] ]]}],nameservers:[{ldhName:'ns1.demo.net'},{ldhName:'ns2.demo.net'}]};
-  }else{
-    try{rd=await fetchRDAP(domain);if(!rd){resEl.innerHTML=`<div class="card"><div class="empty-state"><div class="ico">📇</div><div class="title">No RDAP record</div><div class="sub">Domain may be unregistered or TLD has no RDAP endpoint</div></div></div>`;btn.disabled=false;btn.textContent='Lookup';return}}
-    catch(e){resEl.innerHTML=`<div class="card"><div class="empty-state"><div class="ico">⚠</div><div class="title">RDAP error</div><div class="sub">${escapeHtml(e.message)}</div></div></div>`;btn.disabled=false;btn.textContent='Lookup';return}
-  }
-
-  const evts=rd.events||[];
-  const reg=evts.find(e=>e.eventAction==='registration');
-  const exp=evts.find(e=>e.eventAction==='expiration');
-  const changed=evts.find(e=>e.eventAction==='last changed');
-  const registrar=(rd.entities||[]).find(e=>(e.roles||[]).includes('registrar'));
-  const regName=registrar?(((registrar.vcardArray||[[],[]])[1].find(v=>v[0]==='fn')||[,,,''])[3]||'—'):'—';
-  const ns=(rd.nameservers||[]).map(n=>n.ldhName||n.unicodeName).filter(Boolean);
-
-  resEl.innerHTML=`<div class="card">
-    <div class="card-header"><span class="card-title">Registration Details</span><span class="card-sub">${escapeHtml(rd.ldhName||domain)}</span></div>
-    <dl class="kv-grid">
-      <dt>Registrar</dt><dd class="wrap">${escapeHtml(regName)}</dd>
-      <dt>Created</dt><dd>${escapeHtml(reg?reg.eventDate.slice(0,10):'—')}</dd>
-      <dt>Expires</dt><dd>${escapeHtml(exp?exp.eventDate.slice(0,10):'—')}</dd>
-      <dt>Last Changed</dt><dd>${escapeHtml(changed?changed.eventDate.slice(0,10):'—')}</dd>
-      <dt>Nameservers</dt><dd>${ns.length?ns.map(n=>escapeHtml(n)).join('<br>'):'—'}</dd>
-      <dt>Status</dt><dd class="wrap">${(rd.status||[]).map(s=>'<span class="badge info" style="margin:2px">'+escapeHtml(s)+'</span>').join('')||'—'}</dd>
-      <dt>DNSSEC</dt><dd>${rd.secureDNS&&rd.secureDNS.delegationSigned?'<span class="sev-clean">✓ Signed</span>':'<span style="color:var(--text-muted)">Unsigned</span>'}</dd>
-    </dl>
-  </div>`;
-  btn.disabled=false;btn.textContent='Lookup';
-}
-
-// ═══════════ SCAN HISTORY ═══════════
-async function saveScanHistory(entry){
-  if(!CURRENT_USER)return;
-  const id='scan_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
-  await dbPut('scans',{id,owner:CURRENT_USER,ts:new Date().toISOString(),domain:entry.domain,score:entry.result.score,level:entry.result.level,categories:entry.result.categories,indicators:entry.result.indicators,live:entry.live});
-}
-async function renderHistory(){
-  if(!CURRENT_USER)return;
-  const tb=document.getElementById('historyTable');
-  const scans=(await dbAllBy('scans','owner',CURRENT_USER)).sort((a,b)=>(b.ts||'').localeCompare(a.ts||''));
-  if(!scans.length){
-    tb.innerHTML='<tr><td colspan="6"><div class="empty-state"><div class="ico">📚</div><div class="title">No scans yet</div><div class="sub">Run a scan to populate history</div></div></td></tr>';
-    return;
-  }
-  tb.innerHTML=scans.slice(0,500).map(s=>`<tr class="history-row" onclick="replayScan('${escapeHtml(s.domain)}')">
-    <td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml(s.domain)}</td>
-    <td><span style="font-family:var(--font-mono);font-weight:700;color:${s.score>=80?'var(--red)':s.score>=50?'var(--orange)':s.score>0?'var(--yellow)':'var(--green)'}">${s.score}</span></td>
-    <td><span class="badge ${s.level}">${s.level}</span></td>
-    <td>${s.live?'<span class="mode-badge live">LIVE</span>':'<span class="mode-badge demo">STATIC</span>'}</td>
-    <td>${(s.categories||[]).slice(0,3).map(c=>'<span class="badge info" style="margin:1px;font-size:.6rem">'+escapeHtml(c)+'</span>').join('')}</td>
-    <td style="color:var(--text-dim);font-size:.7rem;font-family:var(--font-mono)">${escapeHtml((s.ts||'').replace('T',' ').slice(0,19))}</td>
-  </tr>`).join('');
-}
-function replayScan(domain){
-  document.getElementById('scanInput').value=domain;
-  showPage('scanner',document.querySelector('[data-page="scanner"]'));
-  scanDomain();
-}
-async function clearHistory(){
-  if(!CURRENT_USER)return;
-  if(!confirm('Delete all scan history for this account?'))return;
-  const n=await dbClearOwner('scans','owner',CURRENT_USER);
-  toast('Cleared '+n+' scans','ok');
-  renderHistory();
-}
-async function exportHistoryJSON(){
-  if(!CURRENT_USER)return;
-  const scans=await dbAllBy('scans','owner',CURRENT_USER);
-  downloadJSON(scans,'kwtcyberwatch_history_'+new Date().toISOString().slice(0,10)+'.json');
-}
-async function exportHistoryCSV(){
-  if(!CURRENT_USER)return;
-  const scans=await dbAllBy('scans','owner',CURRENT_USER);
-  const rows=scans.map(s=>({domain:s.domain,score:s.score,level:s.level,live:s.live,categories:(s.categories||[]).join('|'),indicators:(s.indicators||[]).length,timestamp:s.ts}));
-  downloadCSV(rows,'kwtcyberwatch_history_'+new Date().toISOString().slice(0,10)+'.csv');
-}
-
-// ═══════════ EXPORT HELPERS ═══════════
-function downloadJSON(data,filename){
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();
-}
-function downloadCSV(rows,filename){
-  if(!rows.length){toast('Nothing to export','crit');return}
-  const headers=Object.keys(rows[0]);
-  const csv=[headers.join(','),...rows.map(r=>headers.map(h=>{const v=r[h];if(v==null)return '';const s=String(v);return s.includes(',')||s.includes('"')||s.includes('\n')?'"'+s.replace(/"/g,'""')+'"':s}).join(','))].join('\n');
-  const blob=new Blob([csv],{type:'text/csv'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();
-}
-
-// ═══════════ TOAST ═══════════
-function toast(msg,type){
-  const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.className='toast show '+(type||'');
-  clearTimeout(t._timer);
-  t._timer=setTimeout(()=>t.classList.remove('show'),3500);
-}
-
-// ═══════════ NAVIGATION HOOK ═══════════
-const _origShowPage=showPage;
-showPage=function(id,el){
-  _origShowPage(id,el);
-  if(id==='history')renderHistory();
-  if(id==='bulk')updateBulkCount();
-};
-
-// ═══════════ COUNTER ANIMATION ═══════════
-function animateCounter(){
-  const el=document.getElementById('statCerts');
-  if(!el)return;
-  let val=1247893;
-  setInterval(()=>{if(typeof API_MODE!=='undefined'&&API_MODE&&LIVE_MODE)return;val+=Math.floor(Math.random()*12)+3;el.textContent=val.toLocaleString()},2000);
-}
-setTimeout(animateCounter,1000);
-
-// ═══════════ API BRIDGE — live data when served by the KWTCyberWatch API ═══════════
-let API_MODE=false, API_INFO=null, API_USER=null, apiFeedTimer=null, API_ALERTS=[];
-let API_TOKEN=null;
-try{API_TOKEN=sessionStorage.getItem('kwt_token')||null}catch(e){}
-const API_BASE='';
-
-async function apiFetch(path,opts){
-  opts=opts||{};
-  const headers=Object.assign({'Accept':'application/json'},opts.headers||{});
-  let body=opts.body;
-  if(body!==undefined&&typeof body!=='string'){headers['Content-Type']='application/json';body=JSON.stringify(body)}
-  if(API_TOKEN)headers['Authorization']='Bearer '+API_TOKEN;
-  const r=await fetch(API_BASE+path,{method:opts.method||'GET',headers,body,cache:'no-store'});
-  let data=null;
-  try{data=await r.json()}catch(e){}
-  if(!r.ok){
-    if(r.status===401&&API_TOKEN&&path!=='/api/v1/auth/login'){API_TOKEN=null;try{sessionStorage.removeItem('kwt_token')}catch(e){}}
-    const err=new Error((data&&data.error)||('HTTP '+r.status));err.status=r.status;err.data=data;throw err;
-  }
-  return data;
-}
-async function detectApi(){
-  if(location.protocol==='file:')return false;
-  try{
-    const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),2500);
-    const r=await fetch(API_BASE+'/api/v1/health',{signal:ctrl.signal,cache:'no-store'});
-    clearTimeout(t);
-    if(!r.ok)return false;
-    API_INFO=await r.json();
-    API_MODE=true;
-    const hint=document.querySelector('.login-hint');
-    if(hint)hint.innerHTML='Connected to KWTCyberWatch API v'+escapeHtml(API_INFO.version||'')+'. Sign in with the server credentials (<code>KCW_ADMIN_PASSWORD</code>) to triage alerts, or explore with the demo account.';
-    const badge=document.querySelector('.topbar-badge');
-    if(badge&&API_INFO.version)badge.textContent='v'+API_INFO.version;
-    return true;
-  }catch(e){return false}
-}
-function apiRequireToken(){
-  if(API_TOKEN)return true;
-  toast('Sign in with server credentials to perform this action','crit');
-  return false;
-}
-function fmtTime(iso){return iso?String(iso).replace('T',' ').slice(0,19):'—'}
-function scoreColor(v){return v>=80?'var(--red)':v>=60?'var(--orange)':v>=40?'var(--yellow)':v>0?'var(--text-dim)':'var(--green)'}
-function levelOf(v){return v>=80?'critical':v>=60?'high':v>=40?'medium':v>=20?'low':'clean'}
-function setText(id,val){const el=document.getElementById(id);if(el)el.textContent=val}
-
-// ── login / session hooks ──
-const _origDoLogin=doLogin;
-doLogin=async function(){
-  if(!API_MODE)return _origDoLogin();
-  const u=document.getElementById('loginUser').value.trim();
-  const p=document.getElementById('loginPass').value;
-  const errEl=document.getElementById('loginError');
-  errEl.textContent='';
-  if(AUTH_MODE==='register'){errEl.textContent='Accounts are managed by the server in API mode (KCW_ADMIN_PASSWORD / KCW_ANALYST_PASSWORD).';return}
-  if(!u||!p){errEl.textContent='Username and password required';return}
-  try{
-    const data=await apiFetch('/api/v1/auth/login',{method:'POST',body:{username:u,password:p}});
-    API_TOKEN=data.token;API_USER=data.user;
-    try{sessionStorage.setItem('kwt_token',API_TOKEN)}catch(e){}
-    toast('Signed in to API as '+data.user.role,'ok');
-    await completeLogin(u,true);
-  }catch(e){
-    if(e.status===401){errEl.textContent='Invalid credentials'}
-    else if(e.status===429){errEl.textContent='Rate limited — try again shortly'}
-    else{errEl.textContent='API error: '+e.message}
-  }
-};
-const _origCompleteLogin=completeLogin;
-completeLogin=async function(username,liveMode){
-  await _origCompleteLogin(username,liveMode);
-  if(!(API_MODE&&liveMode))return;
-  const badge=document.getElementById('modeBadge');
-  badge.className='mode-badge api pulse-dot';badge.textContent='API';
-  if(feedInterval){clearInterval(feedInterval);feedInterval=null}
-  document.getElementById('alertControls').style.display='flex';
-  document.getElementById('alertActionsHead').style.display='';
-  await apiRefresh();
-  startApiFeed();
-};
-const _origDoLogout=doLogout;
-doLogout=function(){
-  _origDoLogout();
-  API_TOKEN=null;API_USER=null;
-  try{sessionStorage.removeItem('kwt_token')}catch(e){}
-  if(apiFeedTimer){clearInterval(apiFeedTimer);apiFeedTimer=null}
-  document.getElementById('alertControls').style.display='none';
-  document.getElementById('alertActionsHead').style.display='none';
-};
-
-// ── data loading ──
-async function apiRefresh(){
-  const [stats,brands,summary,cs]=await Promise.allSettled([
-    apiFetch('/api/v1/stats'),apiFetch('/api/v1/brands'),
-    apiFetch('/api/v1/reports/summary?days=7'),apiFetch('/api/v1/certstream/status')
-  ]);
-  if(stats.status==='fulfilled')renderApiStats(stats.value,cs.status==='fulfilled'?cs.value:null);
-  if(brands.status==='fulfilled')renderApiBrands(brands.value.brands||[]);
-  if(summary.status==='fulfilled')renderApiSummary(summary.value);
-  if(cs.status==='fulfilled'&&Array.isArray(cs.value.keywords)){
-    document.getElementById('keywordList').innerHTML=cs.value.keywords.map(k=>`<span style="display:inline-block;padding:4px 12px;margin:3px;background:var(--cyan-glow);border:1px solid var(--cyan-dim);border-radius:99px;color:var(--cyan)">${escapeHtml(k)}</span>`).join('');
-  }
-  await Promise.allSettled([apiLoadAlerts(),apiLoadSightings(),apiLoadRecentScans()]);
-}
-function renderApiStats(s,cs){
-  const db=s.database||{};
-  const monitor=(cs&&cs.stats)||s.monitor||{};
-  const total=monitor.total_certs||db.certstream_events||0;
-  setText('statCerts',Number(total).toLocaleString());
-  setText('statCertsSub','monitor: '+((cs&&cs.status)||monitor.status||'unknown')+' · '+Number(db.certstream_events||0).toLocaleString()+' matches stored');
-  setText('statPhishing',Number(db.phishing_detected||0).toLocaleString());
-  setText('statPhishingSub',(db.critical_threats||0)+' critical · '+(db.high_threats||0)+' high');
-  setText('statAlerts',Number(db.open_alerts||0).toLocaleString());
-  const bySev=(s.alerts&&s.alerts.by_severity)||{};
-  setText('statAlertsSub',(bySev.critical||0)+' critical · '+(db.total_alerts||0)+' total');
-  setText('statBrands',(s.brands&&s.brands.total_brands)||0);
-  setText('statBrandsSub','Kuwait banking, telecom, government');
-  setText('statDomains',Number(db.total_domains||0).toLocaleString());
-  setText('statDomainsSub',(db.squat_sightings||0)+' live typosquats · '+(db.allowlist_entries||0)+' allowlisted');
-  setText('alertCount',db.open_alerts||0);
-  setText('alertCritical',bySev.critical||0);setText('alertHigh',bySev.high||0);setText('alertMedium',bySev.medium||0);
-  const byStatus=(s.alerts&&s.alerts.by_status)||{};
-  setText('alertResolvedLabel','Resolved');setText('alertResolved',(byStatus.resolved||0)+(byStatus.false_positive||0));
-  setText('certsPerSec',((cs&&cs.status)||'unknown').toUpperCase());
-  setText('matchedToday',Number(monitor.matched_certs||0).toLocaleString());
-  setText('csHighRiskLabel','Matched Domains');setText('csHighRisk',Number(monitor.matched_domains||db.certstream_events||0).toLocaleString());
-  setText('feedCount',Number(db.certstream_events||0).toLocaleString());
-}
-function renderApiBrands(brands){
-  const tb=document.getElementById('brandTable');
-  tb.innerHTML=brands.map(b=>`<tr>
-    <td><strong>${escapeHtml(b.name)}</strong></td>
-    <td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml((b.domains||[]).join(', '))}</td>
-    <td>${escapeHtml(b.industry||'')}</td>
-    <td><span class="badge ${escapeHtml(b.priority||'medium')}">${escapeHtml(b.priority||'')}</span></td>
-    <td style="font-family:var(--font-mono);font-weight:700;color:${b.alerts>0?'var(--red)':'var(--green)'}">${b.alerts||0}</td>
-    <td><span style="color:var(--green)">● Active</span></td>
-  </tr>`).join('');
-}
-function renderApiSummary(summary){
-  const top=summary.top_domains||[];
-  if(top.length){
-    document.getElementById('recentThreats').innerHTML=top.slice(0,8).map(d=>`<tr>
-      <td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml(d.domain)}</td>
-      <td><span class="badge ${escapeHtml(d.risk_level||levelOf(d.risk_score))}">${escapeHtml(((d.categories||[])[0]||'suspicious').replace(/_/g,' '))}</span></td>
-      <td><span style="font-family:var(--font-mono);font-weight:700;color:${scoreColor(d.risk_score)}">${Math.round(d.risk_score)}</span></td>
-      <td style="color:var(--text-dim);font-size:.75rem">${escapeHtml(fmtTime(d.last_seen))}</td>
-    </tr>`).join('');
-    const cats={};
-    top.forEach(d=>(d.categories||[]).forEach(c=>{cats[c]=(cats[c]||0)+1}));
-    const palette=['var(--red)','var(--orange)','var(--yellow)','var(--cyan)','var(--purple)','var(--green)','var(--text-dim)'];
-    const catData=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,7).map(([k,v],i)=>({label:k.replace(/_/g,' '),val:v,color:palette[i%palette.length]}));
-    if(catData.length)renderBarChart('categoryChart',catData,180);
-  }
-  const series=summary.timeseries||[];
-  if(series.length){
-    renderBarChart('weeklyChart',series.map(r=>({label:r.date.slice(5),val:r.domains+r.alerts,color:r.critical_alerts>0?'var(--red)':'var(--cyan)'})),170);
-  }
-  const byBrand=(summary.alerts_all_time&&summary.alerts_all_time.by_brand)||{};
-  const brandData=Object.entries(byBrand).slice(0,6).map(([k,v],i)=>({label:k.replace(/\s*\(.*\)$/,'').split(' ').slice(0,2).join(' '),val:v,color:['var(--red)','var(--orange)','var(--yellow)','var(--cyan)','var(--purple)','var(--green)'][i]}));
-  if(brandData.length)renderBarChart('brandChart',brandData,170);
-  const w=summary.watcher;
-  if(w)setText('sgLastRun',fmtTime(w.finished_at).slice(0,16));
-}
-async function apiLoadRecentScans(){
-  try{
-    const data=await apiFetch('/api/v1/scans/history?limit=15');
-    const rows=(data.scans||[]).filter(s=>s.scan_type==='domain');
-    if(!rows.length)return;
-    document.getElementById('recentScans').innerHTML=rows.map(s=>{
-      const cats=((s.result||{}).phishing||{}).categories||[];
-      const score=Math.round(s.risk_score||0);
-      return `<tr>
-      <td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml(s.domain)}</td>
-      <td><span style="font-family:var(--font-mono);font-weight:700;color:${scoreColor(score)}">${score}/100</span></td>
-      <td><span class="badge ${escapeHtml(s.risk_level||'clean')}">${escapeHtml(s.risk_level||'clean')}</span></td>
-      <td>${cats.map(c=>'<span class="badge info" style="margin:1px 2px;font-size:.6rem">'+escapeHtml(c)+'</span>').join('')||'<span style="color:var(--green)">—</span>'}</td>
-      <td style="color:var(--text-dim);font-size:.75rem">${escapeHtml(fmtTime(s.scanned_at))}</td></tr>`;
-    }).join('');
-  }catch(e){}
-}
-
-// ── alerts with lifecycle actions ──
-async function apiLoadAlerts(){
-  if(!API_MODE)return;
-  const status=(document.getElementById('alertStatusFilter')||{}).value;
-  const q=status?'&status='+encodeURIComponent(status):'';
-  try{
-    const data=await apiFetch('/api/v1/alerts?limit=200'+q);
-    API_ALERTS=data.alerts||[];
-    renderApiAlerts(API_ALERTS);
-  }catch(e){toast('Failed to load alerts: '+e.message,'crit')}
-}
-function renderApiAlerts(alerts){
-  const tb=document.getElementById('alertTable');
-  if(!alerts.length){tb.innerHTML='<tr><td colspan="8"><div class="empty-state"><div class="ico">🚨</div><div class="title">No alerts</div><div class="sub">Scan a domain or run the CertStream monitor</div></div></td></tr>';return}
-  const statusBadge=s=>s==='open'?'high':s==='investigating'?'info':s==='false_positive'?'clean':'low';
-  tb.innerHTML=alerts.map(a=>`<tr>
-    <td style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim)" title="${escapeHtml(a.description||'')}">${escapeHtml(a.alert_id)}</td>
-    <td><span class="badge ${escapeHtml(a.severity)}">${escapeHtml(a.severity)}</span></td>
-    <td><strong>${escapeHtml((a.brand_name||'').replace(/\s*\(.*\)$/,''))}</strong></td>
-    <td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml(a.domain)}</td>
-    <td>${escapeHtml((a.alert_type||'').replace(/_/g,' '))}</td>
-    <td style="color:var(--text-dim);font-size:.72rem">${escapeHtml(fmtTime(a.created_at))}</td>
-    <td><span class="badge ${statusBadge(a.status)}">${escapeHtml(a.status)}</span>${a.assignee?'<div style="font-size:.62rem;color:var(--text-muted)">'+escapeHtml(a.assignee)+'</div>':''}</td>
-    <td style="white-space:nowrap">
-      ${a.status!=='investigating'&&a.status!=='resolved'?`<button class="act-btn" onclick="apiAlertAction('${escapeHtml(a.alert_id)}','investigating')">Investigate</button>`:''}
-      ${a.status!=='resolved'&&a.status!=='false_positive'?`<button class="act-btn" onclick="apiAlertAction('${escapeHtml(a.alert_id)}','resolved')">Resolve</button>`:''}
-      ${a.status!=='false_positive'?`<button class="act-btn danger" onclick="apiAlertAction('${escapeHtml(a.alert_id)}','false_positive',true)">FP + allowlist</button>`:''}
-      ${a.status==='resolved'||a.status==='false_positive'?`<button class="act-btn" onclick="apiAlertAction('${escapeHtml(a.alert_id)}','open')">Reopen</button>`:''}
-    </td>
-  </tr>`).join('');
-}
-async function apiAlertAction(alertId,status,allowlist){
-  if(!apiRequireToken())return;
-  if(allowlist&&!confirm('Mark as false positive AND allowlist the domain (and its subdomains)?'))return;
-  try{
-    const body={status};
-    if(API_USER&&API_USER.username)body.assignee=API_USER.username;
-    if(allowlist)body.allowlist=true;
-    await apiFetch('/api/v1/alerts/'+encodeURIComponent(alertId),{method:'PATCH',body});
-    toast('Alert '+alertId+' → '+status.replace('_',' '),'ok');
-    await apiLoadAlerts();
-    try{renderApiStats(await apiFetch('/api/v1/stats'),null)}catch(e){}
-  }catch(e){toast('Update failed: '+e.message,'crit')}
-}
-
-// ── typosquat sightings ──
-async function apiLoadSightings(){
-  if(!API_MODE)return;
-  const status=(document.getElementById('sgStatusFilter')||{}).value;
-  try{
-    const data=await apiFetch('/api/v1/squats/sightings?limit=300'+(status?'&status='+encodeURIComponent(status):''));
-    renderApiSightings(data.sightings||[],data.watcher);
-  }catch(e){toast('Failed to load sightings: '+e.message,'crit')}
-}
-function renderApiSightings(rows,watcher){
-  const tb=document.getElementById('sightingTable');
-  const counts={new:0,monitoring:0};
-  rows.forEach(r=>{if(r.status in counts)counts[r.status]++});
-  setText('sgNew',counts.new);setText('sgMonitoring',counts.monitoring);setText('sgTotal',rows.length);setText('sightingCount',counts.new);
-  if(watcher&&watcher.finished_at)setText('sgLastRun',fmtTime(watcher.finished_at).slice(0,16));
-  if(!rows.length){tb.innerHTML='<tr><td colspan="8"><div class="empty-state"><div class="ico">🎯</div><div class="title">No live typosquats recorded</div><div class="sub">Run <code>python main.py watch-squats --once</code> or check a brand above</div></div></td></tr>';return}
-  const badge=s=>s==='new'?'critical':s==='monitoring'?'high':s==='takedown_requested'?'medium':s==='benign'?'clean':'low';
-  const act=(d,st,label)=>`<button class="act-btn" onclick="apiSightingAction('${escapeHtml(d)}','${st}')">${label}</button>`;
-  tb.innerHTML=rows.map(r=>`<tr>
-    <td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml(r.domain)}</td>
-    <td>${escapeHtml(r.brand)}</td>
-    <td><span class="badge info" style="font-size:.6rem">${escapeHtml((r.technique||'').replace(/_/g,' '))}</span></td>
-    <td style="font-family:var(--font-mono);font-size:.7rem">${escapeHtml((r.ips||[]).join(', '))||'—'}</td>
-    <td style="color:var(--text-dim);font-size:.72rem">${escapeHtml(fmtTime(r.first_seen))}</td>
-    <td style="font-family:var(--font-mono);font-size:.72rem">${r.seen_count||1}×</td>
-    <td><span class="badge ${badge(r.status)}">${escapeHtml((r.status||'').replace(/_/g,' '))}</span></td>
-    <td style="white-space:nowrap">${r.status!=='monitoring'?act(r.domain,'monitoring','Monitor'):''}${r.status!=='takedown_requested'?act(r.domain,'takedown_requested','Takedown'):''}${r.status!=='resolved'?act(r.domain,'resolved','Resolved'):''}${r.status!=='benign'?act(r.domain,'benign','Benign'):''}</td>
-  </tr>`).join('');
-}
-async function apiSightingAction(domain,status){
-  if(!apiRequireToken())return;
-  try{
-    await apiFetch('/api/v1/squats/sightings/'+encodeURIComponent(domain),{method:'PATCH',body:{status}});
-    toast(domain+' → '+status.replace('_',' '),'ok');
-    await apiLoadSightings();
-  }catch(e){toast('Update failed: '+e.message,'crit')}
-}
-async function apiRunSquatCheck(){
-  if(!API_MODE){toast('Serve the dashboard from the API to run live checks','crit');return}
-  if(!apiRequireToken())return;
-  const brand=document.getElementById('sgBrandInput').value.trim().toLowerCase();
-  if(!brand){toast('Enter a protected brand domain','crit');return}
-  const btn=document.getElementById('sgCheckBtn');const progress=document.getElementById('sgProgress');
-  btn.disabled=true;progress.style.display='block';
-  progress.innerHTML=`<div class="scan-step running"><span class="step-ico">⏳</span><span>Generating and resolving permutations of ${escapeHtml(brand)} (server side)</span><span class="step-meta">this can take a minute</span></div>`;
-  try{
-    const s=await apiFetch('/api/v1/squats/check',{method:'POST',body:{brand,limit:400}});
-    progress.innerHTML=`<div class="scan-step done"><span class="step-ico">✓</span><span>${s.candidates} candidates resolved — ${s.live} live, ${s.new} new</span><span class="step-meta">${s.duration_seconds}s</span></div>`;
-    if(s.new>0)toast(`⚠ ${s.new} new typosquat(s) of ${brand} are live`,'crit');else toast('Check complete','ok');
-    await apiLoadSightings();
-  }catch(e){progress.innerHTML=`<div class="scan-step fail"><span class="step-ico">✕</span><span>${escapeHtml(e.message)}</span></div>`}
-  finally{btn.disabled=false;setTimeout(()=>progress.style.display='none',6000)}
-}
-
-// ── CertStream feed from stored events ──
-async function startApiFeed(){
-  const feed=document.getElementById('liveFeed');
-  let lastId=0;
-  const load=async()=>{
-    if(!feedRunning)return;
-    try{
-      const data=await apiFetch('/api/v1/certstream/events?limit=60');
-      const events=(data.events||[]).slice().reverse();
-      for(const ev of events){
-        if(ev.id<=lastId)continue;
-        lastId=Math.max(lastId,ev.id);
-        const score=Math.round(ev.risk_score||0);
-        const row=document.createElement('div');
-        row.className='feed-row';
-        row.innerHTML=`<span class="feed-time">${escapeHtml(fmtTime(ev.timestamp).slice(11))}</span>
-          <span class="badge ${levelOf(score)}" style="font-size:.6rem">${levelOf(score)}</span>
-          <span class="feed-domain">${escapeHtml(ev.domain)}</span>
-          <span class="feed-keywords">${escapeHtml((ev.matched_keywords||[]).join(', '))}</span>
-          <span class="feed-score" style="color:${scoreColor(score)}">${score}</span>`;
-        feed.insertBefore(row,feed.firstChild);
-        if(feed.children.length>100)feed.removeChild(feed.lastChild);
-      }
-      if(!feed.children.length)feed.innerHTML='<div style="padding:16px;color:var(--text-muted)">No matched certificates stored yet — start <code>python main.py monitor</code>.</div>';
-    }catch(e){}
-  };
-  feed.innerHTML='';
-  await load();
-  if(apiFeedTimer)clearInterval(apiFeedTimer);
-  apiFeedTimer=setInterval(load,15000);
-}
-
-// ── scanner & bulk scanner backed by the API ──
-function apiToResult(d){
-  const p=d.phishing||{};
-  return {score:Math.round(p.risk_score||0),level:p.risk_level||'clean',isPhishing:!!p.is_phishing,categories:p.categories||[],
-    indicators:(p.indicators||[]).map(i=>({type:i.type,detail:i.detail,w:Number(i.weight||0)})),recommendation:p.recommendation||''};
-}
-function apiScanExtras(d){
-  const panel=document.getElementById('scanResult');
-  const parsed=(d.phishing&&d.phishing.parsed)||{};
-  const brands=d.brand_alerts||[], squats=d.domain_squatting||[], enr=d.enrichment||null;
-  let html='<div class="card">';
-  html+=`<div style="font-size:.75rem;font-weight:600;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Domain structure</div>
-    <dl class="kv-grid"><dt>Registrable</dt><dd>${escapeHtml(parsed.registrable||'')}</dd><dt>Suffix</dt><dd>${escapeHtml(parsed.suffix||'')}</dd>
-    <dt>IDN</dt><dd>${parsed.is_idn?'yes — '+escapeHtml(parsed.unicode_hostname||''):'no'}</dd>
-    <dt>Hosting platform</dt><dd>${escapeHtml(parsed.hosting_platform||'—')}</dd>
-    <dt>Allowlisted</dt><dd>${d.allowlisted?'yes':'no'}</dd></dl>`;
-  if(brands.length){
-    html+=`<div style="font-size:.75rem;font-weight:600;color:var(--text-dim);margin:16px 0 8px;text-transform:uppercase;letter-spacing:.06em">Brand alerts (${brands.length})</div>`;
-    html+=brands.map(a=>`<div style="padding:8px 10px;border-left:3px solid var(--red);background:var(--bg-deep);border-radius:var(--radius-sm);margin-bottom:6px;font-size:.8rem"><span class="badge ${escapeHtml(a.severity)}">${escapeHtml(a.severity)}</span> <strong>${escapeHtml(a.brand_name)}</strong> — ${escapeHtml((a.alert_type||'').replace(/_/g,' '))}<div style="color:var(--text-dim);font-size:.7rem;margin-top:3px">${escapeHtml(a.description||'')}</div></div>`).join('');
-  }
-  if(squats.length){
-    html+=`<div style="font-size:.75rem;font-weight:600;color:var(--text-dim);margin:16px 0 8px;text-transform:uppercase;letter-spacing:.06em">Squatting analysis</div>`;
-    html+=squats.map(s=>`<div style="display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:.78rem"><span class="badge ${escapeHtml(s.risk_level)}">${escapeHtml(s.risk_level)}</span><span style="font-family:var(--font-mono)">${escapeHtml(s.target)}</span><span style="color:var(--text-dim)">${escapeHtml((s.attack_types||[]).join(', '))}</span><span style="margin-left:auto;font-family:var(--font-mono);color:var(--text-muted);font-size:.7rem">sim ${Math.round((s.similarity||0)*100)}% · conf ${Math.round((s.confidence||0)*100)}%</span></div>`).join('');
-  }
-  if(enr&&!enr.error){
-    const dns=enr.dns||{},rd=enr.rdap||{};
-    html+=`<div style="font-size:.75rem;font-weight:600;color:var(--text-dim);margin:16px 0 8px;text-transform:uppercase;letter-spacing:.06em">Enrichment</div>
-      <dl class="kv-grid"><dt>Resolves</dt><dd>${enr.resolves?'yes — '+escapeHtml((dns.A||[]).concat(dns.AAAA||[]).join(', ')):'no'}</dd>
-      <dt>Nameservers</dt><dd class="wrap">${escapeHtml((dns.NS||[]).join(', ')||'—')}</dd>
-      <dt>Registrar</dt><dd class="wrap">${escapeHtml(rd.registrar||'—')}</dd>
-      <dt>Created</dt><dd>${escapeHtml((rd.created||'').slice(0,10)||'—')}${rd.age_days!=null?' ('+rd.age_days+' days ago)':''}</dd>
-      <dt>Abuse contact</dt><dd class="wrap">${escapeHtml(rd.abuse_email||'—')}</dd></dl>`;
-    if(enr.errors&&Object.keys(enr.errors).length)html+=`<div style="font-size:.68rem;color:var(--orange);margin-top:6px">Partial enrichment: ${escapeHtml(Object.entries(enr.errors).map(([k,v])=>k+': '+v).join(' · '))}</div>`;
-  }
-  html+='</div>';
-  panel.insertAdjacentHTML('beforeend',html);
-}
-const _origScanDomain=scanDomain;
-scanDomain=async function(){
-  if(!(API_MODE&&LIVE_MODE))return _origScanDomain();
-  const input=document.getElementById('scanInput');
-  const domain=input.value.trim().toLowerCase();
-  if(!domain){toast('Enter a domain','crit');return}
-  const btn=document.getElementById('scanBtn');
-  btn.disabled=true;btn.textContent='Scanning...';
-  try{
-    const data=await apiFetch('/api/v1/scan/domain',{method:'POST',body:{domain,enrich:true}});
-    const r=apiToResult(data);
-    renderScanResult(data.domain,r,{});
-    apiScanExtras(data);
-    await saveScanHistory({domain:data.domain,result:r,live:true});
-    await apiLoadRecentScans();
-    if((data.brand_alerts||[]).length)apiLoadAlerts();
-  }catch(e){toast('Scan failed: '+e.message,'crit')}
-  finally{btn.disabled=false;btn.textContent='🔍 Analyze'}
-};
-const _origRunBulkScan=runBulkScan;
-runBulkScan=async function(){
-  if(!(API_MODE&&LIVE_MODE))return _origRunBulkScan();
-  const lines=document.getElementById('bulkInput').value.split('\n').map(l=>l.trim().toLowerCase()).filter(Boolean);
-  if(!lines.length){toast('Enter at least one domain','crit');return}
-  const btn=document.getElementById('bulkBtn');const progress=document.getElementById('bulkProgress');const tb=document.getElementById('bulkResults');
-  btn.disabled=true;btn.textContent='Scanning...';progress.style.display='block';
-  progress.innerHTML=`<div class="scan-step running"><span class="step-ico">⏳</span><span>Scanning ${lines.length} domains via API</span></div>`;
-  tb.innerHTML='';BULK_RESULTS=[];
-  try{
-    const chunks=[];for(let i=0;i<lines.length;i+=100)chunks.push(lines.slice(i,i+100));
-    for(const chunk of chunks){
-      const data=await apiFetch('/api/v1/scan/bulk',{method:'POST',body:{domains:chunk}});
-      for(const r of data.results||[]){
-        if(r.error){tb.insertAdjacentHTML('beforeend',`<tr><td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml(r.domain)}</td><td colspan="5" style="color:var(--text-muted)">${escapeHtml(r.error)}</td></tr>`);continue}
-        const res={score:Math.round(r.risk_score),level:r.risk_level,categories:r.categories||[],indicators:[]};
-        BULK_RESULTS.push({domain:r.domain,result:res,dns:null});
-        tb.insertAdjacentHTML('beforeend',`<tr><td style="font-family:var(--font-mono);font-size:.75rem">${escapeHtml(r.domain)}</td><td><span style="font-family:var(--font-mono);font-weight:700;color:${scoreColor(res.score)}">${res.score}</span></td><td><span class="badge ${escapeHtml(res.level)}">${escapeHtml(res.level)}</span></td><td>${res.categories.slice(0,3).map(c=>'<span class="badge info" style="margin:1px;font-size:.6rem">'+escapeHtml(c)+'</span>').join('')}</td><td style="font-size:.7rem">${escapeHtml((r.matched_brands||[]).join(', '))||'<span style="color:var(--text-muted)">—</span>'}</td><td style="font-size:.7rem;color:${r.brand_alerts?'var(--red)':'var(--text-dim)'}">${r.brand_alerts||0} alert(s)</td></tr>`);
-      }
-    }
-    progress.innerHTML=`<div class="scan-step done"><span class="step-ico">✓</span><span>Complete</span><span class="step-meta">${BULK_RESULTS.length} scanned</span></div>`;
-    document.getElementById('bulkResultCount').textContent=`${BULK_RESULTS.length} scanned · ${BULK_RESULTS.filter(r=>r.result.score>=60).length} high-risk`;
-    document.getElementById('bulkExport').disabled=false;
-    toast(`Scanned ${BULK_RESULTS.length} domains`,'ok');
-    apiLoadAlerts();
-  }catch(e){progress.innerHTML=`<div class="scan-step fail"><span class="step-ico">✕</span><span>${escapeHtml(e.message)}</span></div>`;toast('Bulk scan failed: '+e.message,'crit')}
-  finally{setTimeout(()=>progress.style.display='none',2500);btn.disabled=false;btn.textContent='▶ Scan All'}
-};
-
-// ── page hook & boot ──
-const _apiShowPage=showPage;
-showPage=function(id,el){
-  _apiShowPage(id,el);
-  if(!(API_MODE&&LIVE_MODE))return;
-  if(id==='alerts')apiLoadAlerts();
-  if(id==='sightings')apiLoadSightings();
-  if(id==='dashboard'||id==='analytics')apiRefresh();
-};
-window.addEventListener('DOMContentLoaded',()=>{detectApi()});
-</script>
+<script src="engine-data.js"></script>
+<script src="engine.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

@@ -5,6 +5,29 @@ All notable changes to KWTCyberWatch will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-09-24
+
+### Added
+- **Browser-native detection engine** (`demo/engine.js`): a JavaScript port of the phishing
+  detector, brand monitor and domain analyzer — registrable-domain parsing, IDN/punycode,
+  mixed-script and Arabic handling, confusable skeletons, leet folding, technique detection,
+  brand ranking, scoring and the permutation generator. `scripts/export_engine_data.py` generates
+  `demo/engine-data.js` from the Python tables and `tests/test_js_engine.py` asserts verdict
+  parity on a 90-domain corpus (fails when the generated file is stale).
+- **Real GitHub Pages demo** (`demo/app.js`): the dashboard no longer uses sample data. It
+  streams the live CertStream WebSocket feed and scores every certificate, scans with the local
+  engine plus live DNS-over-HTTPS / crt.sh / RDAP / URLhaus enrichment, hunts typosquats by
+  resolving generated permutations and records sightings, keeps alerts with a full triage
+  lifecycle, and computes dashboard/analytics figures from what it has actually seen.
+  Everything persists in IndexedDB; workspaces can be exported and imported as JSON; alerts export
+  as CSV and STIX 2.1 bundles built in the browser; desktop notifications are optional.
+- Settings for feed keywords, allowlist and custom brand profiles rebuild the browser engine
+  immediately.
+
+### Changed
+- `demo/index.html` was rebuilt around the new engine and application; the login/demo-account
+  flow was replaced by an analyst landing page.
+
 ## [2.1.0] - 2026-09-24
 
 ### Added
@@ -168,6 +191,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Domain logging to text file
 - Exponential backoff retry logic
 
+[2.2.0]: https://github.com/SiteQ8/KWTCyberWatch/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/SiteQ8/KWTCyberWatch/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/SiteQ8/KWTCyberWatch/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/SiteQ8/KWTCyberWatch/releases/tag/v1.0.0
