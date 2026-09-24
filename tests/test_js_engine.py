@@ -5,6 +5,7 @@ Parity tests between the Python engine and its browser port (demo/engine.js).
 Requires Node.js; the comparison tests are skipped when ``node`` is missing.
 """
 
+import base64
 import json
 import shutil
 import subprocess
@@ -286,7 +287,8 @@ require(path.join(process.argv[1], "demo", "engine-data.js"));
 require(path.join(process.argv[1], "demo", "engine.js"));
 require(path.join(process.argv[1], "demo", "discovery.js"));
 const leaves = JSON.parse(require("fs").readFileSync(0, "utf8"));
-const out = leaves.map((b64) => { try { const p = window.KCW_X509.parseLeafInput(b64); return { all_domains: p.all_domains, issuer: p.issuer, entry_type: p.entry_type, not_before: p.not_before, serial: p.serial_number }; } catch (e) { return { error: e.message }; } });
+const pick = (p) => ({ all_domains: p.all_domains, issuer: p.issuer, entry_type: p.entry_type, not_before: p.not_before, serial: p.serial_number });
+const out = leaves.map((item) => { try { if (item.tile) { const u8 = Uint8Array.from(Buffer.from(item.tile, "base64")); return { tile: window.KCW_X509.parseDataTile(u8).map(pick), path: window.KCW_X509.tilePath(item.index) }; } return pick(window.KCW_X509.parseLeafInput(item)); } catch (e) { return { error: e.message }; } });
 process.stdout.write(JSON.stringify(out), () => process.exit(0));
 """
 
@@ -310,16 +312,28 @@ def test_browser_x509_parser_matches_python():
             certificate("xn--mgbaa0aog6m.com", ["xn--mgbaa0aog6m.com"], issuer_org="ZeroSSL"), 0
         ),
     ]
+    from tests.test_ct_tailer import tile_leaf
+
+    tile = tile_leaf(certificate("a.kuwait-example.com", ["a.kuwait-example.com"]), 0) + tile_leaf(
+        tbs("b.kuwait-example.com", ["b.kuwait-example.com"], poison=True), 1
+    )
+    payload = leaves + [{"tile": base64.b64encode(tile).decode(), "index": 1234567}]
     js = json.loads(
         subprocess.run(
             [NODE, "-e", X509_HARNESS, str(ROOT)],
-            input=json.dumps(leaves),
+            input=json.dumps(payload),
             capture_output=True,
             text=True,
             check=True,
             cwd=str(ROOT),
         ).stdout
     )
+    tile_js = js.pop()
+    assert tile_js["path"] == x509.tile_path(1234567) == "x001/x234/567"
+    assert [t["all_domains"] for t in tile_js["tile"]] == [
+        p["all_domains"] for p in x509.parse_data_tile(tile)
+    ]
+    assert [t["entry_type"] for t in tile_js["tile"]] == ["x509", "precert"]
     for b64, got in zip(leaves, js):
         want = x509.parse_leaf_input(b64)
         assert got == {

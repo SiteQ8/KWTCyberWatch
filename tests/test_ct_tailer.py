@@ -9,7 +9,13 @@ import pytest
 
 from src.config.settings import CertStreamConfig
 from src.core.certstream_monitor import CertStreamMonitor
-from src.core.ct_tailer import FALLBACK_LOGS, CTLogTailer, select_logs_from_list
+from src.core.ct_tailer import (
+    FALLBACK_LOGS,
+    FALLBACK_STATIC_LOGS,
+    CTLogTailer,
+    parse_checkpoint,
+    select_logs_from_list,
+)
 from src.utils import x509
 
 # --------------------------------------------------------------------------- #
@@ -326,10 +332,37 @@ class TestCTLogTailer:
             fetched.append(url)
             raise RuntimeError("offline")
 
-        tailer = CTLogTailer(lambda m: None, fetcher=fetch)
+        tailer = CTLogTailer(lambda m: None, fetcher=fetch, bytes_fetcher=fetch)
         assert tailer.discover() == []  # nothing reachable, but every fallback shard was probed
         assert fetched[0].endswith("log_list.json")
-        assert len(fetched) == 1 + len(FALLBACK_LOGS)
+        assert len(fetched) == 1 + len(FALLBACK_LOGS) + len(FALLBACK_STATIC_LOGS)
+        assert any(u.endswith("/checkpoint") for u in fetched)
+
+    def test_log_list_includes_tiled_logs(self):
+        now = datetime(2026, 9, 24, tzinfo=timezone.utc)
+        log_list = {
+            "operators": [
+                {
+                    "name": "Let's Encrypt",
+                    "tiled_logs": [
+                        {
+                            "description": "Sycamore 2026h2",
+                            "monitoring_url": "https://sycamore.ct.letsencrypt.org/2026h2",
+                            "submission_url": "https://sycamore.ct.letsencrypt.org/2026h2/",
+                            "state": {"usable": {}},
+                        }
+                    ],
+                }
+            ]
+        }
+        chosen = select_logs_from_list(log_list, now=now)
+        assert chosen == [
+            {
+                "name": "Let's Encrypt Sycamore 2026h2",
+                "url": "https://sycamore.ct.letsencrypt.org/2026h2/",
+                "kind": "static",
+            }
+        ]
 
 
 class TestMonitorIntegration:
@@ -377,3 +410,109 @@ class TestMonitorIntegration:
         assert cfg.source == "ctlogs"
         for kw in ("kuwait", "q8", "kwt", "knet", "sahel", "الكويت"):
             assert kw in cfg.keywords
+
+
+# --------------------------------------------------------------------------- #
+# Static CT API (tiled logs)
+# --------------------------------------------------------------------------- #
+
+
+def tile_leaf(der: bytes, entry_type: int, timestamp_ms: int = 1_700_000_000_000) -> bytes:
+    body = struct.pack(">Q", timestamp_ms) + struct.pack(">H", entry_type)
+    if entry_type == 0:
+        body += len(der).to_bytes(3, "big") + der
+    else:
+        body += b"\x22" * 32 + len(der).to_bytes(3, "big") + der
+    body += b"\x00\x00"  # extensions
+    if entry_type == 1:
+        pre = certificate("precert-placeholder.example", ["precert-placeholder.example"])
+        body += len(pre).to_bytes(3, "big") + pre
+    chain = b"\x33" * 32 * 2
+    body += len(chain).to_bytes(2, "big") + chain
+    return body
+
+
+class FakeStaticLog:
+    """In-memory Static CT API log (checkpoint + data tiles)."""
+
+    def __init__(self, leaves):
+        self.leaves = leaves
+        self.calls = []
+
+    def handle(self, url):
+        self.calls.append(url)
+        if url.endswith("/checkpoint"):
+            return f"example.org/log\n{len(self.leaves)}\nAAAA\n\n— sig\n".encode()
+        if "/tile/data/" in url:
+            path = url.split("/tile/data/")[1]
+            width = 256
+            if ".p/" in path:
+                path, w = path.split(".p/")
+                width = int(w)
+            index = int("".join(seg.lstrip("x") for seg in path.split("/")))
+            start = index * 256
+            chunk = self.leaves[start : start + width]
+            if len(chunk) != width:
+                raise RuntimeError("HTTP 404")
+            return b"".join(chunk)
+        raise RuntimeError("HTTP 404")
+
+
+class TestStaticCT:
+    def test_tile_path_encoding(self):
+        assert x509.tile_path(0) == "000"
+        assert x509.tile_path(5) == "005"
+        assert x509.tile_path(1234) == "x001/234"
+        assert x509.tile_path(1234567) == "x001/x234/567"
+
+    def test_parse_checkpoint(self):
+        assert parse_checkpoint("origin\n4711\nroot\n\n— sig") == 4711
+        with pytest.raises(ValueError):
+            parse_checkpoint("bad")
+
+    def test_parse_data_tile_both_entry_types(self):
+        tile = tile_leaf(
+            certificate("a.kuwait-example.com", ["a.kuwait-example.com"]), 0
+        ) + tile_leaf(tbs("b.kuwait-example.com", ["b.kuwait-example.com"], poison=True), 1)
+        leaves = x509.parse_data_tile(tile)
+        assert [leaf["all_domains"][0] for leaf in leaves] == [
+            "a.kuwait-example.com",
+            "b.kuwait-example.com",
+        ]
+        assert [leaf["entry_type"] for leaf in leaves] == ["x509", "precert"]
+        with pytest.raises(x509.DERError):
+            x509.parse_data_tile(tile[:20])
+
+    def test_tails_a_static_log_with_partial_and_full_tiles(self):
+        leaves = [
+            tile_leaf(certificate(f"h{i}.example", [f"h{i}.example"]), i % 2) for i in range(300)
+        ]
+        log = FakeStaticLog(leaves)
+        received = []
+
+        def fetch_bytes(url, timeout):
+            return log.handle(url)
+
+        tailer = CTLogTailer(
+            received.append,
+            logs=[{"name": "static", "url": "https://static.log/", "kind": "static"}],
+            fetcher=lambda url, timeout: (_ for _ in ()).throw(RuntimeError("no json here")),
+            bytes_fetcher=fetch_bytes,
+            batch_size=8,
+            poll_interval=0,
+            now=lambda: 0,
+        )
+        tailer.discover()
+        assert tailer.logs[0]["cursor"] == 292 and tailer.logs[0]["tree_size"] == 300
+        assert tailer.poll_once() == 8  # partial tile 1 (.p/44), entries 292..299
+        assert [m["data"]["leaf_cert"]["all_domains"][0] for m in received] == [
+            f"h{i}.example" for i in range(292, 300)
+        ]
+        assert any(".p/44" in u for u in log.calls)
+        log.leaves += [
+            tile_leaf(certificate("new.example", ["new.example"]), 0) for _ in range(300)
+        ]
+        assert tailer.poll_once() == 212  # rest of tile 1 becomes full: 300..511
+        assert tailer.poll_once() == 88  # partial tile 2 (.p/88): 512..599
+        assert tailer.logs[0]["cursor"] == 600 and tailer.poll_once() == 0
+        assert tailer.summary()["logs"][0]["kind"] == "static"

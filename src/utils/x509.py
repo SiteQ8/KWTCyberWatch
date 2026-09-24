@@ -277,3 +277,75 @@ __all__ = [
     "read_tlv",
     "to_certstream_message",
 ]
+
+
+# --------------------------------------------------------------------------- #
+# Static CT API (tiled logs): data tiles of TileLeaf structures
+# --------------------------------------------------------------------------- #
+
+
+def parse_tile_leaf(buf: bytes, offset: int = 0) -> Tuple[Dict[str, Any], int]:
+    """
+    Parse one ``TileLeaf`` from a Static CT API data tile starting at ``offset``.
+
+    Returns ``(parsed_certificate, next_offset)``. The structure is
+    ``timestamp(8) entry_type(2) [cert | issuer_key_hash(32) tbs] extensions<2>
+    [pre_certificate for precerts] certificate_chain<2 of 32-byte fingerprints>``.
+    """
+    if offset + 10 > len(buf):
+        raise DERError("tile leaf too short")
+    timestamp = struct.unpack(">Q", buf[offset : offset + 8])[0]
+    entry_type = struct.unpack(">H", buf[offset + 8 : offset + 10])[0]
+    pos = offset + 10
+
+    def take(n_len_bytes: int) -> bytes:
+        nonlocal pos
+        if pos + n_len_bytes > len(buf):
+            raise DERError("tile leaf truncated")
+        n = int.from_bytes(buf[pos : pos + n_len_bytes], "big")
+        pos += n_len_bytes
+        if pos + n > len(buf):
+            raise DERError("tile leaf truncated")
+        chunk = buf[pos : pos + n]
+        pos += n
+        return chunk
+
+    if entry_type == 0:
+        der = take(3)
+        kind = "x509"
+    elif entry_type == 1:
+        pos += 32  # issuer_key_hash
+        der = take(3)
+        kind = "precert"
+    else:
+        raise DERError(f"unknown tile entry type {entry_type}")
+    take(2)  # extensions
+    if entry_type == 1:
+        take(3)  # the full pre-certificate (not needed; the TBS carries the names)
+    take(2)  # certificate_chain fingerprints
+    parsed = parse_certificate(der)
+    parsed["entry_type"] = kind
+    parsed["timestamp"] = timestamp
+    return parsed, pos
+
+
+def parse_data_tile(buf: bytes) -> List[Dict[str, Any]]:
+    """Parse every leaf in a data tile; a malformed leaf ends the tile (entries so far are kept)."""
+    out: List[Dict[str, Any]] = []
+    pos = 0
+    while pos < len(buf):
+        parsed, pos = parse_tile_leaf(buf, pos)
+        out.append(parsed)
+    return out
+
+
+def tile_path(index: int) -> str:
+    """Encode a tile index as the Static CT API path: zero-padded to a multiple of three digits,
+    split into 3-digit groups, every group but the last prefixed with ``x``."""
+    digits = str(index)
+    digits = digits.rjust(((len(digits) + 2) // 3) * 3, "0")
+    groups = [digits[i : i + 3] for i in range(0, len(digits), 3)]
+    return "/".join(["x" + g for g in groups[:-1]] + [groups[-1]])
+
+
+__all__ += ["parse_data_tile", "parse_tile_leaf", "tile_path"]

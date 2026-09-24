@@ -76,6 +76,7 @@
   const DEFAULTS = {
     soundAlerts: false, retentionDays: 90,
     feedSource: "ctlogs", ctLogs: [], keywordsVersion: 0,
+    feedDeepMatch: true, autoEnrich: true, rules: [],
     watchtowerEnabled: true, watchtowerMinutes: 20, watchtowerBrands: 4, watchtowerPerBrand: 60, lastWatchtower: "",
     keywords: KCW.data.certstream_keywords.slice(),
     allowlist: [],
@@ -209,17 +210,50 @@
   // ------------------------------------------------------------------ //
   // Alerts & sightings (persistence + notifications)
   // ------------------------------------------------------------------ //
+  const RULE_SCORE = { critical: 95, high: 80, medium: 60, low: 40 };
+  const RULE_WEIGHT = { critical: 40, high: 25, medium: 15, low: 5 };
+  function compileRules() {
+    return (S.rules || []).filter((r) => r && r.enabled !== false && r.pattern).map((r) => {
+      try { return Object.assign({}, r, { re: new RegExp(r.pattern, r.flags || "i") }); } catch (e) { return null; }
+    }).filter(Boolean);
+  }
+  function hashId(text) { let h = 2166136261; for (let i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return h.toString(16).padStart(8, "0"); }
+  function ruleAlerts(host, rules, source) {
+    const parsed = KCW.parseDomain(host);
+    return rules.filter((r) => r.re.test(host) || (parsed.unicode_hostname && r.re.test(parsed.unicode_hostname))).map((r) => ({
+      alert_id: "RL-" + hashId(host + "|" + r.id), brand_name: r.name, brand_short: r.name, alert_type: "custom_rule", severity: r.severity || "medium",
+      description: `Detection rule "${r.name}" matched ${host}`, evidence: { rule: r.pattern, rule_id: r.id, suspicious_domain: host, registrable_domain: parsed.registrable, source },
+      detected_at: new Date().toISOString(), status: "open", assignee: null, risk_score: RULE_SCORE[r.severity] || 60, domain: host,
+    }));
+  }
   async function persistBrandAlerts(alerts, source, extra) {
     let stored = 0;
+    const kept = [];
+    const existing = await dbAll("alerts");
     for (const a of alerts) {
       a.source = source;
       if (extra) a.evidence = Object.assign({}, a.evidence, extra);
       a.status = a.status || "open";
+      const reg = (a.evidence && a.evidence.registrable_domain) || KCW.parseDomain(a.domain).registrable;
+      const dup = existing.find((e) => e.alert_id !== a.alert_id && e.brand_name === a.brand_name && (e.status === "open" || e.status === "investigating") && ((e.evidence && e.evidence.registrable_domain) || KCW.parseDomain(e.domain).registrable) === reg);
+      if (dup) {  // same brand + registrable domain already open: consolidate instead of duplicating
+        dup.occurrences = (dup.occurrences || 1) + 1;
+        dup.last_seen = a.detected_at;
+        dup.evidence = dup.evidence || {};
+        const hosts = new Set(dup.evidence.hosts || [dup.domain]);
+        hosts.add(a.domain);
+        dup.evidence.hosts = Array.from(hosts).slice(0, 20);
+        if ((SEV_RANK[a.severity] || 0) > (SEV_RANK[dup.severity] || 0)) dup.severity = a.severity;
+        await dbPut("alerts", dup);
+        continue;
+      }
       await dbPut("alerts", a);
+      existing.push(a);
+      kept.push(a);
       stored++;
       maybeNotify(a);
     }
-    if (stored) { refreshCounts(); if (window.__lastAlertForPreview !== undefined) window.__lastAlertForPreview = alerts[alerts.length - 1]; emit("alerts", { alerts, source }); }
+    if (stored) { refreshCounts(); if (window.__lastAlertForPreview !== undefined) window.__lastAlertForPreview = kept[kept.length - 1]; emit("alerts", { alerts: kept, source }); }
     return stored;
   }
   function maybeNotify(alert) {
@@ -446,6 +480,10 @@
     },
     connect() {
       this.keywords = S.keywords.map((k) => k.toLowerCase());
+      this.rules = compileRules();
+      this.deepIndex = [];
+      for (const b of engine.brands) for (const bl of b.primary_labels || []) if (bl.length >= 3) this.deepIndex.push({ bl, skel: KCW.brandSkeleton(bl), name: b.short_name || b.name });
+      this.stats.deep = this.stats.deep || 0;
       this.stop(false);
       if (!this.stats.startedAt) this.stats.startedAt = Date.now();
       if ((S.feedSource || "ctlogs") === "ctlogs" && window.KCW_CT) { window.KCW_CT.start(this); return; }
@@ -508,6 +546,12 @@
         const host = KCW.normalizeDomain(raw);
         if (!host || seen.has(host)) continue;
         const hits = this.matchKeywords(host);
+        const ruleHits = this.rules && this.rules.length ? this.rules.filter((r) => r.re.test(host)) : [];
+        ruleHits.forEach((r) => hits.push("rule:" + r.name));
+        if (!hits.length && S.feedDeepMatch) {
+          const deep = this.deepMatch(host);
+          if (deep.length) { this.stats.deep += 1; deep.forEach((n) => hits.push("≈" + n)); }
+        }
         if (!hits.length) continue;
         seen.add(host);
         this.stats.matched += 1;
@@ -520,13 +564,27 @@
         const row = { domain: host, ts: new Date().toISOString(), score, keywords: hits, issuer: issuerName, source: synthetic ? "replay" : (msg.data.source && msg.data.source.name) || feedSrc, brands: verdict.matched_brands, categories: verdict.categories, synthetic: !!synthetic };
         if (score >= (S.feedMinScore || 0)) { try { await dbAdd("certs", row); } catch (e) { /* quota */ } }
         this.render(row, synthetic);
-        const alerts = engine.monitor.checkDomain(host, synthetic ? "replay" : feedSrc, true);
+        const alerts = engine.monitor.checkDomain(host, synthetic ? "replay" : feedSrc, true).concat(ruleAlerts(host, ruleHits, feedSrc));
         const keep = alerts.filter((a) => (SEV_RANK[a.severity] || 0) >= (SEV_RANK[S.feedAlertSeverity] || 3));
         if (keep.length) await persistBrandAlerts(keep, synthetic ? "replay" : feedSrc, { issuer: issuerName, risk_score: score, ct_log: (msg.data.source && msg.data.source.name) || "" });
       }
       setText("matchedToday", (await dbCount("certs")).toLocaleString());
       setText("csHighRisk", this.stats.high);
       setText("feedCount", this.stats.matched);
+    },
+    deepMatch(host) {
+      // Cheap prefilter (label contains / skeleton within edit distance 1 of a brand label), then the real brand monitor.
+      const parsed = KCW.parseDomain(host);
+      const label = parsed.label || "";
+      if (label.length < 3 || parsed.is_ip) return [];
+      const skel = KCW.brandSkeleton(parsed.unicode_label || label);
+      let candidate = false;
+      for (const b of this.deepIndex) {
+        if (b.bl.length >= 4 && (skel.includes(b.skel) || label.includes(b.bl))) { candidate = true; break; }
+        if (Math.abs(skel.length - b.skel.length) <= 1 && KCW.levenshtein(skel, b.skel, 1) <= 1) { candidate = true; break; }
+      }
+      if (!candidate) return [];
+      try { return engine.monitor.checkDomain(host, "deep", false).map((a) => a.brand_short || a.brand_name); } catch (e) { return []; }
     },
     render(row, synthetic) {
       const el = $("liveFeed");
@@ -599,6 +657,15 @@
     const btn = $("scanBtn"); btn.disabled = true; btn.textContent = "Scanning…";
     try {
       const result = engine.scan(input, {}, "scan", true);
+      const rules = compileRules();
+      const matchedRules = rules.filter((r) => r.re.test(result.domain));
+      if (matchedRules.length && !result.allowlisted) {
+        const p0 = result.phishing;
+        for (const r of matchedRules) { p0.indicators.push({ type: "custom_rule", detail: `Rule "${r.name}" (${r.pattern})`, weight: RULE_WEIGHT[r.severity] || 15 }); p0.risk_score = Math.min(100, p0.risk_score + (RULE_WEIGHT[r.severity] || 15)); }
+        p0.risk_level = levelOf(p0.risk_score); p0.is_phishing = p0.risk_score >= 50;
+        if (!p0.categories.includes("custom_rule")) p0.categories.push("custom_rule");
+        result.brand_alerts = result.brand_alerts.concat(ruleAlerts(result.domain, matchedRules, "scan"));
+      }
       const enrich = $("scanEnrich").checked;
       renderScanResult(result, { pending: enrich });
       let live = null;
@@ -820,7 +887,7 @@
       <td style="font-family:var(--font-mono);font-size:.7rem;color:var(--cyan);cursor:pointer" title="Open alert" onclick="openAlert('${esc(a.alert_id)}')">${esc(a.alert_id)}</td>
       <td><span class="badge ${esc(a.severity)}">${esc(a.severity)}</span></td>
       <td style="cursor:pointer" onclick="openAlert('${esc(a.alert_id)}')"><strong>${esc(a.brand_short || a.brand_name)}</strong></td>
-      <td style="font-family:var(--font-mono);font-size:.75rem;cursor:pointer" onclick="quickScan('${esc(a.domain)}')">${esc(a.domain)}</td>
+      <td style="font-family:var(--font-mono);font-size:.75rem;cursor:pointer" onclick="quickScan('${esc(a.domain)}')">${esc(a.domain)}${a.occurrences > 1 ? ` <span class="badge info" style="font-size:.55rem" title="${esc((a.evidence && a.evidence.hosts || []).join(", "))}">×${a.occurrences}</span>` : ""}${a.evidence && a.evidence.newly_registered ? ' <span class="badge critical" style="font-size:.55rem" title="registered less than 30 days ago">new</span>' : ""}${a.evidence && a.evidence.ips && a.evidence.ips.length ? `<div style="font-size:.62rem;color:var(--text-muted)">${esc(a.evidence.ips[0])}</div>` : ""}</td>
       <td>${esc((a.alert_type || "").replace(/_/g, " "))}</td>
       <td style="font-size:.7rem;color:var(--text-dim)">${esc(a.source || "")}</td>
       <td style="color:var(--text-dim);font-size:.72rem">${ago(a.detected_at)}</td>
@@ -1089,7 +1156,9 @@
   }
   async function removeCustomBrand(i) { const next = S.customBrands.slice(); next.splice(i, 1); await saveSetting("customBrands", next); renderCustomBrands(); }
   function renderSettings() {
-    renderKeywords(); renderAllowlist(); renderCustomBrands();
+    renderKeywords(); renderAllowlist(); renderCustomBrands(); renderRules();
+    const dm = $("setDeepMatch"); if (dm) dm.checked = !!S.feedDeepMatch;
+    const ae = $("setAutoEnrich"); if (ae) ae.checked = !!S.autoEnrich;
     const fs = $("setFeedSource"); if (fs) fs.value = S.feedSource || "ctlogs";
     const wt = $("setWatchtower"); if (wt) wt.checked = !!S.watchtowerEnabled;
     const wm = $("setWatchtowerMinutes"); if (wm) wm.value = S.watchtowerMinutes || 20;
@@ -1098,6 +1167,31 @@
     checkApi();
     $("aboutText").innerHTML = `KWTCyberWatch v${esc(KCW.version)} · browser engine with ${engine.brands.length} brand profiles, ${KCW.data.phishing_keywords.length} lure keywords, ${Object.keys(KCW.data.confusables).length} confusable characters and ${KCW.data.suffixes.free_hosting.length} free-hosting suffixes.<br>Source: <a href="https://github.com/SiteQ8/KWTCyberWatch" target="_blank" rel="noopener">github.com/SiteQ8/KWTCyberWatch</a> · by Ali AlEnezi (@SiteQ8).`;
   }
+  function renderRules() {
+    const el = $("ruleList");
+    if (!el) return;
+    el.innerHTML = (S.rules || []).length ? S.rules.map((r, i) => `<div class="rule-row"><label class="toggle" style="margin:0;transform:scale(.8)"><input type="checkbox" ${r.enabled !== false ? "checked" : ""} onchange="toggleRule(${i},this.checked)"><span class="toggle-slider"></span></label><span class="badge ${esc(r.severity || "medium")}" style="font-size:.55rem">${esc(r.severity || "medium")}</span><strong style="font-size:.78rem">${esc(r.name)}</strong><code style="flex:1;font-size:.7rem;word-break:break-all">/${esc(r.pattern)}/${esc(r.flags || "i")}</code><button class="act-btn danger" onclick="removeRule(${i})">✕</button></div>`).join("")
+      : '<div style="font-size:.74rem;color:var(--text-muted)">No custom rules yet. Rules are regular expressions tested against every certificate hostname in the live feed and every scanned domain.</div>';
+  }
+  async function addRule() {
+    const name = $("ruleName").value.trim(), pattern = $("rulePattern").value.trim(), severity = $("ruleSeverity").value;
+    if (!name || !pattern) { toast("Rule needs a name and a pattern", "crit"); return; }
+    try { new RegExp(pattern, "i"); } catch (e) { toast("Invalid regular expression: " + e.message, "crit"); return; }
+    const rules = (S.rules || []).concat([{ id: "r" + Date.now().toString(36), name, pattern, flags: "i", severity, enabled: true, created_at: new Date().toISOString() }]);
+    await saveSetting("rules", rules);
+    $("ruleName").value = ""; $("rulePattern").value = "";
+    renderRules(); feed.rules = compileRules(); toast(`Rule "${name}" added`, "ok");
+  }
+  async function removeRule(i) { const rules = (S.rules || []).slice(); rules.splice(i, 1); await saveSetting("rules", rules); renderRules(); feed.rules = compileRules(); }
+  async function toggleRule(i, on) { const rules = (S.rules || []).slice(); rules[i] = Object.assign({}, rules[i], { enabled: !!on }); await saveSetting("rules", rules); feed.rules = compileRules(); }
+  function testRules() {
+    const host = KCW.normalizeDomain($("ruleTest").value);
+    const out = $("ruleTestResult");
+    if (!host) { out.textContent = ""; return; }
+    const hits = compileRules().filter((r) => r.re.test(host));
+    out.innerHTML = hits.length ? hits.map((r) => `<span class="badge ${esc(r.severity)}" style="margin:2px">${esc(r.name)}</span>`).join("") : '<span style="color:var(--text-muted)">no rule matches</span>';
+  }
+  Object.assign(window, { renderRules, addRule, removeRule, toggleRule, testRules });
   async function exportAllData() {
     const out = {};
     for (const s of ["scans", "alerts", "certs", "sightings", "intel", "settings"]) out[s] = await dbAll(s);
@@ -1155,6 +1249,6 @@
     db: { all: dbAll, put: dbPut, add: dbAdd, get: dbGet, del: dbDel, clear: dbClear, count: dbCount },
     investigate, buildStixBundle, saveSetting, refreshCounts, renderAlerts, renderDashboard, renderSightings, renderHistory, renderAnalytics,
     persistBrandAlerts, addAllowlistDomain, upsertSighting, resolveQuick, fetchCrtSh, fetchRDAP, parseRDAP, fetchURLhaus, dohAll,
-    esc, ago, fmtTime, scoreColor, levelOf, setText, downloadBlob, emit,
+    esc, ago, fmtTime, scoreColor, levelOf, setText, downloadBlob, emit, compileRules,
   };
 })();

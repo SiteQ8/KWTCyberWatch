@@ -7,7 +7,7 @@
     Open-source phishing detection and brand protection for Kuwait: live Certificate Transparency monitoring, IDN/Arabic-aware typosquat and brand-impersonation detection for 26 Kuwaiti banks, telecoms and government services, alert triage, threat-intel enrichment and a fully client-side analyst console you can run from GitHub Pages.
   </p>
   <p align="center">
-    <a href="#-features"><img src="https://img.shields.io/badge/version-2.3.0-00d4ff?style=flat-square" alt="Version"></a>
+    <a href="#-features"><img src="https://img.shields.io/badge/version-2.4.0-00d4ff?style=flat-square" alt="Version"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License"></a>
     <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square" alt="Python"></a>
     <a href="https://github.com/SiteQ8/KWTCyberWatch/actions"><img src="https://img.shields.io/badge/tests-420%2B-brightgreen?style=flat-square" alt="Tests"></a>
@@ -17,6 +17,12 @@
 </p>
 
 ---
+
+## ✨ What's new in 2.4
+
+- **Static CT API logs** are tailed too (tiled `checkpoint` / `tile/data`), next to RFC 6962 logs.
+- **Deep match** runs the brand engine on every certificate, catching homoglyphs and typos with no keyword.
+- **Custom regex detection rules**, **alert consolidation** per domain and **auto-enrichment** (DNS + RDAP age) of new alerts.
 
 ## ✨ What's new in 2.3
 
@@ -157,7 +163,8 @@ Try it live at <https://siteq8.github.io/KWTCyberWatch/demo/>.
   (RFC 6962 `get-sth` / `get-entries`), parses every certificate with a built-in DER reader and
   scores each hostname the moment it is logged. No CertStream or other third-party feed is
   involved; logs are discovered from Google's log list with a built-in fallback and the feed
-  page shows per-log state, rate and coverage.
+  page shows per-log state, rate and coverage. Both RFC 6962 and Static CT API (tiled) logs
+  are supported, and a deep-match mode runs the brand engine on every hostname.
 - **Watchtower** — a scheduled sweep that generates look-alikes of the protected brands,
   resolves them over DNS-over-HTTPS and records live ones as sightings with alerts.
 - **Real enrichment** — DNS via Google DNS-over-HTTPS, Certificate Transparency history via

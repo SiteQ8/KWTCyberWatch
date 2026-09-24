@@ -414,6 +414,40 @@
   });
 
   // ------------------------------------------------------------------ //
+  // Auto-enrichment of new feed alerts (DNS + registration age)
+  // ------------------------------------------------------------------ //
+  const ENRICH = { queue: [], busy: false, cache: new Map() };
+  async function enrichAlert(a) {
+    const reg = (a.evidence && a.evidence.registrable_domain) || KCW.parseDomain(a.domain).registrable;
+    let info = ENRICH.cache.get(reg);
+    if (!info) {
+      info = { ips: [], registrar: null, age_days: null, created: null, checked_at: new Date().toISOString() };
+      const [dns, rdap] = await Promise.allSettled([A.resolveQuick(a.domain), A.fetchRDAP(reg)]);
+      if (dns.status === "fulfilled") { info.ips = dns.value.ips || []; info.resolves = dns.value.resolves; }
+      if (rdap.status === "fulfilled") { const rd = A.parseRDAP(rdap.value); info.registrar = rd.registrar; info.age_days = rd.age_days; info.created = rd.created; info.nameservers = rd.nameservers; }
+      ENRICH.cache.set(reg, info);
+    }
+    const fresh = await db.get("alerts", a.alert_id);
+    if (!fresh) return;
+    fresh.evidence = Object.assign({}, fresh.evidence, { ips: info.ips, resolves: info.resolves, registrar: info.registrar, registered: info.created, age_days: info.age_days, nameservers: info.nameservers, newly_registered: info.age_days !== null && info.age_days < 30 });
+    await db.put("alerts", fresh);
+    A.emit("alert-updated", { alert: fresh });
+    if ($("page-alerts").classList.contains("active")) A.renderAlerts();
+  }
+  async function pumpEnrich() {
+    if (ENRICH.busy) return;
+    ENRICH.busy = true;
+    try { while (ENRICH.queue.length) { const a = ENRICH.queue.shift(); try { await enrichAlert(a); } catch (e) { /* offline */ } } }
+    finally { ENRICH.busy = false; }
+  }
+  on("alerts", ({ alerts, source }) => {
+    if (!S.autoEnrich || source === "replay" || source === "watchtower") return;
+    for (const a of alerts) if (!ENRICH.queue.some((q) => q.alert_id === a.alert_id)) ENRICH.queue.push(a);
+    if (ENRICH.queue.length > 50) ENRICH.queue.length = 50;
+    pumpEnrich();
+  });
+
+  // ------------------------------------------------------------------ //
   // Sortable tables (numeric-aware, works on any rendered tbody)
   // ------------------------------------------------------------------ //
   document.addEventListener("click", (e) => {

@@ -20,7 +20,13 @@ import time
 from datetime import datetime, timezone
 from typing import Any, Callable, Dict, Iterable, List, Optional
 
-from src.utils.x509 import DERError, parse_leaf_input, to_certstream_message
+from src.utils.x509 import (
+    DERError,
+    parse_data_tile,
+    parse_leaf_input,
+    tile_path,
+    to_certstream_message,
+)
 
 logger = logging.getLogger("kwtcyberwatch.ctlogs")
 
@@ -43,6 +49,17 @@ FALLBACK_LOGS: List[Dict[str, str]] = [
 ]
 
 Fetcher = Callable[[str, float], Any]
+BytesFetcher = Callable[[str, float], bytes]
+
+TILE_WIDTH = 256
+
+# Static CT API (tiled) logs: monitoring prefixes. Probed like the others; unreachable ones are skipped.
+FALLBACK_STATIC_LOGS: List[Dict[str, str]] = [
+    {"name": "Geomys Tuscolo 2026h2", "url": "https://tuscolo2026h2.sunlight.geomys.org/"},
+    {"name": "Geomys Tuscolo 2027h1", "url": "https://tuscolo2027h1.sunlight.geomys.org/"},
+    {"name": "Let's Encrypt Sycamore 2026h2", "url": "https://sycamore.ct.letsencrypt.org/2026h2/"},
+    {"name": "Let's Encrypt Willow 2026h2", "url": "https://willow.ct.letsencrypt.org/2026h2/"},
+]
 
 
 def _default_fetcher(url: str, timeout: float) -> Any:
@@ -52,6 +69,23 @@ def _default_fetcher(url: str, timeout: float) -> Any:
     if resp.status_code != 200:
         raise RuntimeError(f"HTTP {resp.status_code}")
     return resp.json()
+
+
+def _default_bytes_fetcher(url: str, timeout: float) -> bytes:
+    import requests
+
+    resp = requests.get(url, timeout=timeout, headers={"User-Agent": "KWTCyberWatch CT tailer"})
+    if resp.status_code != 200:
+        raise RuntimeError(f"HTTP {resp.status_code}")
+    return resp.content
+
+
+def parse_checkpoint(text: str) -> int:
+    """Return the tree size from a Static CT API ``checkpoint`` (origin line, size, root hash...)."""
+    lines = text.strip().split("\n")
+    if len(lines) < 3:
+        raise ValueError("malformed checkpoint")
+    return int(lines[1].strip())
 
 
 def _interval_covers_now(log: Dict[str, Any], now: datetime) -> bool:
@@ -69,25 +103,25 @@ def _interval_covers_now(log: Dict[str, Any], now: datetime) -> bool:
 def select_logs_from_list(
     log_list: Dict[str, Any], now: Optional[datetime] = None
 ) -> List[Dict[str, str]]:
-    """Pick usable RFC 6962 logs whose temporal shard covers ``now`` from a v3 log list."""
+    """Pick usable logs (RFC 6962 and Static CT API) whose temporal shard covers ``now``."""
     now = now or datetime.now(timezone.utc)
     chosen: List[Dict[str, str]] = []
     for operator in log_list.get("operators", []):
-        for log in operator.get("logs", []):  # "tiled_logs" (static CT) are not RFC 6962
-            state = log.get("state") or {}
-            if not ({"usable", "qualified"} & set(state.keys())):
-                continue
-            if not _interval_covers_now(log, now):
-                continue
-            url = str(log.get("url") or "").rstrip("/") + "/"
-            if not url.startswith("https://"):
-                continue
-            chosen.append(
-                {
-                    "name": f"{operator.get('name', 'log')} {log.get('description', '')}".strip(),
-                    "url": url,
-                }
-            )
+        for kind, key, url_key in (
+            ("rfc6962", "logs", "url"),
+            ("static", "tiled_logs", "monitoring_url"),
+        ):
+            for log in operator.get(key, []):
+                state = log.get("state") or {}
+                if not ({"usable", "qualified"} & set(state.keys())):
+                    continue
+                if not _interval_covers_now(log, now):
+                    continue
+                url = str(log.get(url_key) or "").rstrip("/") + "/"
+                if not url.startswith("https://"):
+                    continue
+                name = f"{operator.get('name', 'log')} {log.get('description', '')}".strip()
+                chosen.append({"name": name, "url": url, "kind": kind})
     return chosen
 
 
@@ -99,6 +133,7 @@ class CTLogTailer:
         handler: Callable[[Dict[str, Any]], None],
         logs: Optional[Iterable[Dict[str, str]]] = None,
         fetcher: Fetcher = _default_fetcher,
+        bytes_fetcher: BytesFetcher = _default_bytes_fetcher,
         batch_size: int = 256,
         poll_interval: float = 2.0,
         max_lag: int = 5000,
@@ -108,6 +143,7 @@ class CTLogTailer:
     ):
         self.handler = handler
         self.fetch = fetcher
+        self.fetch_bytes = bytes_fetcher
         self.batch_size = max(1, int(batch_size))
         self.poll_interval = float(poll_interval)
         self.max_lag = int(max_lag)
@@ -139,12 +175,15 @@ class CTLogTailer:
             except Exception as exc:  # offline or blocked: fall back
                 logger.warning("CT log list unavailable (%s); using built-in shards", exc)
         if not candidates:
-            candidates = [dict(item) for item in FALLBACK_LOGS]
+            candidates = [dict(item) for item in FALLBACK_LOGS] + [
+                dict(item, kind="static") for item in FALLBACK_STATIC_LOGS
+            ]
         self.logs = []
         for cand in candidates:
             state = {
                 "name": cand["name"],
                 "url": cand["url"],
+                "kind": cand.get("kind", "rfc6962"),
                 "tree_size": 0,
                 "cursor": None,
                 "entries": 0,
@@ -155,8 +194,7 @@ class CTLogTailer:
                 "status": "probing",
             }
             try:
-                sth = self.fetch(cand["url"] + "ct/v1/get-sth", 10)
-                state["tree_size"] = int(sth.get("tree_size", 0))
+                state["tree_size"] = self._tree_size(state)
                 state["cursor"] = max(0, state["tree_size"] - self.batch_size)
                 state["status"] = "live"
                 self.logs.append(state)
@@ -165,14 +203,51 @@ class CTLogTailer:
         logger.info("Tailing %d CT logs", len(self.logs))
         return self.logs
 
+    def _tree_size(self, log: Dict[str, Any]) -> int:
+        self.stats["requests"] += 1
+        if log.get("kind") == "static":
+            return parse_checkpoint(self.fetch_bytes(log["url"] + "checkpoint", 10).decode("utf-8"))
+        sth = self.fetch(log["url"] + "ct/v1/get-sth", 10)
+        return int(sth.get("tree_size", 0))
+
+    def _fetch_entries(self, log: Dict[str, Any]) -> List[Any]:
+        """Return the next batch as ``(index, parsed_or_None, error)`` tuples."""
+        out: List[Any] = []
+        self.stats["requests"] += 1
+        if log.get("kind") == "static":
+            tile = log["cursor"] // TILE_WIDTH
+            start = tile * TILE_WIDTH
+            width = min(TILE_WIDTH, log["tree_size"] - start)
+            suffix = "" if width == TILE_WIDTH else f".p/{width}"
+            data = self.fetch_bytes(f"{log['url']}tile/data/{tile_path(tile)}{suffix}", 20)
+            try:
+                leaves = parse_data_tile(data)
+            except DERError as exc:
+                logger.debug("%s tile %d: %s", log["name"], tile, exc)
+                leaves = []
+            for offset, parsed in enumerate(leaves):
+                index = start + offset
+                if index >= log["cursor"]:
+                    out.append((index, parsed, None))
+            if not leaves:  # unreadable tile: step past it so we do not spin on it
+                out.append((start + width - 1, None, "unreadable tile"))
+            return out
+        end = min(log["cursor"] + self.batch_size, log["tree_size"]) - 1
+        payload = self.fetch(f"{log['url']}ct/v1/get-entries?start={log['cursor']}&end={end}", 20)
+        for offset, entry in enumerate(payload.get("entries") or []):
+            index = log["cursor"] + offset
+            try:
+                out.append((index, parse_leaf_input(entry.get("leaf_input", "")), None))
+            except (DERError, ValueError, TypeError) as exc:
+                out.append((index, None, str(exc)))
+        return out
+
     def poll_log(self, log: Dict[str, Any]) -> int:
         """Fetch one batch from ``log``; returns the number of entries processed."""
         if self._now() < log["next_at"]:
             return 0
         try:
-            self.stats["requests"] += 1
-            sth = self.fetch(log["url"] + "ct/v1/get-sth", 10)
-            log["tree_size"] = int(sth.get("tree_size", log["tree_size"]))
+            log["tree_size"] = self._tree_size(log)
             if log["cursor"] is None:
                 log["cursor"] = max(0, log["tree_size"] - self.batch_size)
             if log["tree_size"] - log["cursor"] > self.max_lag:
@@ -183,26 +258,19 @@ class CTLogTailer:
             if log["cursor"] >= log["tree_size"]:
                 log["next_at"] = self._now() + self.poll_interval
                 return 0
-            end = min(log["cursor"] + self.batch_size, log["tree_size"]) - 1
-            self.stats["requests"] += 1
-            payload = self.fetch(
-                f"{log['url']}ct/v1/get-entries?start={log['cursor']}&end={end}", 20
-            )
-            entries = payload.get("entries") or []
-            for offset, entry in enumerate(entries):
-                index = log["cursor"] + offset
-                try:
-                    parsed = parse_leaf_input(entry.get("leaf_input", ""))
-                except (DERError, ValueError, TypeError) as exc:
+            entries = self._fetch_entries(log)
+            for index, parsed, error in entries:
+                if parsed is None:
                     self.stats["parse_errors"] += 1
-                    logger.debug("%s#%d parse error: %s", log["name"], index, exc)
+                    logger.debug("%s#%d parse error: %s", log["name"], index, error)
                     continue
                 try:
                     self.handler(to_certstream_message(parsed, log["name"], index))
                 except Exception as exc:  # handler bugs must not stop the tail
                     logger.error("handler error for %s#%d: %s", log["name"], index, exc)
             processed = len(entries)
-            log["cursor"] += processed
+            if entries:
+                log["cursor"] = entries[-1][0] + 1
             log["entries"] += processed
             self.stats["entries"] += processed
             log["backoff"] = 0.0
@@ -250,6 +318,7 @@ class CTLogTailer:
                     in (
                         "name",
                         "url",
+                        "kind",
                         "tree_size",
                         "cursor",
                         "entries",
@@ -268,4 +337,11 @@ class CTLogTailer:
         return f"CTLogTailer({json.dumps(self.summary())})"
 
 
-__all__ = ["CTLogTailer", "FALLBACK_LOGS", "LOG_LIST_URL", "select_logs_from_list"]
+__all__ = [
+    "CTLogTailer",
+    "FALLBACK_LOGS",
+    "FALLBACK_STATIC_LOGS",
+    "LOG_LIST_URL",
+    "parse_checkpoint",
+    "select_logs_from_list",
+]
