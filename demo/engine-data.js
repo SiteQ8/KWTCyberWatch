@@ -1089,7 +1089,6 @@
   "kuwaiti",
   "kw",
   "kwt",
-  "kwi",
   "q8",
   "q-8",
   "kuw",

@@ -63,7 +63,6 @@ DEFAULT_CERTSTREAM_KEYWORDS: List[str] = [
     "kuwaiti",
     "kw",
     "kwt",
-    "kwi",
     "q8",
     "q-8",
     "kuw",

@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.4.0] - 2026-09-24
 
 ### Fixed
+- Short keywords (3–4 characters) now only match at the edge of a hostname label, so random
+  strings such as `...jskuw` or `cbkfmcdt...` no longer show up; `kwi` was retired as too noisy.
+  Mid-label brand names are still caught by deep match.
+- The 404 page and canonical links work on the custom domain (kwtcyberwatch.3li.info).
 - The relay job crashed on its final summary line after 25 minutes of tailing; rate-limited
   logs (HTTP 429) now back off from 20 s instead of retrying every few seconds, and per-log
   polling is paced at about two requests per second.
