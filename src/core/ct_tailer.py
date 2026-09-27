@@ -120,7 +120,11 @@ def select_logs_from_list(
                 url = str(log.get(url_key) or "").rstrip("/") + "/"
                 if not url.startswith("https://"):
                     continue
-                name = f"{operator.get('name', 'log')} {log.get('description', '')}".strip()
+                op_name = str(operator.get("name", "log")).strip()
+                desc = str(log.get("description", "")).strip().strip("'\"")
+                if desc.lower().startswith(op_name.lower()):
+                    desc = desc[len(op_name) :].strip(" -'\"")
+                name = f"{op_name} {desc}".strip()
                 chosen.append({"name": name, "url": url, "kind": kind})
     return chosen
 
@@ -275,17 +279,21 @@ class CTLogTailer:
             self.stats["entries"] += processed
             log["backoff"] = 0.0
             log["status"] = "live"
+            # keep a polite pace even when we are behind: at most ~2 requests/second per log
             log["next_at"] = self._now() + (
-                0 if processed >= self.batch_size else self.poll_interval
+                min(0.5, self.poll_interval) if processed >= self.batch_size else self.poll_interval
             )
             return processed
         except Exception as exc:
             log["errors"] += 1
             self.stats["errors"] += 1
-            log["backoff"] = min(300.0, (log["backoff"] or 2.0) * 2)
+            rate_limited = "429" in str(exc)
+            floor = 20.0 if rate_limited else 2.0
+            log["backoff"] = min(300.0, max(floor, (log["backoff"] or floor / 2) * 2))
             log["next_at"] = self._now() + log["backoff"]
-            log["status"] = f"error: {exc}"
-            logger.warning("CT log %s: %s (retry in %.0fs)", log["name"], exc, log["backoff"])
+            log["status"] = "rate-limited" if rate_limited else f"error: {exc}"
+            level = logging.INFO if rate_limited else logging.WARNING
+            logger.log(level, "CT log %s: %s (retry in %.0fs)", log["name"], exc, log["backoff"])
             return 0
 
     def poll_once(self) -> int:

@@ -169,7 +169,8 @@ def main(argv: List[str]) -> int:
     result = run_snapshot(args.seconds, Path(args.out), logs=logs)
     print(
         f"tailed {len(result['logs'])} log(s) for {result['window_seconds']}s: "
-        f"{result['entries']} entries, {len(result['matches'])} matches, {len(result['alerts'])} alerts"
+        f"{result['entries']} entries, {len(result['matches'])} matches, "
+        f"{result['alert_candidates']} alert candidates"
     )
     return 0
 

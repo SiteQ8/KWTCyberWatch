@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.4.0] - 2026-09-24
 
+### Fixed
+- The relay job crashed on its final summary line after 25 minutes of tailing; rate-limited
+  logs (HTTP 429) now back off from 20 s instead of retrying every few seconds, and per-log
+  polling is paced at about two requests per second.
+
 ### Added
 - **Relay feed**: `.github/workflows/ct-relay.yml` runs `scripts/ct_snapshot.py` (the project's own
   tailer) every 30 minutes for ~25 minutes and publishes Kuwait keyword matches to
