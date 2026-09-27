@@ -118,10 +118,17 @@ class CertStreamMonitor:
         tokens = set(t for t in _TOKEN_SPLIT.split(lowered) if t)
         hits: List[str] = []
         for kw in self.keywords:
-            if len(kw) >= self.min_keyword_length:
-                if kw in lowered:
+            if len(kw) < self.min_keyword_length:
+                if kw in tokens:
                     hits.append(kw)
-            elif kw in tokens:
+            elif len(kw) <= 4:
+                # short keywords must sit at a token edge ("kuwaitbank", "e-kfh", "lkpay"),
+                # never buried inside a long random label ("...jskuw", "kkunalsanga")
+                if kw in tokens or any(
+                    (t.startswith(kw) or t.endswith(kw)) and len(t) <= len(kw) + 8 for t in tokens
+                ):
+                    hits.append(kw)
+            elif kw in lowered:
                 hits.append(kw)
         return hits
 

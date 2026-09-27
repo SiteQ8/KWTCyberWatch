@@ -43,7 +43,7 @@
 - **Threat intel that works out of the box** — OpenPhish and URLhaus need no key; VirusTotal, URLScan, PhishTank and Google Safe Browsing plug in with one.
 - **SIEM-ready outputs** — STIX 2.1 bundles, CSV exports, Syslog/CEF and Microsoft Teams channels, Prometheus metrics.
 - **Hardened API** — signed bearer tokens, roles, API keys, rate limiting, OpenAPI docs.
-- **A real browser dashboard** — the full detection engine is ported to JavaScript (parity-tested against Python), so the [GitHub Pages demo](https://siteq8.github.io/KWTCyberWatch/demo/) scans for real, tails Certificate Transparency logs directly, resolves typosquats over DNS-over-HTTPS and enriches with crt.sh, RDAP and URLhaus. No backend, no sample data, no third-party feed.
+- **A real browser dashboard** — the full detection engine is ported to JavaScript (parity-tested against Python), so the [live console](https://kwtcyberwatch.3li.info/demo/) scans for real, tails Certificate Transparency logs directly, resolves typosquats over DNS-over-HTTPS and enriches with crt.sh, RDAP and URLhaus. No backend, no sample data, no third-party feed.
 - **400+ offline tests** and a green CI (lint + tests + Docker).
 
 ---
@@ -152,7 +152,7 @@ Minimum severity, per-domain cooldown de-duplication and delivery statistics are
 
 ### Web dashboard
 The single-page dashboard in `demo/` is a **real client-side analyst console**, not a mock-up.
-Try it live at <https://siteq8.github.io/KWTCyberWatch/demo/> (project site: <https://siteq8.github.io/KWTCyberWatch/>).
+Try it live at <https://kwtcyberwatch.3li.info/demo/> (project site: <https://kwtcyberwatch.3li.info/>).
 
 - **Browser-native detection engine** — `demo/engine.js` is a line-for-line port of the Python
   phishing detector, brand monitor and domain analyzer (26 Kuwaiti brand profiles, IDN/Arabic
@@ -190,7 +190,7 @@ Try it live at <https://siteq8.github.io/KWTCyberWatch/demo/> (project site: <ht
 ## 🚀 Quick Start
 
 ### Demo (no installation)
-Visit <https://siteq8.github.io/KWTCyberWatch/demo/> or open `demo/index.html` locally — the engine, feed and lookups all run in your browser.
+Visit <https://kwtcyberwatch.3li.info/demo/> or open `demo/index.html` locally — the engine, feed and lookups all run in your browser.
 
 ### Installation
 

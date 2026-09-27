@@ -39,8 +39,20 @@ class TestMatching:
         assert monitor.match_keywords("q8car.com") == []
         assert monitor.match_keywords("q8-car.com") == ["q8"]
 
+    def test_short_keywords_anchor_to_token_edges(self):
+        cfg = CertStreamConfig(keywords=["kuw", "cbk", "kpay", "kuna", "kuwait"])
+        m = CertStreamMonitor(cfg)
+        assert m.match_keywords("kuwaitbank.com") == ["kuw", "kuwait"]
+        assert m.match_keywords("e-cbk.com") == ["cbk"]
+        assert m.match_keywords("lkpay.example.com") == ["kpay"]
+        assert m.match_keywords("fckvvqrxxcfveswhtjskuw.example.dev") == []
+        assert m.match_keywords("cbkfmcdtytlkzfswjwrtsj.example.dev") == []
+        assert m.match_keywords("kkunalsanga123.workers.dev") == []
+        assert m.match_keywords("qpojmlgcbklmxprow.com") == []
+
     def test_long_keywords_substring(self, monitor):
-        assert monitor.match_keywords("mynbkonline.com") == ["nbk"]
+        assert monitor.match_keywords("nbkonline.com") == ["nbk"]
+        assert monitor.match_keywords("mynbkonline.com") == []  # mid-token: left to deep match
         assert monitor.match_keywords("KUWAITbank.tk") == ["kuwait"]
 
 

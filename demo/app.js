@@ -72,7 +72,8 @@
   // ------------------------------------------------------------------ //
   // Settings & engine
   // ------------------------------------------------------------------ //
-  const KEYWORDS_VERSION = 2;
+  const KEYWORDS_VERSION = 3;
+  const RETIRED_KEYWORDS = ["kwi"];
   const DEFAULTS = {
     soundAlerts: false, retentionDays: 90,
     feedSource: "ctlogs", ctLogs: [], keywordsVersion: 0,
@@ -97,7 +98,7 @@
     for (const r of rows) if (r.key in DEFAULTS) S[r.key] = r.value;
     try { S.analyst = localStorage.getItem("kcw_analyst") || S.analyst; } catch (e) { /* private mode */ }
     if ((S.keywordsVersion || 0) < KEYWORDS_VERSION) {
-      const merged = S.keywords.slice();
+      const merged = S.keywords.filter((k) => !RETIRED_KEYWORDS.includes(k));
       for (const k of DEFAULTS.keywords) if (!merged.includes(k)) merged.push(k);
       S.keywords = merged;
       await dbPut("settings", { key: "keywords", value: merged });
@@ -528,8 +529,12 @@
       const uni = lower.includes("xn--") ? KCW.toUnicode(lower) : lower;
       const tokens = new Set(lower.split(/[^a-z0-9]+/).filter(Boolean));
       const hits = [];
+      const tokenList = Array.from(tokens);
+      const edge = (kw) => tokens.has(kw) || tokenList.some((t) => (t.startsWith(kw) || t.endsWith(kw)) && t.length <= kw.length + 8);
       for (const kw of this.keywords) {
-        if (kw.length >= 3) { if (lower.includes(kw) || (uni !== lower && uni.includes(kw))) hits.push(kw); } else if (tokens.has(kw)) hits.push(kw);
+        if (kw.length < 3) { if (tokens.has(kw)) hits.push(kw); }
+        else if (kw.length <= 4 && /^[a-z0-9-]+$/.test(kw)) { if (edge(kw)) hits.push(kw); }
+        else if (lower.includes(kw) || (uni !== lower && uni.includes(kw))) hits.push(kw);
       }
       return hits;
     },
