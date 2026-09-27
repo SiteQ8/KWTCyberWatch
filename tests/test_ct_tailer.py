@@ -229,6 +229,7 @@ class TestCTLogTailer:
             fetcher=make_fetcher({"https://fake.log/": log}),
             batch_size=4,
             max_lag=10,
+            poll_interval=0,
             now=lambda: 0,
         )
         tailer.discover()

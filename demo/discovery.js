@@ -206,7 +206,10 @@
           const iv = log.temporal_interval;
           if (iv) { const s = Date.parse(iv.start_inclusive), e = Date.parse(iv.end_exclusive); if (!(s <= now && now < e)) continue; }
           if (!String(log[urlKey] || "").startsWith("https://")) continue;
-          out.push({ name: `${op.name || "log"} ${log.description || ""}`.trim(), url: String(log[urlKey]).replace(/\/+$/, "") + "/", kind });
+          const opName = String(op.name || "log").trim();
+          let desc = String(log.description || "").trim().replace(/^['"]|['"]$/g, "");
+          if (desc.toLowerCase().startsWith(opName.toLowerCase())) desc = desc.slice(opName.length).replace(/^[\s\-'"]+/, "");
+          out.push({ name: `${opName} ${desc}`.trim(), url: String(log[urlKey]).replace(/\/+$/, "") + "/", kind });
         }
       }
     }
