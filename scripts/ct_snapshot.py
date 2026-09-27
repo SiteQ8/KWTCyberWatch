@@ -67,10 +67,10 @@ def run_snapshot(
     seen: set = set()
 
     def on_event(event: Any) -> None:
-        key = (event.domain, event.source)
-        if key in seen:
+        # the same certificate is usually submitted to several logs: one row per hostname
+        if event.domain in seen:
             return
-        seen.add(key)
+        seen.add(event.domain)
         verdict = detector.analyze(
             event.domain, {"issuer": event.issuer_name, "is_wildcard": event.is_wildcard}
         )

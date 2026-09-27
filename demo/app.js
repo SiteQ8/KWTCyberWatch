@@ -72,8 +72,8 @@
   // ------------------------------------------------------------------ //
   // Settings & engine
   // ------------------------------------------------------------------ //
-  const KEYWORDS_VERSION = 3;
-  const RETIRED_KEYWORDS = ["kwi"];
+  const KEYWORDS_VERSION = 4;
+  const RETIRED_KEYWORDS = ["kwi", "mosal"];
   const DEFAULTS = {
     soundAlerts: false, retentionDays: 90,
     feedSource: "ctlogs", ctLogs: [], keywordsVersion: 0,
