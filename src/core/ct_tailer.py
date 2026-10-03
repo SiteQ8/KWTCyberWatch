@@ -17,7 +17,7 @@ from __future__ import annotations
 import json
 import logging
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, Dict, Iterable, List, Optional
 
 from src.utils.x509 import (
@@ -31,6 +31,11 @@ from src.utils.x509 import (
 logger = logging.getLogger("kwtcyberwatch.ctlogs")
 
 LOG_LIST_URL = "https://www.gstatic.com/ct/log_list/v3/log_list.json"
+
+# Longest lifetime a newly issued certificate may have (the CA/Browser Forum cap during 2026).
+# Shards are keyed by certificate expiry date, so a certificate issued today lands in a shard up
+# to one lifetime ahead and the tailer must read every shard that starts within that window.
+MAX_CERT_LIFETIME_DAYS = 200
 
 # Fallback shards (checked 2026-09). Logs that do not answer are skipped automatically.
 FALLBACK_LOGS: List[Dict[str, str]] = [
@@ -88,7 +93,17 @@ def parse_checkpoint(text: str) -> int:
     return int(lines[1].strip())
 
 
-def _interval_covers_now(log: Dict[str, Any], now: datetime) -> bool:
+def _interval_accepts_new_certs(
+    log: Dict[str, Any], now: datetime, lifetime_days: int = MAX_CERT_LIFETIME_DAYS
+) -> bool:
+    """
+    True when ``log`` can still receive certificates issued around ``now``.
+
+    A shard's temporal interval is the range of certificate *expiry* dates it accepts, not of
+    issuance dates. A certificate issued today therefore lands in the shard that covers today
+    plus its lifetime, which may be months ahead. Keep every shard that has not ended yet and
+    that starts within the longest lifetime a new certificate can have.
+    """
     interval = log.get("temporal_interval")
     if not interval:
         return True
@@ -97,13 +112,18 @@ def _interval_covers_now(log: Dict[str, Any], now: datetime) -> bool:
         end = datetime.fromisoformat(interval["end_exclusive"].replace("Z", "+00:00"))
     except (KeyError, ValueError):
         return True
-    return start <= now < end
+    return end > now and start < now + timedelta(days=lifetime_days)
 
 
 def select_logs_from_list(
-    log_list: Dict[str, Any], now: Optional[datetime] = None
+    log_list: Dict[str, Any],
+    now: Optional[datetime] = None,
+    lifetime_days: int = MAX_CERT_LIFETIME_DAYS,
 ) -> List[Dict[str, str]]:
-    """Pick usable logs (RFC 6962 and Static CT API) whose temporal shard covers ``now``."""
+    """
+    Pick usable logs (RFC 6962 and Static CT API) that new certificates can land in: every
+    shard that has not ended and starts within ``lifetime_days`` of ``now``.
+    """
     now = now or datetime.now(timezone.utc)
     chosen: List[Dict[str, str]] = []
     for operator in log_list.get("operators", []):
@@ -115,7 +135,7 @@ def select_logs_from_list(
                 state = log.get("state") or {}
                 if not ({"usable", "qualified"} & set(state.keys())):
                     continue
-                if not _interval_covers_now(log, now):
+                if not _interval_accepts_new_certs(log, now, lifetime_days):
                     continue
                 url = str(log.get(url_key) or "").rstrip("/") + "/"
                 if not url.startswith("https://"):

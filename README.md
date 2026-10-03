@@ -7,7 +7,7 @@
     Open-source phishing detection and brand protection for Kuwait: live Certificate Transparency monitoring, IDN/Arabic-aware typosquat and brand-impersonation detection for 26 Kuwaiti banks, telecoms and government services, alert triage, threat-intel enrichment and a fully client-side analyst console you can run from GitHub Pages.
   </p>
   <p align="center">
-    <a href="#-features"><img src="https://img.shields.io/badge/version-2.4.0-00d4ff?style=flat-square" alt="Version"></a>
+    <a href="#-features"><img src="https://img.shields.io/badge/version-2.5.0-00d4ff?style=flat-square" alt="Version"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License"></a>
     <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square" alt="Python"></a>
     <a href="https://github.com/SiteQ8/KWTCyberWatch/actions"><img src="https://img.shields.io/badge/tests-420%2B-brightgreen?style=flat-square" alt="Tests"></a>
@@ -17,6 +17,12 @@
 </p>
 
 ---
+
+## ✨ What's new in 2.5
+
+- **Shard selection fixed**: both tailers now read every CT shard that new certificates can land in, not only the shard whose expiry window contains today. The old rule missed longer-lived certificates and, from October 2026, would have missed most 90-day ones too.
+- **Hosting platforms scored once**: a name on `pages.dev`, `workers.dev` or any other free platform no longer collects TLD points on top of the platform indicator.
+- **A leading `www` is neutral**: it no longer counts as an extra subdomain level.
 
 ## ✨ What's new in 2.4
 

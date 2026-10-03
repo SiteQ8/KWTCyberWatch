@@ -196,6 +196,10 @@
       return await r.json();
     } finally { clearTimeout(t); }
   }
+  // A shard's temporal interval is the range of certificate expiry dates it accepts, so a certificate
+  // issued today lands in a shard up to one lifetime ahead. Keep every shard that has not ended and
+  // starts within that lifetime (200 days, the CA/Browser Forum cap during 2026).
+  const MAX_CERT_LIFETIME_MS = 200 * 864e5;
   function selectLogs(list, now) {
     const out = [];
     for (const op of list.operators || []) {
@@ -204,7 +208,7 @@
           const state = log.state || {};
           if (!("usable" in state || "qualified" in state)) continue;
           const iv = log.temporal_interval;
-          if (iv) { const s = Date.parse(iv.start_inclusive), e = Date.parse(iv.end_exclusive); if (!(s <= now && now < e)) continue; }
+          if (iv) { const s = Date.parse(iv.start_inclusive), e = Date.parse(iv.end_exclusive); if (!(e > now && s < now + MAX_CERT_LIFETIME_MS)) continue; }
           if (!String(log[urlKey] || "").startsWith("https://")) continue;
           const opName = String(op.name || "log").trim();
           let desc = String(log.description || "").trim().replace(/^['"]|['"]$/g, "");

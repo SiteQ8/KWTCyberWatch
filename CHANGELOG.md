@@ -5,6 +5,29 @@ All notable changes to KWTCyberWatch will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - 2026-10-03
+
+### Fixed
+- **Shard selection read the wrong logs.** A CT shard's temporal interval is the range of
+  certificate *expiry* dates it accepts, so a certificate issued today lands in the shard that
+  covers today plus its lifetime. Both tailers kept only the shards whose interval contained the
+  current date, which meant they never read the shards where longer-lived certificates land and,
+  from early October 2026, would have missed most 90-day certificates as well. They now keep every
+  shard that has not ended and starts within 200 days (`MAX_CERT_LIFETIME_DAYS`). Measured on
+  3 October 2026, the shards the old rule ignored were growing 2.2 times faster than the ones it read.
+- **Hosting platforms were scored three times.** A hostname on a free hosting platform was charged
+  for the platform (`free_hosting_platform`), for the platform's TLD (`medium_risk_tld`, because
+  `workers.dev` and `pages.dev` end in `.dev`) and for a brand on that TLD (`brand_on_risky_tld`):
+  38 points before the name itself was examined. The TLD layer now skips hosting platforms, so the
+  platform is scored once, in both engines.
+- **A leading `www` counted as a subdomain level.** `www.a.example.top` scored 12 points more than
+  `a.example.top` for "excessive subdomains" and could cross from high to critical on that alone.
+  The structure layer now ignores a leading `www` in both engines.
+
+### Added
+- Tests for the three fixes, including a shard chooser test with a 2027h1 shard and a shard that
+  starts beyond one certificate lifetime, and two parity corpus entries for the scoring changes.
+
 ## [2.4.0] - 2026-09-24
 
 ### Fixed
@@ -277,6 +300,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Domain logging to text file
 - Exponential backoff retry logic
 
+[2.5.0]: https://github.com/SiteQ8/KWTCyberWatch/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/SiteQ8/KWTCyberWatch/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/SiteQ8/KWTCyberWatch/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/SiteQ8/KWTCyberWatch/compare/v2.1.0...v2.2.0

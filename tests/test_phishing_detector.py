@@ -190,3 +190,20 @@ class TestVerdict:
         verdicts = detector.analyze_many(["nbk.com", "nbk-login.com"])
         assert len(verdicts) == 2
         assert detector.detection_count == 2
+
+
+def test_hosting_platform_is_scored_once():
+    """The platform indicator stands alone: no TLD points for a hosting platform's own suffix."""
+    v = PhishingDetector().analyze("verify-account-portal.pages.dev")
+    kinds = {i["type"] for i in v.indicators}
+    assert "free_hosting_platform" in kinds
+    assert not {"medium_risk_tld", "high_risk_tld", "brand_on_risky_tld"} & kinds
+
+
+def test_leading_www_does_not_add_structure():
+    """A leading www must not push a name across a score threshold."""
+    det = PhishingDetector()
+    plain = det.analyze("portal.secure-update.xyz")
+    www = det.analyze("www.portal.secure-update.xyz")
+    assert www.risk_score == plain.risk_score
+    assert "excessive_subdomains" not in {i["type"] for i in www.indicators}
