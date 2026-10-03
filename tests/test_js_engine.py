@@ -23,6 +23,9 @@ ROOT = Path(__file__).resolve().parent.parent
 NODE = shutil.which("node")
 
 CORPUS = [
+    # scoring rules fixed in 2.5.0: hosting scored once, leading www ignored
+    "verify-account-portal.pages.dev",
+    "www.portal.secure-update.xyz",
     # legitimate
     "nbk.com",
     "login.nbk.com",

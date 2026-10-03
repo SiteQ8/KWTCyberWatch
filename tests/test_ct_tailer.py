@@ -517,3 +517,34 @@ class TestStaticCT:
         assert tailer.poll_once() == 88  # partial tile 2 (.p/88): 512..599
         assert tailer.logs[0]["cursor"] == 600 and tailer.poll_once() == 0
         assert tailer.summary()["logs"][0]["kind"] == "static"
+
+
+def test_log_list_keeps_shards_that_new_certificates_land_in():
+    """Shards are keyed by expiry date, so the chooser must look one certificate lifetime ahead."""
+    now = datetime(2026, 10, 3, tzinfo=timezone.utc)
+
+    def shard(desc, start, end):
+        return {
+            "description": desc,
+            "url": f"https://ct.example.org/logs/{desc.lower()}/",
+            "state": {"usable": {}},
+            "temporal_interval": {"start_inclusive": start, "end_exclusive": end},
+        }
+
+    log_list = {
+        "operators": [
+            {
+                "name": "Example",
+                "logs": [
+                    shard("Expired2026h1", "2026-01-01T00:00:00Z", "2026-07-01T00:00:00Z"),
+                    shard("Current2026h2", "2026-07-01T00:00:00Z", "2027-01-01T00:00:00Z"),
+                    shard("Next2027h1", "2027-01-01T00:00:00Z", "2027-07-01T00:00:00Z"),
+                    shard("Far2027h2", "2027-07-01T00:00:00Z", "2028-01-01T00:00:00Z"),
+                ],
+            }
+        ]
+    }
+    chosen = [c["name"] for c in select_logs_from_list(log_list, now=now)]
+    assert chosen == ["Example Current2026h2", "Example Next2027h1"]
+    narrow = [c["name"] for c in select_logs_from_list(log_list, now=now, lifetime_days=30)]
+    assert narrow == ["Example Current2026h2"]

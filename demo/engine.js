@@ -933,6 +933,7 @@
       return { score: Math.min(score, CAPS.brand_impersonation), inds, cats, brands };
     }
     static _tld(parsed, brandMatch) {
+      if (parsed.hosting_platform) return [0, "suspicious_tld", []]; // the platform is scored once by _hosting
       const risk = tldRisk(parsed.suffix);
       if (risk === "none") return [0, "suspicious_tld", []];
       let w = risk === "high" ? 20 : 10;
@@ -944,7 +945,8 @@
       const inds = [];
       let score = 0;
       const label = parsed.is_idn ? parsed.unicode_label : parsed.label;
-      const depth = parsed.depth;
+      let depth = parsed.depth;
+      if (String(parsed.hostname).split(".")[0] === "www") depth -= 1; // a leading www is a convention, not structure
       if (depth >= 4) { const w = 12 + (depth >= 6 ? 6 : 0); score += w; inds.push(ind("excessive_subdomains", `Hostname has ${depth} labels`, w)); }
       const hyphens = (label.match(/-/g) || []).length;
       if (hyphens >= 3) { score += 10; inds.push(ind("excessive_hyphens", `Label contains ${hyphens} hyphens`, 10)); }

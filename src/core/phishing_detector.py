@@ -435,6 +435,9 @@ class PhishingDetector:
     def _check_tld(
         parsed: ParsedDomain, brand_match: bool
     ) -> Tuple[float, str, List[Dict[str, Any]]]:
+        if parsed.hosting_platform:
+            # the platform is scored once by _check_hosting; its TLD says nothing about the tenant
+            return 0.0, "suspicious_tld", []
         risk = tld_risk(parsed.suffix)
         if risk == "none":
             return 0.0, "suspicious_tld", []
@@ -455,6 +458,8 @@ class PhishingDetector:
         score = 0.0
         label = parsed.unicode_label if parsed.is_idn else parsed.label
         depth = parsed.depth
+        if parsed.hostname.split(".")[0] == "www":
+            depth -= 1  # a leading www is a convention, not a sign of structure
         if depth >= 4:
             w = 12.0 + (6.0 if depth >= 6 else 0.0)
             score += w
