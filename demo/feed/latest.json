@@ -1,17 +1,17 @@
 {
-"generated_at": "2026-10-22T17:48:11.413376+00:00",
-"started_at": "2026-10-22T17:23:00.148336+00:00",
-"window_seconds": 1511,
+"generated_at": "2026-10-22T21:04:02.899368+00:00",
+"started_at": "2026-10-22T20:38:53.233882+00:00",
+"window_seconds": 1510,
 "keywords": 84,
 "logs": [
 {
 "name": "Google Argon2026h2",
 "url": "https://ct.googleapis.com/logs/us1/argon2026h2/",
 "kind": "rfc6962",
-"tree_size": 3452283393,
-"cursor": 3452278880,
-"entries": 2288,
-"skipped": 30761,
+"tree_size": 3452605965,
+"cursor": 3452604704,
+"entries": 1515,
+"skipped": 35963,
 "errors": 0,
 "status": "live"
 },
@@ -19,21 +19,21 @@
 "name": "Google Argon2027h1",
 "url": "https://ct.googleapis.com/logs/us1/argon2027h1/",
 "kind": "rfc6962",
-"tree_size": 654352208,
-"cursor": 654348832,
-"entries": 1689,
-"skipped": 266761,
-"errors": 1,
+"tree_size": 656434613,
+"cursor": 656434368,
+"entries": 1099,
+"skipped": 247097,
+"errors": 0,
 "status": "live"
 },
 {
 "name": "Google Xenon2026h2",
 "url": "https://ct.googleapis.com/logs/eu1/xenon2026h2/",
 "kind": "rfc6962",
-"tree_size": 2985603218,
-"cursor": 2985600800,
-"entries": 2216,
-"skipped": 35257,
+"tree_size": 2985941311,
+"cursor": 2985938912,
+"entries": 1502,
+"skipped": 36176,
 "errors": 0,
 "status": "live"
 },
@@ -41,21 +41,21 @@
 "name": "Google Xenon2027h1",
 "url": "https://ct.googleapis.com/logs/eu1/xenon2027h1/",
 "kind": "rfc6962",
-"tree_size": 526637645,
-"cursor": 526634112,
-"entries": 1757,
-"skipped": 248937,
-"errors": 1,
+"tree_size": 528614205,
+"cursor": 528613952,
+"entries": 1063,
+"skipped": 230339,
+"errors": 0,
 "status": "live"
 },
 {
 "name": "Google ParcelYard2026h2",
 "url": "https://storage.googleapis.com/parcelyard2026h2.prod.certificate.transparency.goog/",
 "kind": "static",
-"tree_size": 1611634969,
-"cursor": 1611631616,
-"entries": 18732,
-"skipped": 4776,
+"tree_size": 1611908803,
+"cursor": 1611906560,
+"entries": 12442,
+"skipped": 14730,
 "errors": 0,
 "status": "live"
 },
@@ -63,10 +63,10 @@
 "name": "Google ParcelYard2027h1",
 "url": "https://storage.googleapis.com/parcelyard2027h1.prod.certificate.transparency.goog/",
 "kind": "static",
-"tree_size": 396378876,
-"cursor": 396378624,
-"entries": 13604,
-"skipped": 256356,
+"tree_size": 398608853,
+"cursor": 398608640,
+"entries": 7057,
+"skipped": 254957,
 "errors": 0,
 "status": "live"
 },
@@ -74,10 +74,10 @@
 "name": "Google PlumbersArms2026h2",
 "url": "https://storage.googleapis.com/plumbersarms2026h2.prod.certificate.transparency.goog/",
 "kind": "static",
-"tree_size": 1611147724,
-"cursor": 1611144192,
-"entries": 18499,
-"skipped": 4824,
+"tree_size": 1611421545,
+"cursor": 1611419392,
+"entries": 12610,
+"skipped": 14666,
 "errors": 0,
 "status": "live"
 },
@@ -85,10 +85,10 @@
 "name": "Google PlumbersArms2027h1",
 "url": "https://storage.googleapis.com/plumbersarms2027h1.prod.certificate.transparency.goog/",
 "kind": "static",
-"tree_size": 397215651,
-"cursor": 397215488,
-"entries": 13917,
-"skipped": 256085,
+"tree_size": 399444601,
+"cursor": 399444480,
+"entries": 7741,
+"skipped": 254189,
 "errors": 0,
 "status": "live"
 },
@@ -96,10 +96,10 @@
 "name": "Cloudflare Nimbus2026",
 "url": "https://ct.cloudflare.com/logs/nimbus2026/",
 "kind": "rfc6962",
-"tree_size": 6711985805,
-"cursor": 6711985805,
-"entries": 256,
-"skipped": 144678,
+"tree_size": 6712420363,
+"cursor": 6712420363,
+"entries": 512,
+"skipped": 133010,
 "errors": 0,
 "status": "live"
 },
@@ -107,8 +107,8 @@
 "name": "Cloudflare Nimbus2027",
 "url": "https://ct.cloudflare.com/logs/nimbus2027/",
 "kind": "rfc6962",
-"tree_size": 632116944,
-"cursor": 632116944,
+"tree_size": 634182698,
+"cursor": 634182698,
 "entries": 256,
 "skipped": 0,
 "errors": 0,
@@ -118,10 +118,10 @@
 "name": "DigiCert Wyvern2026h2",
 "url": "https://wyvern.ct.digicert.com/2026h2/",
 "kind": "rfc6962",
-"tree_size": 2178838656,
-"cursor": 2178836992,
-"entries": 18674,
-"skipped": 9726,
+"tree_size": 2179076125,
+"cursor": 2179072512,
+"entries": 12604,
+"skipped": 14486,
 "errors": 0,
 "status": "live"
 },
@@ -129,10 +129,10 @@
 "name": "DigiCert Wyvern2027h1",
 "url": "https://wyvern.ct.digicert.com/2027h1/",
 "kind": "rfc6962",
-"tree_size": 293916092,
-"cursor": 293912064,
-"entries": 16689,
-"skipped": 92091,
+"tree_size": 294742247,
+"cursor": 294742016,
+"entries": 11430,
+"skipped": 87270,
 "errors": 0,
 "status": "live"
 },
@@ -140,10 +140,10 @@
 "name": "DigiCert Sphinx2026h2",
 "url": "https://sphinx.ct.digicert.com/2026h2/",
 "kind": "rfc6962",
-"tree_size": 2145776877,
-"cursor": 2145773056,
-"entries": 18615,
-"skipped": 4776,
+"tree_size": 2145991605,
+"cursor": 2145990656,
+"entries": 12359,
+"skipped": 14524,
 "errors": 0,
 "status": "live"
 },
@@ -151,10 +151,10 @@
 "name": "DigiCert Sphinx2027h1",
 "url": "https://sphinx.ct.digicert.com/2027h1/",
 "kind": "rfc6962",
-"tree_size": 258177905,
-"cursor": 258177792,
-"entries": 16359,
-"skipped": 87326,
+"tree_size": 258936560,
+"cursor": 258933504,
+"entries": 11027,
+"skipped": 76912,
 "errors": 0,
 "status": "live"
 },
@@ -162,9 +162,9 @@
 "name": "Sectigo Elephant2026h2",
 "url": "https://elephant2026h2.ct.sectigo.com/",
 "kind": "rfc6962",
-"tree_size": 2048506633,
-"cursor": 2048505344,
-"entries": 15321,
+"tree_size": 2048615488,
+"cursor": 2048614144,
+"entries": 12919,
 "skipped": 0,
 "errors": 0,
 "status": "live"
@@ -173,10 +173,10 @@
 "name": "Sectigo Elephant2027h1",
 "url": "https://elephant2027h1.ct.sectigo.com/",
 "kind": "rfc6962",
-"tree_size": 520667946,
-"cursor": 520667904,
-"entries": 3542,
-"skipped": 271317,
+"tree_size": 522640871,
+"cursor": 522640871,
+"entries": 4832,
+"skipped": 240469,
 "errors": 0,
 "status": "live"
 },
@@ -184,10 +184,10 @@
 "name": "Sectigo Tiger2026h2",
 "url": "https://tiger2026h2.ct.sectigo.com/",
 "kind": "rfc6962",
-"tree_size": 2445348432,
-"cursor": 2445345792,
-"entries": 17215,
-"skipped": 5150,
+"tree_size": 2445517280,
+"cursor": 2445515776,
+"entries": 11084,
+"skipped": 10477,
 "errors": 0,
 "status": "live"
 },
@@ -195,10 +195,10 @@
 "name": "Sectigo Tiger2027h1",
 "url": "https://tiger2027h1.ct.sectigo.com/",
 "kind": "rfc6962",
-"tree_size": 534857647,
-"cursor": 534857647,
-"entries": 2619,
-"skipped": 263087,
+"tree_size": 536804067,
+"cursor": 536804067,
+"entries": 3072,
+"skipped": 226911,
 "errors": 0,
 "status": "live"
 },
@@ -206,9 +206,9 @@
 "name": "Sectigo Monument2027h1",
 "url": "https://monument2027h1.mon.ct.sectigo.com/",
 "kind": "static",
-"tree_size": 1471571,
-"cursor": 1471571,
-"entries": 614,
+"tree_size": 1476851,
+"cursor": 1476851,
+"entries": 910,
 "skipped": 0,
 "errors": 0,
 "status": "live"
@@ -217,9 +217,9 @@
 "name": "Sectigo Statue2027h1",
 "url": "https://statue2027h1.mon.ct.sectigo.com/",
 "kind": "static",
-"tree_size": 1490664,
-"cursor": 1490664,
-"entries": 1341,
+"tree_size": 1496031,
+"cursor": 1496031,
+"entries": 947,
 "skipped": 0,
 "errors": 0,
 "status": "live"
@@ -228,10 +228,10 @@
 "name": "Let's Encrypt Sycamore2026h2",
 "url": "https://mon.sycamore.ct.letsencrypt.org/2026h2/",
 "kind": "static",
-"tree_size": 1030734278,
-"cursor": 1030732288,
-"entries": 18254,
-"skipped": 19902,
+"tree_size": 1031083524,
+"cursor": 1031080192,
+"entries": 12441,
+"skipped": 24641,
 "errors": 0,
 "status": "live"
 },
@@ -239,10 +239,10 @@
 "name": "Let's Encrypt Sycamore2027h1",
 "url": "https://mon.sycamore.ct.letsencrypt.org/2027h1/",
 "kind": "static",
-"tree_size": 728773217,
-"cursor": 728773120,
-"entries": 14457,
-"skipped": 263273,
+"tree_size": 730941996,
+"cursor": 730941952,
+"entries": 7520,
+"skipped": 247872,
 "errors": 0,
 "status": "live"
 },
@@ -250,10 +250,10 @@
 "name": "Let's Encrypt Willow2026h2",
 "url": "https://mon.willow.ct.letsencrypt.org/2026h2/",
 "kind": "static",
-"tree_size": 988183075,
-"cursor": 988181248,
-"entries": 18209,
-"skipped": 19482,
+"tree_size": 988531151,
+"cursor": 988528640,
+"entries": 12517,
+"skipped": 24994,
 "errors": 0,
 "status": "live"
 },
@@ -261,10 +261,10 @@
 "name": "Let's Encrypt Willow2027h1",
 "url": "https://mon.willow.ct.letsencrypt.org/2027h1/",
 "kind": "static",
-"tree_size": 725274122,
-"cursor": 725274112,
-"entries": 14648,
-"skipped": 259559,
+"tree_size": 727379469,
+"cursor": 727379456,
+"entries": 8500,
+"skipped": 237777,
 "errors": 0,
 "status": "live"
 },
@@ -272,20 +272,20 @@
 "name": "TrustAsia log2026a",
 "url": "https://ct2026-a.trustasia.com/log2026a/",
 "kind": "rfc6962",
-"tree_size": 3003056267,
-"cursor": 3003055360,
-"entries": 12965,
+"tree_size": 3003145917,
+"cursor": 3003144448,
+"entries": 9614,
 "skipped": 0,
-"errors": 0,
+"errors": 1,
 "status": "live"
 },
 {
 "name": "TrustAsia log2026b",
 "url": "https://ct2026-b.trustasia.com/log2026b/",
 "kind": "rfc6962",
-"tree_size": 3023933564,
-"cursor": 3023932928,
-"entries": 13696,
+"tree_size": 3024022104,
+"cursor": 3024020992,
+"entries": 9230,
 "skipped": 0,
 "errors": 0,
 "status": "live"
@@ -294,76 +294,76 @@
 "name": "TrustAsia HETU2027",
 "url": "https://hetu2027.trustasia.com/hetu2027/",
 "kind": "rfc6962",
-"tree_size": 390142535,
-"cursor": 390142279,
-"entries": 1117,
-"skipped": 215684,
-"errors": 8,
-"status": "rate-limited"
+"tree_size": 391661018,
+"cursor": 391660768,
+"entries": 877,
+"skipped": 176344,
+"errors": 11,
+"status": "live"
 },
 {
 "name": "TrustAsia Luoshu2027",
 "url": "https://luoshu2027.trustasia.com/luoshu2027/",
 "kind": "static",
-"tree_size": 386857798,
-"cursor": 386855168,
-"entries": 13564,
-"skipped": 176389,
-"errors": 6,
+"tree_size": 388348758,
+"cursor": 388344576,
+"entries": 6734,
+"skipped": 166557,
+"errors": 17,
 "status": "live"
 },
 {
 "name": "Geomys Tuscolo2026h2",
 "url": "https://tuscolo2026h2.skylight.geomys.org/",
 "kind": "static",
-"tree_size": 1011899482,
-"cursor": 1011894784,
-"entries": 3727,
-"skipped": 20429,
-"errors": 23,
+"tree_size": 1012134819,
+"cursor": 1012134563,
+"entries": 2015,
+"skipped": 25045,
+"errors": 12,
 "status": "rate-limited"
 },
 {
 "name": "Geomys Tuscolo2027h1",
 "url": "https://tuscolo2027h1.skylight.geomys.org/",
 "kind": "static",
-"tree_size": 313983815,
-"cursor": 313983559,
-"entries": 0,
-"skipped": 180796,
-"errors": 8,
+"tree_size": 315632890,
+"cursor": 315632634,
+"entries": 268,
+"skipped": 184038,
+"errors": 10,
 "status": "rate-limited"
 },
 {
 "name": "Geomys Trastevere2026h2",
 "url": "https://trastevere2026h2.skylight.geomys.org/",
 "kind": "static",
-"tree_size": 22802935,
-"cursor": 22802935,
-"entries": 292,
+"tree_size": 22803200,
+"cursor": 22803200,
+"entries": 298,
 "skipped": 0,
-"errors": 3,
+"errors": 2,
 "status": "live"
 },
 {
 "name": "Geomys Trastevere2027h1",
 "url": "https://trastevere2027h1.skylight.geomys.org/",
 "kind": "static",
-"tree_size": 14216675,
-"cursor": 14216675,
-"entries": 1411,
+"tree_size": 14222222,
+"cursor": 14222222,
+"entries": 940,
 "skipped": 0,
-"errors": 2,
+"errors": 4,
 "status": "live"
 },
 {
 "name": "IPng Networks Halloumi2026h2a",
 "url": "https://halloumi2026h2a.mon.ct.ipng.ch/",
 "kind": "static",
-"tree_size": 1263930002,
-"cursor": 1263926784,
-"entries": 18844,
-"skipped": 5174,
+"tree_size": 1264125987,
+"cursor": 1264123392,
+"entries": 12778,
+"skipped": 9987,
 "errors": 0,
 "status": "live"
 },
@@ -371,10 +371,10 @@
 "name": "IPng Networks Halloumi2027h1",
 "url": "https://halloumi2027h1.mon.ct.ipng.ch/",
 "kind": "static",
-"tree_size": 239699732,
-"cursor": 239696640,
-"entries": 15715,
-"skipped": 122303,
+"tree_size": 240819080,
+"cursor": 240816128,
+"entries": 10009,
+"skipped": 124246,
 "errors": 0,
 "status": "live"
 },
@@ -382,9 +382,9 @@
 "name": "IPng Networks Gouda2026h2",
 "url": "https://gouda2026h2.mon.ct.ipng.ch/",
 "kind": "static",
-"tree_size": 1226758528,
-"cursor": 1226757888,
-"entries": 17247,
+"tree_size": 1226881811,
+"cursor": 1226878208,
+"entries": 12902,
 "skipped": 0,
 "errors": 0,
 "status": "live"
@@ -393,10 +393,10 @@
 "name": "IPng Networks Gouda2027h1",
 "url": "https://gouda2027h1.mon.ct.ipng.ch/",
 "kind": "static",
-"tree_size": 203720815,
-"cursor": 203716864,
-"entries": 15909,
-"skipped": 104672,
+"tree_size": 204750466,
+"cursor": 204745728,
+"entries": 10498,
+"skipped": 109470,
 "errors": 0,
 "status": "live"
 },
@@ -404,31 +404,31 @@
 "name": "Microsec Eszigno2026h2",
 "url": "https://eszigno2026h2.mon.ct.e-szigno.hu/",
 "kind": "static",
-"tree_size": 19369598,
-"cursor": 19369597,
-"entries": 270,
+"tree_size": 19369681,
+"cursor": 19369681,
+"entries": 275,
 "skipped": 0,
-"errors": 2,
-"status": "rate-limited"
+"errors": 1,
+"status": "live"
 },
 {
 "name": "Microsec Eszigno2027h1",
 "url": "https://eszigno2027h1.mon.ct.e-szigno.hu/",
 "kind": "static",
-"tree_size": 21846827,
-"cursor": 21846827,
-"entries": 1320,
+"tree_size": 21852098,
+"cursor": 21852098,
+"entries": 888,
 "skipped": 0,
-"errors": 1,
+"errors": 0,
 "status": "live"
 },
 {
 "name": "GoDaddy Aquamarine2026h2",
 "url": "https://ct-log-api.godaddy.com/aquamarine2026h2/",
 "kind": "static",
-"tree_size": 23761721,
-"cursor": 23761721,
-"entries": 308,
+"tree_size": 23761940,
+"cursor": 23761940,
+"entries": 284,
 "skipped": 0,
 "errors": 0,
 "status": "live"
@@ -437,9 +437,9 @@
 "name": "GoDaddy Aquamarine2027h1",
 "url": "https://ct-log-api.godaddy.com/aquamarine2027h1/",
 "kind": "static",
-"tree_size": 142485633,
-"cursor": 142485504,
-"entries": 12910,
+"tree_size": 142573781,
+"cursor": 142573781,
+"entries": 12043,
 "skipped": 0,
 "errors": 0,
 "status": "live"
@@ -448,20 +448,20 @@
 "name": "HARICA Selene2027h1",
 "url": "https://selene.mon.ct.harica.eu/selene2027h1/",
 "kind": "static",
-"tree_size": 21111853,
-"cursor": 21111853,
-"entries": 1467,
+"tree_size": 21117461,
+"cursor": 21117461,
+"entries": 966,
 "skipped": 0,
 "errors": 0,
 "status": "live"
 }
 ],
-"coverage": 10.1,
-"entries": 380533,
+"coverage": 7.4,
+"entries": 258578,
 "matches": [
 {
-"domain": "kuwanaganka.com",
-"ts": "2026-10-22T17:23:17.813784+00:00",
+"domain": "aldawlikuw.net",
+"ts": "2026-10-22T20:39:19.309135+00:00",
 "keywords": [
 "kuw"
 ],
@@ -470,15 +470,259 @@
 "level": "clean",
 "brands": [],
 "categories": [],
-"log": "Sectigo Elephant2027h1",
-"not_before": "2026-10-22T16:22:15+00:00",
+"log": "Sectigo Tiger2027h1",
+"not_before": "2026-10-22T18:46:57+00:00",
 "wildcard": false
 },
 {
-"domain": "kwt-works-beta.pages.dev",
-"ts": "2026-10-22T17:23:58.918289+00:00",
+"domain": "www.aldawlikuw.net",
+"ts": "2026-10-22T20:39:19.309365+00:00",
 "keywords": [
-"kwt"
+"kuw"
+],
+"issuer": "Let's Encrypt",
+"score": 0.0,
+"level": "clean",
+"brands": [],
+"categories": [],
+"log": "Sectigo Tiger2027h1",
+"not_before": "2026-10-22T18:46:57+00:00",
+"wildcard": false
+},
+{
+"domain": "kfhr3vgkrg.dattolocal.net",
+"ts": "2026-10-22T20:40:45.902387+00:00",
+"keywords": [
+"kfh"
+],
+"issuer": "Let's Encrypt",
+"score": 0.0,
+"level": "clean",
+"brands": [],
+"categories": [],
+"log": "IPng Networks Gouda2027h1",
+"not_before": "2026-10-22T18:53:53+00:00",
+"wildcard": false
+},
+{
+"domain": "www.graknet.ca",
+"ts": "2026-10-22T20:42:57.571227+00:00",
+"keywords": [
+"knet"
+],
+"issuer": "ZeroSSL GmbH",
+"score": 0.0,
+"level": "clean",
+"brands": [],
+"categories": [],
+"log": "DigiCert Sphinx2027h1",
+"not_before": "2026-10-22T00:00:00+00:00",
+"wildcard": false
+},
+{
+"domain": "dmc-kuwait.it.com",
+"ts": "2026-10-22T20:43:56.171913+00:00",
+"keywords": [
+"kuwait",
+"kuw"
+],
+"issuer": "Let's Encrypt",
+"score": 0.0,
+"level": "clean",
+"brands": [],
+"categories": [],
+"log": "Sectigo Tiger2027h1",
+"not_before": "2026-10-22T19:44:12+00:00",
+"wildcard": false
+},
+{
+"domain": "kuwen3.com",
+"ts": "2026-10-22T20:48:31.011892+00:00",
+"keywords": [
+"kuw"
+],
+"issuer": "Google Trust Services",
+"score": 0.0,
+"level": "clean",
+"brands": [],
+"categories": [],
+"log": "Google PlumbersArms2027h1",
+"not_before": "2026-10-22T19:48:27+00:00",
+"wildcard": false
+},
+{
+"domain": "kfh8jqbc9b.dattolocal.net",
+"ts": "2026-10-22T20:48:34.286162+00:00",
+"keywords": [
+"kfh"
+],
+"issuer": "Let's Encrypt",
+"score": 25.0,
+"level": "low",
+"brands": [
+"KFH"
+],
+"categories": [
+"brand_impersonation",
+"certificate_context"
+],
+"log": "DigiCert Sphinx2027h1",
+"not_before": "2026-10-22T19:48:57+00:00",
+"wildcard": false
+},
+{
+"domain": "kunal.buxani.me",
+"ts": "2026-10-22T20:48:49.292121+00:00",
+"keywords": [
+"kuna"
+],
+"issuer": "Let's Encrypt",
+"score": 10.0,
+"level": "clean",
+"brands": [],
+"categories": [
+"suspicious_tld"
+],
+"log": "IPng Networks Gouda2027h1",
+"not_before": "2026-10-22T19:49:49+00:00",
+"wildcard": false
+},
+{
+"domain": "satooya-stg.clicknet.jp",
+"ts": "2026-10-22T20:50:06.601728+00:00",
+"keywords": [
+"knet"
+],
+"issuer": "Let's Encrypt",
+"score": 0.0,
+"level": "clean",
+"brands": [],
+"categories": [],
+"log": "Let's Encrypt Sycamore2027h1",
+"not_before": "2026-10-22T19:51:30+00:00",
+"wildcard": false
+},
+{
+"domain": "www.satooya-stg.clicknet.jp",
+"ts": "2026-10-22T20:50:06.601849+00:00",
+"keywords": [
+"knet"
+],
+"issuer": "Let's Encrypt",
+"score": 0.0,
+"level": "clean",
+"brands": [],
+"categories": [],
+"log": "Let's Encrypt Sycamore2027h1",
+"not_before": "2026-10-22T19:51:30+00:00",
+"wildcard": false
+},
+{
+"domain": "api-gateway-chore-beleg-api-1-12-3.dev-kw-9b4e4b.k8s.adesso-projects.com",
+"ts": "2026-10-22T20:51:01.443946+00:00",
+"keywords": [
+"kw"
+],
+"issuer": "ZeroSSL GmbH",
+"score": 22.0,
+"level": "low",
+"brands": [],
+"categories": [
+"structural_anomaly"
+],
+"log": "DigiCert Wyvern2027h1",
+"not_before": "2026-10-22T00:00:00+00:00",
+"wildcard": false
+},
+{
+"domain": "kuwinn1.com",
+"ts": "2026-10-22T20:51:29.564553+00:00",
+"keywords": [
+"kuw"
+],
+"issuer": "Google Trust Services",
+"score": 0.0,
+"level": "clean",
+"brands": [],
+"categories": [],
+"log": "Google ParcelYard2027h1",
+"not_before": "2026-10-22T19:51:25+00:00",
+"wildcard": false
+},
+{
+"domain": "gei2.buyteknet.info",
+"ts": "2026-10-22T20:51:36.094198+00:00",
+"keywords": [
+"knet"
+],
+"issuer": "Let's Encrypt",
+"score": 10.0,
+"level": "clean",
+"brands": [],
+"categories": [
+"suspicious_tld"
+],
+"log": "Let's Encrypt Willow2027h1",
+"not_before": "2026-10-22T19:52:29+00:00",
+"wildcard": false
+},
+{
+"domain": "keycloak-chore-beleg-api-1-12-3.dev-kw-9b4e4b.k8s.adesso-projects.com",
+"ts": "2026-10-22T20:53:22.254128+00:00",
+"keywords": [
+"kw"
+],
+"issuer": "ZeroSSL GmbH",
+"score": 22.0,
+"level": "low",
+"brands": [],
+"categories": [
+"structural_anomaly"
+],
+"log": "Google Xenon2027h1",
+"not_before": "2026-10-22T00:00:00+00:00",
+"wildcard": false
+},
+{
+"domain": "update.update.cbkjiupdate.adcbaupdate.update.2187backend.en.35-205-140-87.sslip.io",
+"ts": "2026-10-22T20:53:23.660473+00:00",
+"keywords": [
+"cbk"
+],
+"issuer": "Let's Encrypt",
+"score": 26.0,
+"level": "low",
+"brands": [],
+"categories": [
+"keyword_abuse",
+"structural_anomaly"
+],
+"log": "Google ParcelYard2027h1",
+"not_before": "2026-10-22T19:54:49+00:00",
+"wildcard": false
+},
+{
+"domain": "rekuna.cn",
+"ts": "2026-10-22T20:54:06.902797+00:00",
+"keywords": [
+"kuna"
+],
+"issuer": "Sectigo Limited",
+"score": 10.0,
+"level": "clean",
+"brands": [],
+"categories": [
+"suspicious_tld"
+],
+"log": "IPng Networks Halloumi2027h1",
+"not_before": "2026-10-22T00:00:00+00:00",
+"wildcard": false
+},
+{
+"domain": "kunay0509.workers.dev",
+"ts": "2026-10-22T20:54:42.827538+00:00",
+"keywords": [
+"kuna"
 ],
 "issuer": "Sectigo Limited",
 "score": 15.0,
@@ -487,829 +731,196 @@
 "categories": [
 "hosting_abuse"
 ],
-"log": "HARICA Selene2027h1",
+"log": "Microsec Eszigno2027h1",
 "not_before": "2026-10-22T00:00:00+00:00",
 "wildcard": false
 },
 {
-"domain": "www.www.www.www.nbktxfid.newtest.gleeze.com",
-"ts": "2026-10-22T17:24:18.514573+00:00",
-"keywords": [
-"nbk"
-],
-"issuer": "ZeroSSL GmbH",
-"score": 18.0,
-"level": "clean",
-"brands": [],
-"categories": [
-"structural_anomaly"
-],
-"log": "GoDaddy Aquamarine2027h1",
-"not_before": "2026-10-22T00:00:00+00:00",
-"wildcard": false
-},
-{
-"domain": "kuwujingzhi.dpdns.org",
-"ts": "2026-10-22T17:25:56.140599+00:00",
-"keywords": [
-"kuw"
-],
-"issuer": "Google Trust Services",
-"score": 0.0,
-"level": "clean",
-"brands": [],
-"categories": [],
-"log": "DigiCert Wyvern2027h1",
-"not_before": "2026-10-22T15:10:57+00:00",
-"wildcard": false
-},
-{
-"domain": "nbk33.com",
-"ts": "2026-10-22T17:27:31.580550+00:00",
-"keywords": [
-"nbk"
-],
-"issuer": "SSL Corporation",
-"score": 20.0,
-"level": "low",
-"brands": [
-"NBK"
-],
-"categories": [
-"brand_impersonation"
-],
-"log": "DigiCert Sphinx2027h1",
-"not_before": "2026-10-22T17:17:26+00:00",
-"wildcard": false
-},
-{
-"domain": "phoenixkuwait.com",
-"ts": "2026-10-22T17:29:10.021889+00:00",
-"keywords": [
-"kuwait"
-],
-"issuer": "Google Trust Services",
-"score": 0.0,
-"level": "clean",
-"brands": [],
-"categories": [],
-"log": "Let's Encrypt Willow2026h2",
-"not_before": "2026-08-24T14:34:29+00:00",
-"wildcard": false
-},
-{
-"domain": "nbk-2bc0a011.pages.dev",
-"ts": "2026-10-22T17:29:26.899304+00:00",
-"keywords": [
-"nbk"
-],
-"issuer": "Google Trust Services",
-"score": 53.0,
-"level": "medium",
-"brands": [
-"NBK"
-],
-"categories": [
-"brand_impersonation",
-"certificate_context",
-"hosting_abuse",
-"structural_anomaly"
-],
-"log": "DigiCert Wyvern2027h1",
-"not_before": "2026-10-22T15:15:52+00:00",
-"wildcard": false
-},
-{
-"domain": "claw-tcbk.wisebox.ai",
-"ts": "2026-10-22T17:29:27.650261+00:00",
-"keywords": [
-"cbk"
-],
-"issuer": "Google Trust Services",
-"score": 0.0,
-"level": "clean",
-"brands": [],
-"categories": [],
-"log": "DigiCert Sphinx2027h1",
-"not_before": "2026-10-22T07:29:44+00:00",
-"wildcard": true
-},
-{
-"domain": "warba360.com",
-"ts": "2026-10-22T17:30:08.466509+00:00",
-"keywords": [
-"warba"
-],
-"issuer": "Let's Encrypt",
-"score": 20.0,
-"level": "low",
-"brands": [
-"Warba"
-],
-"categories": [
-"brand_impersonation",
-"certificate_context"
-],
-"log": "Let's Encrypt Willow2027h1",
-"not_before": "2026-10-22T16:31:36+00:00",
-"wildcard": false
-},
-{
-"domain": "mail.warba360.com",
-"ts": "2026-10-22T17:30:08.466616+00:00",
-"keywords": [
-"warba"
-],
-"issuer": "Let's Encrypt",
-"score": 20.0,
-"level": "low",
-"brands": [
-"Warba"
-],
-"categories": [
-"brand_impersonation",
-"certificate_context"
-],
-"log": "Let's Encrypt Willow2027h1",
-"not_before": "2026-10-22T16:31:36+00:00",
-"wildcard": false
-},
-{
-"domain": "www.warba360.com",
-"ts": "2026-10-22T17:30:08.466696+00:00",
-"keywords": [
-"warba"
-],
-"issuer": "Let's Encrypt",
-"score": 20.0,
-"level": "low",
-"brands": [
-"Warba"
-],
-"categories": [
-"brand_impersonation",
-"certificate_context"
-],
-"log": "Let's Encrypt Willow2027h1",
-"not_before": "2026-10-22T16:31:36+00:00",
-"wildcard": false
-},
-{
-"domain": "syknet.direct.quickconnect.to",
-"ts": "2026-10-22T17:30:27.498307+00:00",
+"domain": "mx.thinknet-lab.jp",
+"ts": "2026-10-22T20:55:48.818351+00:00",
 "keywords": [
 "knet"
 ],
 "issuer": "Let's Encrypt",
-"score": 12.0,
+"score": 0.0,
 "level": "clean",
 "brands": [],
-"categories": [
-"structural_anomaly"
-],
-"log": "Let's Encrypt Sycamore2027h1",
-"not_before": "2026-10-22T16:31:16+00:00",
+"categories": [],
+"log": "DigiCert Sphinx2027h1",
+"not_before": "2026-10-22T03:17:57+00:00",
 "wildcard": false
 },
 {
-"domain": "x392287.mainbk.ackinacki.org",
-"ts": "2026-10-22T17:30:47.068605+00:00",
+"domain": "autoconfig.thinknet-lab.jp",
+"ts": "2026-10-22T20:55:48.818910+00:00",
 "keywords": [
-"nbk"
-],
-"issuer": "ZeroSSL GmbH",
-"score": 12.0,
-"level": "clean",
-"brands": [],
-"categories": [
-"structural_anomaly"
-],
-"log": "Let's Encrypt Willow2027h1",
-"not_before": "2026-10-22T00:00:00+00:00",
-"wildcard": false
-},
-{
-"domain": "www.www.www.skuw.89.58.60.184.nip.io",
-"ts": "2026-10-22T17:31:04.948823+00:00",
-"keywords": [
-"kuw"
+"knet"
 ],
 "issuer": "Let's Encrypt",
-"score": 18.0,
+"score": 0.0,
 "level": "clean",
 "brands": [],
-"categories": [
-"structural_anomaly"
-],
+"categories": [],
 "log": "DigiCert Sphinx2027h1",
-"not_before": "2026-10-22T16:32:32+00:00",
+"not_before": "2026-10-22T03:17:57+00:00",
 "wildcard": false
 },
 {
-"domain": "sp30ct10-ravlemi-biz-kunati.pages.dev",
-"ts": "2026-10-22T17:32:24.069244+00:00",
+"domain": "autodiscover.thinknet-lab.jp",
+"ts": "2026-10-22T20:55:48.819591+00:00",
+"keywords": [
+"knet"
+],
+"issuer": "Let's Encrypt",
+"score": 0.0,
+"level": "clean",
+"brands": [],
+"categories": [],
+"log": "DigiCert Sphinx2027h1",
+"not_before": "2026-10-22T03:17:57+00:00",
+"wildcard": false
+},
+{
+"domain": "kunalgswm.me",
+"ts": "2026-10-22T20:57:07.019943+00:00",
 "keywords": [
 "kuna"
 ],
-"issuer": "Google Trust Services",
-"score": 45.0,
-"level": "medium",
-"brands": [],
-"categories": [
-"high_entropy",
-"hosting_abuse",
-"structural_anomaly"
-],
-"log": "Google PlumbersArms2027h1",
-"not_before": "2026-10-22T16:32:03+00:00",
-"wildcard": false
-},
-{
-"domain": "alliancejjkuwait.com",
-"ts": "2026-10-22T17:32:28.847279+00:00",
-"keywords": [
-"kuwait"
-],
-"issuer": "Google Trust Services",
-"score": 0.0,
-"level": "clean",
-"brands": [],
-"categories": [],
-"log": "Let's Encrypt Sycamore2027h1",
-"not_before": "2026-10-22T16:32:09+00:00",
-"wildcard": false
-},
-{
-"domain": "staging-flow.alliancejjkuwait.com",
-"ts": "2026-10-22T17:32:28.847399+00:00",
-"keywords": [
-"kuwait"
-],
-"issuer": "Google Trust Services",
-"score": 0.0,
-"level": "clean",
-"brands": [],
-"categories": [],
-"log": "Let's Encrypt Sycamore2027h1",
-"not_before": "2026-10-22T16:32:09+00:00",
-"wildcard": false
-},
-{
-"domain": "flowlinknet.digital",
-"ts": "2026-10-22T17:32:54.775077+00:00",
-"keywords": [
-"knet"
-],
-"issuer": "Google Trust Services",
+"issuer": "Let's Encrypt",
 "score": 10.0,
 "level": "clean",
 "brands": [],
 "categories": [
 "suspicious_tld"
 ],
-"log": "IPng Networks Gouda2026h2",
-"not_before": "2026-08-24T16:09:41+00:00",
-"wildcard": false
-},
-{
-"domain": "e-quickpay.com",
-"ts": "2026-10-22T17:33:24.295174+00:00",
-"keywords": [
-"kpay"
-],
-"issuer": "GlobalSign nv-sa",
-"score": 0.0,
-"level": "clean",
-"brands": [],
-"categories": [],
-"log": "DigiCert Sphinx2026h2",
-"not_before": "2026-10-22T17:30:02+00:00",
-"wildcard": false
-},
-{
-"domain": "x7ff8e7.mainbk.ackinacki.org",
-"ts": "2026-10-22T17:33:27.966932+00:00",
-"keywords": [
-"nbk"
-],
-"issuer": "ZeroSSL GmbH",
-"score": 12.0,
-"level": "clean",
-"brands": [],
-"categories": [
-"structural_anomaly"
-],
-"log": "TrustAsia Luoshu2027",
-"not_before": "2026-10-22T00:00:00+00:00",
-"wildcard": false
-},
-{
-"domain": "preprod.vlinkpay.com",
-"ts": "2026-10-22T17:33:44.581417+00:00",
-"keywords": [
-"kpay"
-],
-"issuer": "Let's Encrypt",
-"score": 0.0,
-"level": "clean",
-"brands": [],
-"categories": [],
-"log": "Let's Encrypt Willow2027h1",
-"not_before": "2026-10-22T15:28:09+00:00",
-"wildcard": false
-},
-{
-"domain": "preprod-app.vlinkpay.com",
-"ts": "2026-10-22T17:33:44.581522+00:00",
-"keywords": [
-"kpay"
-],
-"issuer": "Let's Encrypt",
-"score": 0.0,
-"level": "clean",
-"brands": [],
-"categories": [],
-"log": "Let's Encrypt Willow2027h1",
-"not_before": "2026-10-22T15:28:09+00:00",
-"wildcard": false
-},
-{
-"domain": "www.e-quickpay.com",
-"ts": "2026-10-22T17:34:02.227771+00:00",
-"keywords": [
-"kpay"
-],
-"issuer": "GlobalSign nv-sa",
-"score": 0.0,
-"level": "clean",
-"brands": [],
-"categories": [],
-"log": "DigiCert Wyvern2026h2",
-"not_before": "2026-10-22T17:30:04+00:00",
-"wildcard": false
-},
-{
-"domain": "x6ecd4f.mainbk.ackinacki.org",
-"ts": "2026-10-22T17:34:23.714940+00:00",
-"keywords": [
-"nbk"
-],
-"issuer": "ZeroSSL GmbH",
-"score": 12.0,
-"level": "clean",
-"brands": [],
-"categories": [
-"structural_anomaly"
-],
-"log": "Let's Encrypt Sycamore2027h1",
-"not_before": "2026-10-22T00:00:00+00:00",
-"wildcard": false
-},
-{
-"domain": "prq3cpfcbk.dattolocal.net",
-"ts": "2026-10-22T17:34:57.463784+00:00",
-"keywords": [
-"cbk"
-],
-"issuer": "Let's Encrypt",
-"score": 0.0,
-"level": "clean",
-"brands": [],
-"categories": [],
 "log": "Google ParcelYard2027h1",
-"not_before": "2026-10-22T16:36:05+00:00",
+"not_before": "2026-10-22T19:58:10+00:00",
 "wildcard": false
 },
 {
-"domain": "360usallc.com.cbkusa.com",
-"ts": "2026-10-22T17:35:35.952785+00:00",
+"domain": "remote.kwtech.net",
+"ts": "2026-10-22T20:58:50.911038+00:00",
 "keywords": [
-"cbk"
+"kwt"
 ],
 "issuer": "GoDaddy.com",
+"score": 0.0,
+"level": "clean",
+"brands": [],
+"categories": [],
+"log": "GoDaddy Aquamarine2027h1",
+"not_before": "2026-10-22T20:58:29+00:00",
+"wildcard": false
+},
+{
+"domain": "www.remote.kwtech.net",
+"ts": "2026-10-22T20:58:50.911167+00:00",
+"keywords": [
+"kwt"
+],
+"issuer": "GoDaddy.com",
+"score": 0.0,
+"level": "clean",
+"brands": [],
+"categories": [],
+"log": "GoDaddy Aquamarine2027h1",
+"not_before": "2026-10-22T20:58:29+00:00",
+"wildcard": false
+},
+{
+"domain": "deergateway01.gulfbank.com",
+"ts": "2026-10-22T20:58:51.487754+00:00",
+"keywords": [
+"gulfbank"
+],
+"issuer": "Sectigo Limited",
+"score": 0.0,
+"level": "clean",
+"brands": [],
+"categories": [],
+"log": "HARICA Selene2027h1",
+"not_before": "2026-10-22T00:00:00+00:00",
+"wildcard": false
+},
+{
+"domain": "www.deergateway01.gulfbank.com",
+"ts": "2026-10-22T20:58:51.487864+00:00",
+"keywords": [
+"gulfbank"
+],
+"issuer": "Sectigo Limited",
+"score": 0.0,
+"level": "clean",
+"brands": [],
+"categories": [],
+"log": "HARICA Selene2027h1",
+"not_before": "2026-10-22T00:00:00+00:00",
+"wildcard": false
+},
+{
+"domain": "inknet.com.br",
+"ts": "2026-10-22T21:01:08.632961+00:00",
+"keywords": [
+"knet"
+],
+"issuer": "Let's Encrypt",
+"score": 0.0,
+"level": "clean",
+"brands": [],
+"categories": [],
+"log": "IPng Networks Gouda2026h2",
+"not_before": "2026-08-25T08:25:48+00:00",
+"wildcard": false
+},
+{
+"domain": "www.inknet.com.br",
+"ts": "2026-10-22T21:01:08.633068+00:00",
+"keywords": [
+"knet"
+],
+"issuer": "Let's Encrypt",
+"score": 0.0,
+"level": "clean",
+"brands": [],
+"categories": [],
+"log": "IPng Networks Gouda2026h2",
+"not_before": "2026-08-25T08:25:48+00:00",
+"wildcard": false
+},
+{
+"domain": "bankpay.in",
+"ts": "2026-10-22T21:02:44.502693+00:00",
+"keywords": [
+"kpay"
+],
+"issuer": "Sectigo Limited",
+"score": 0.0,
+"level": "clean",
+"brands": [],
+"categories": [],
+"log": "DigiCert Sphinx2027h1",
+"not_before": "2026-10-22T00:00:00+00:00",
+"wildcard": false
+},
+{
+"domain": "ha.kw.uray.io",
+"ts": "2026-10-22T21:03:28.987375+00:00",
+"keywords": [
+"kw"
+],
+"issuer": "Let's Encrypt",
 "score": 22.0,
 "level": "low",
 "brands": [],
 "categories": [
 "structural_anomaly"
 ],
-"log": "GoDaddy Aquamarine2027h1",
-"not_before": "2026-10-22T17:35:12+00:00",
-"wildcard": false
-},
-{
-"domain": "kunantatoto.shop",
-"ts": "2026-10-22T17:35:51.962845+00:00",
-"keywords": [
-"kuna"
-],
-"issuer": "SSL Corporation",
-"score": 10.0,
-"level": "clean",
-"brands": [],
-"categories": [
-"suspicious_tld"
-],
-"log": "IPng Networks Halloumi2027h1",
-"not_before": "2026-10-22T17:18:29+00:00",
-"wildcard": false
-},
-{
-"domain": "x04cc6a.mainbk.ackinacki.org",
-"ts": "2026-10-22T17:36:01.811398+00:00",
-"keywords": [
-"nbk"
-],
-"issuer": "ZeroSSL GmbH",
-"score": 12.0,
-"level": "clean",
-"brands": [],
-"categories": [
-"structural_anomaly"
-],
-"log": "DigiCert Wyvern2027h1",
-"not_before": "2026-10-22T00:00:00+00:00",
-"wildcard": false
-},
-{
-"domain": "darknet-reviews.ru",
-"ts": "2026-10-22T17:36:03.764804+00:00",
-"keywords": [
-"knet"
-],
-"issuer": "Google Trust Services",
-"score": 10.0,
-"level": "clean",
-"brands": [],
-"categories": [
-"suspicious_tld"
-],
-"log": "Let's Encrypt Sycamore2027h1",
-"not_before": "2026-10-22T15:39:30+00:00",
-"wildcard": false
-},
-{
-"domain": "jckwt.carrs.canary.test.sfdc.net",
-"ts": "2026-10-22T17:36:13.654451+00:00",
-"keywords": [
-"kwt"
-],
-"issuer": "DigiCert Inc",
-"score": 18.0,
-"level": "clean",
-"brands": [],
-"categories": [
-"structural_anomaly"
-],
-"log": "IPng Networks Gouda2026h2",
-"not_before": "2026-10-22T00:00:00+00:00",
-"wildcard": false
-},
-{
-"domain": "isukuna.xyz",
-"ts": "2026-10-22T17:37:05.724419+00:00",
-"keywords": [
-"kuna"
-],
-"issuer": "Let's Encrypt",
-"score": 10.0,
-"level": "clean",
-"brands": [],
-"categories": [
-"suspicious_tld"
-],
-"log": "Let's Encrypt Willow2027h1",
-"not_before": "2026-10-22T16:38:14+00:00",
-"wildcard": false
-},
-{
-"domain": "xd02173.mainbk.ackinacki.org",
-"ts": "2026-10-22T17:37:24.035645+00:00",
-"keywords": [
-"nbk"
-],
-"issuer": "ZeroSSL GmbH",
-"score": 12.0,
-"level": "clean",
-"brands": [],
-"categories": [
-"structural_anomaly"
-],
-"log": "Let's Encrypt Sycamore2027h1",
-"not_before": "2026-10-22T00:00:00+00:00",
-"wildcard": false
-},
-{
-"domain": "nbketamine.com",
-"ts": "2026-10-22T17:37:59.285684+00:00",
-"keywords": [
-"nbk"
-],
-"issuer": "GoDaddy.com",
-"score": 0.0,
-"level": "clean",
-"brands": [],
-"categories": [],
-"log": "GoDaddy Aquamarine2027h1",
-"not_before": "2026-10-22T17:37:41+00:00",
-"wildcard": false
-},
-{
-"domain": "www.nbketamine.com",
-"ts": "2026-10-22T17:37:59.285785+00:00",
-"keywords": [
-"nbk"
-],
-"issuer": "GoDaddy.com",
-"score": 0.0,
-"level": "clean",
-"brands": [],
-"categories": [],
-"log": "GoDaddy Aquamarine2027h1",
-"not_before": "2026-10-22T17:37:41+00:00",
-"wildcard": false
-},
-{
-"domain": "x0fe1d5.mainbk.ackinacki.org",
-"ts": "2026-10-22T17:39:49.952625+00:00",
-"keywords": [
-"nbk"
-],
-"issuer": "ZeroSSL GmbH",
-"score": 12.0,
-"level": "clean",
-"brands": [],
-"categories": [
-"structural_anomaly"
-],
 "log": "IPng Networks Gouda2027h1",
-"not_before": "2026-10-22T00:00:00+00:00",
-"wildcard": false
-},
-{
-"domain": "optiknet.com",
-"ts": "2026-10-22T17:39:58.732851+00:00",
-"keywords": [
-"knet"
-],
-"issuer": "Let's Encrypt",
-"score": 0.0,
-"level": "clean",
-"brands": [],
-"categories": [],
-"log": "Sectigo Elephant2027h1",
-"not_before": "2026-10-22T16:40:56+00:00",
-"wildcard": false
-},
-{
-"domain": "www.optiknet.com",
-"ts": "2026-10-22T17:39:58.732953+00:00",
-"keywords": [
-"knet"
-],
-"issuer": "Let's Encrypt",
-"score": 0.0,
-"level": "clean",
-"brands": [],
-"categories": [],
-"log": "Sectigo Elephant2027h1",
-"not_before": "2026-10-22T16:40:56+00:00",
-"wildcard": false
-},
-{
-"domain": "x45a090.mainbk.ackinacki.org",
-"ts": "2026-10-22T17:40:38.444396+00:00",
-"keywords": [
-"nbk"
-],
-"issuer": "ZeroSSL GmbH",
-"score": 12.0,
-"level": "clean",
-"brands": [],
-"categories": [
-"structural_anomaly"
-],
-"log": "DigiCert Wyvern2027h1",
-"not_before": "2026-10-22T00:00:00+00:00",
-"wildcard": false
-},
-{
-"domain": "fpesjkpay.clokewhm.pochta.gid14-832f-4254-9ec4-7581ed6d2b66.lomberd.com",
-"ts": "2026-10-22T17:41:39.532040+00:00",
-"keywords": [
-"kpay"
-],
-"issuer": "ZeroSSL GmbH",
-"score": 18.0,
-"level": "clean",
-"brands": [],
-"categories": [
-"structural_anomaly"
-],
-"log": "Microsec Eszigno2027h1",
-"not_before": "2026-10-22T00:00:00+00:00",
-"wildcard": false
-},
-{
-"domain": "kwtyqmcv.skyview.homes",
-"ts": "2026-10-22T17:42:11.978976+00:00",
-"keywords": [
-"kwt"
-],
-"issuer": "Let's Encrypt",
-"score": 0.0,
-"level": "clean",
-"brands": [],
-"categories": [],
-"log": "Let's Encrypt Willow2027h1",
-"not_before": "2026-10-22T16:43:08+00:00",
-"wildcard": true
-},
-{
-"domain": "xc7c892.mainbk.ackinacki.org",
-"ts": "2026-10-22T17:42:34.349185+00:00",
-"keywords": [
-"nbk"
-],
-"issuer": "ZeroSSL GmbH",
-"score": 12.0,
-"level": "clean",
-"brands": [],
-"categories": [
-"structural_anomaly"
-],
-"log": "TrustAsia Luoshu2027",
-"not_before": "2026-10-22T00:00:00+00:00",
-"wildcard": false
-},
-{
-"domain": "zyloxsahel.shop",
-"ts": "2026-10-22T17:45:17.045166+00:00",
-"keywords": [
-"sahel"
-],
-"issuer": "Google Trust Services",
-"score": 43.0,
-"level": "medium",
-"brands": [
-"eGov"
-],
-"categories": [
-"brand_impersonation",
-"certificate_context",
-"suspicious_tld"
-],
-"log": "DigiCert Sphinx2027h1",
-"not_before": "2026-10-22T15:38:26+00:00",
-"wildcard": false
-},
-{
-"domain": "hhykwt.ph",
-"ts": "2026-10-22T17:45:35.433391+00:00",
-"keywords": [
-"kwt"
-],
-"issuer": "Let's Encrypt",
-"score": 0.0,
-"level": "clean",
-"brands": [],
-"categories": [],
-"log": "Google ParcelYard2027h1",
-"not_before": "2026-10-22T16:46:39+00:00",
-"wildcard": false
-},
-{
-"domain": "www.jilkpay.pay.bsber.jhxod765933b8c4e-c8ec-4e6a-bcd2-812357bbcc28.bgpglass.com",
-"ts": "2026-10-22T17:45:51.416638+00:00",
-"keywords": [
-"kpay"
-],
-"issuer": "ZeroSSL GmbH",
-"score": 18.0,
-"level": "clean",
-"brands": [],
-"categories": [
-"structural_anomaly"
-],
-"log": "IPng Networks Gouda2026h2",
-"not_before": "2026-08-22T00:00:00+00:00",
-"wildcard": false
-},
-{
-"domain": "slinknet.keenetic.name",
-"ts": "2026-10-22T17:45:52.331862+00:00",
-"keywords": [
-"knet"
-],
-"issuer": "Let's Encrypt",
-"score": 0.0,
-"level": "clean",
-"brands": [],
-"categories": [],
-"log": "IPng Networks Gouda2027h1",
-"not_before": "2026-10-22T16:46:28+00:00",
-"wildcard": false
-},
-{
-"domain": "news.kuwezu.de",
-"ts": "2026-10-22T17:46:02.543284+00:00",
-"keywords": [
-"kuw"
-],
-"issuer": "Let's Encrypt",
-"score": 0.0,
-"level": "clean",
-"brands": [],
-"categories": [],
-"log": "Let's Encrypt Sycamore2027h1",
-"not_before": "2026-10-22T16:47:21+00:00",
-"wildcard": false
-},
-{
-"domain": "kuwin46.win",
-"ts": "2026-10-22T17:46:13.276025+00:00",
-"keywords": [
-"kuw"
-],
-"issuer": "Google Trust Services",
-"score": 20.0,
-"level": "low",
-"brands": [],
-"categories": [
-"suspicious_tld"
-],
-"log": "IPng Networks Halloumi2027h1",
-"not_before": "2026-10-22T16:45:28+00:00",
-"wildcard": false
-},
-{
-"domain": "q8payp6mmi.tsdb.cloud.timescale.com",
-"ts": "2026-10-22T17:47:01.145516+00:00",
-"keywords": [
-"q8pay"
-],
-"issuer": "Google Trust Services",
-"score": 12.0,
-"level": "clean",
-"brands": [],
-"categories": [
-"structural_anomaly"
-],
-"log": "Sectigo Tiger2027h1",
-"not_before": "2026-10-22T16:46:15+00:00",
-"wildcard": true
-},
-{
-"domain": "q8payp6mmi.vpc.tsdb.forge.timescale.com",
-"ts": "2026-10-22T17:47:01.145637+00:00",
-"keywords": [
-"q8pay"
-],
-"issuer": "Google Trust Services",
-"score": 18.0,
-"level": "clean",
-"brands": [],
-"categories": [
-"structural_anomaly"
-],
-"log": "Sectigo Tiger2027h1",
-"not_before": "2026-10-22T16:46:15+00:00",
-"wildcard": true
-},
-{
-"domain": "q8payp6mmi.branch.tsdb.cloud.timescale.com",
-"ts": "2026-10-22T17:47:01.145734+00:00",
-"keywords": [
-"q8pay"
-],
-"issuer": "Google Trust Services",
-"score": 18.0,
-"level": "clean",
-"brands": [],
-"categories": [
-"structural_anomaly"
-],
-"log": "Sectigo Tiger2027h1",
-"not_before": "2026-10-22T16:46:15+00:00",
-"wildcard": true
-},
-{
-"domain": "rackpay.com",
-"ts": "2026-10-22T17:47:01.219521+00:00",
-"keywords": [
-"kpay"
-],
-"issuer": "Let's Encrypt",
-"score": 0.0,
-"level": "clean",
-"brands": [],
-"categories": [],
-"log": "Sectigo Tiger2027h1",
-"not_before": "2026-10-22T16:47:29+00:00",
+"not_before": "2026-10-22T20:04:26+00:00",
 "wildcard": false
 }
 ],
-"alert_candidates": 6,
+"alert_candidates": 0,
 "engine": "python",
 "kind": "observations",
 "notice": "Observations of public Certificate Transparency data: a hostname in a publicly logged certificate matched a watch keyword. Scores are automated heuristics, not accusations; verify independently before acting. See DISCLAIMER.md."
