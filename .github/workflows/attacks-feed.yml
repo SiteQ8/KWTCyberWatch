@@ -29,7 +29,10 @@ jobs:
         env:
           RAQEEB_TOKEN: ${{ secrets.RAQEEB_TOKEN }}
         run: |
-          test -n "$RAQEEB_TOKEN" || { echo "RAQEEB_TOKEN is not set"; exit 1; }
+          if [ -z "$RAQEEB_TOKEN" ]; then
+            echo "RAQEEB_TOKEN is not set; the Raqeeb runner pushes the feed directly instead"
+            exit 0
+          fi
           curl -sSf -H "Authorization: Bearer $RAQEEB_TOKEN" \
                -H "Accept: application/vnd.github.raw+json" \
                -o feed/kuwait-attacks.json.new \
@@ -38,6 +41,9 @@ jobs:
           mv feed/kuwait-attacks.json.new feed/kuwait-attacks.json
 
       - name: Publish
+        if: ${{ env.RAQEEB_TOKEN != '' }}
+        env:
+          RAQEEB_TOKEN: ${{ secrets.RAQEEB_TOKEN }}
         run: |
           git config user.name "Ali AlEnezi"
           git config user.email "site@hotmail.com"

@@ -78,20 +78,22 @@ pre .c{color:var(--muted)}pre .k{color:var(--cyan)}
 footer{padding:36px 0 44px;border-top:1px solid var(--border);color:var(--muted);font-size:.8rem;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 footer a{color:var(--dim)}
 .tag{display:inline-block;padding:3px 9px;border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--cyan-glow);color:var(--cyan);border:1px solid #00d4ff55;margin-left:8px;vertical-align:middle}
-.atk{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
-.atk a.item{display:block;padding:16px 18px;border:1px solid var(--border);border-radius:var(--radius);background:var(--card);color:var(--text);transition:transform .2s,border-color .2s}
-.atk a.item:hover{transform:translateY(-2px);border-color:var(--cyan)}
-.atk .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:.66rem;color:var(--muted);margin-bottom:8px}
-.atk .victim{font-weight:700;font-size:.98rem;line-height:1.3;margin-bottom:6px}
-.atk .line{font-size:.8rem;color:var(--dim)}
-.pill{display:inline-block;padding:2px 8px;border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border:1px solid var(--border);color:var(--dim)}
-.pill.ransomware{color:var(--orange);border-color:#ff8c0055;background:#ff8c0014}
-.pill.leak,.pill.breach,.pill.stealer{color:var(--red);border-color:#ff335555;background:#ff335514}
-.pill.defacement,.pill.ddos{color:var(--purple);border-color:#b388ff55;background:#b388ff14}
-.pill.high{color:var(--red);border-color:#ff335555}
-.atk-head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:22px}
-.atk-head .sub{margin-bottom:0}
-.atk-foot{margin-top:18px;font-size:.78rem;color:var(--muted)}
+.reg{display:grid;grid-template-columns:1fr 1.4fr;gap:40px;align-items:start}
+.reg .big{font-size:clamp(2.6rem,6vw,4.6rem);line-height:.95;letter-spacing:-.04em;font-weight:800}
+.reg .big em{font-style:normal;color:var(--orange)}
+.reg .say{color:var(--dim);margin-top:14px;max-width:44ch}
+.reg .say a{color:var(--text);border-bottom:1px solid var(--border)}
+.reg ol{list-style:none;display:grid;gap:14px;border-top:1px solid var(--border);padding-top:16px}
+.reg li{display:grid;grid-template-columns:84px 1fr;gap:12px;align-items:baseline}
+.reg li time{color:var(--muted);font-size:.86rem;font-variant-numeric:tabular-nums}
+.reg li a{color:var(--text);font-weight:700;font-size:1.02rem}
+.reg li small{display:block;color:var(--dim);font-size:.84rem;margin-top:2px}
+.reg li .k{font-weight:600}
+.reg li .k.ransomware{color:var(--orange)}.reg li .k.leak,.reg li .k.breach,.reg li .k.stealer{color:var(--red)}.reg li .k.defacement,.reg li .k.ddos{color:var(--purple)}
+.reg .more{margin-top:18px;font-size:.9rem}
+.reg .more a{color:var(--text);border-bottom:1px solid var(--border)}
+.reg .note{margin-top:8px;font-size:.78rem;color:var(--muted)}
+@media(max-width:960px){.reg{grid-template-columns:1fr}}
 @media(max-width:960px){.hero{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.two{grid-template-columns:1fr}.shots{grid-template-columns:1fr}}
 @media(max-width:560px){.stats>div{min-width:0;flex:1 1 40%;padding:12px 14px}nav .links a:not(.btn){display:none}}
 </style>
@@ -128,15 +130,15 @@ footer a{color:var(--dim)}
   </header>
 
   <section id="attacks">
-    <div class="atk-head">
+    <div class="reg">
       <div>
-        <h2>Recent attacks on Kuwait <span class="tag">awareness</span></h2>
-        <p class="sub">Public claims of ransomware listings, data leaks and breaches involving Kuwaiti organisations, collected from public trackers and press. Every entry is an allegation by a threat actor or a tracker, not a confirmed incident.</p>
+        <p class="big" id="reg-big">Attack claims against Kuwaiti organisations</p>
+        <p class="say" id="reg-say">Public ransomware listings, leak sales and breach claims, gathered from public trackers and press for awareness. Every entry is an allegation, not a confirmed incident.</p>
+        <p class="more"><a href="attacks.html">Open the full register</a></p>
+        <p class="note">Updates itself several times a day. Wrong or fake entry? Write to <a href="mailto:site@hotmail.com">site@hotmail.com</a>.</p>
       </div>
-      <a class="btn ghost" href="attacks.html">All records →</a>
+      <ol id="reg-list"><li><time></time><span style="color:var(--muted)">Loading the register.</span></li></ol>
     </div>
-    <div class="atk" id="atk-list"><div class="line" style="color:var(--muted)">Loading the feed…</div></div>
-    <p class="atk-foot" id="atk-foot"></p>
   </section>
 
   <section id="features">
@@ -220,19 +222,16 @@ docker compose up -d</pre>
 </div>
 <script>
 (async()=>{
-  const list=document.getElementById('atk-list'),foot=document.getElementById('atk-foot');
+  const list=document.getElementById('reg-list'),big=document.getElementById('reg-big');
+  const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const KIND={ransomware:'ransomware listing',leak:'data leak',breach:'breach claim',stealer:'stealer logs',defacement:'defacement',ddos:'service outage'};
   try{
     const d=await (await fetch('feed/kuwait-attacks.json',{cache:'no-store'})).json();
-    const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-    const items=d.items.slice(0,8);
-    list.innerHTML=items.map(i=>`<a class="item" href="${esc(i.url)}" target="_blank" rel="noopener nofollow">
-      <div class="meta"><span>${esc(i.date)}</span><span class="pill ${esc(i.kind)}">${esc(i.kind)}</span>${i.severity==='high'?'<span class="pill high">high</span>':''}${i.sectors.map(s=>`<span class="pill">${esc(s)}</span>`).join('')}</div>
-      <div class="victim">${esc(i.victim)}</div>
-      <div class="line">${i.actor?'Claimed by <b>'+esc(i.actor)+'</b> · ':''}via ${esc(i.source)}</div>
-    </a>`).join('');
-    const yrs=Object.entries(d.by_year).map(([y,n])=>`${y}: ${n}`).join(' · ');
-    foot.innerHTML=`${d.count} public records since 2022 (${yrs}). Updates itself several times a day. Updated ${esc(d.generated.slice(0,10))}. Wrong or fake entry? <a href="mailto:site@hotmail.com?subject=${encodeURIComponent('KWTCyberWatch attacks feed: report')}">Report it</a> · <a href="feed/kuwait-attacks.json">JSON feed</a>`;
-  }catch(e){list.innerHTML='<div class="line">The feed could not be loaded.</div>';}
+    const yrs=Object.keys(d.by_year).sort();
+    big.innerHTML=`<em>${d.count}</em> attack claims against Kuwaiti organisations since ${esc(yrs[0])}`;
+    list.innerHTML=d.items.slice(0,6).map(i=>{const [y,m,dd]=i.date.split('-');return `<li><time datetime="${esc(i.date)}">${+dd} ${MON[+m-1]} ${y}</time><div><a href="${esc(i.url)}" target="_blank" rel="noopener nofollow">${esc(i.victim)}</a><small><span class="k ${esc(i.kind)}">${esc(KIND[i.kind]||i.kind)}</span>${i.actor?`, claimed by ${esc(i.actor)}`:''}${i.sectors.length?`. ${esc(i.sectors.join(', '))}`:''}</small></div></li>`;}).join('');
+  }catch(e){list.innerHTML='<li><time></time><span>The register could not be loaded.</span></li>';}
 })();
 </script>
 </body>
