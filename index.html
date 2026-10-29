@@ -78,6 +78,20 @@ pre .c{color:var(--muted)}pre .k{color:var(--cyan)}
 footer{padding:36px 0 44px;border-top:1px solid var(--border);color:var(--muted);font-size:.8rem;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 footer a{color:var(--dim)}
 .tag{display:inline-block;padding:3px 9px;border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--cyan-glow);color:var(--cyan);border:1px solid #00d4ff55;margin-left:8px;vertical-align:middle}
+.atk{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.atk a.item{display:block;padding:16px 18px;border:1px solid var(--border);border-radius:var(--radius);background:var(--card);color:var(--text);transition:transform .2s,border-color .2s}
+.atk a.item:hover{transform:translateY(-2px);border-color:var(--cyan)}
+.atk .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:.66rem;color:var(--muted);margin-bottom:8px}
+.atk .victim{font-weight:700;font-size:.98rem;line-height:1.3;margin-bottom:6px}
+.atk .line{font-size:.8rem;color:var(--dim)}
+.pill{display:inline-block;padding:2px 8px;border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border:1px solid var(--border);color:var(--dim)}
+.pill.ransomware{color:var(--orange);border-color:#ff8c0055;background:#ff8c0014}
+.pill.leak,.pill.breach,.pill.stealer{color:var(--red);border-color:#ff335555;background:#ff335514}
+.pill.defacement,.pill.ddos{color:var(--purple);border-color:#b388ff55;background:#b388ff14}
+.pill.high{color:var(--red);border-color:#ff335555}
+.atk-head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.atk-head .sub{margin-bottom:0}
+.atk-foot{margin-top:18px;font-size:.78rem;color:var(--muted)}
 @media(max-width:960px){.hero{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.two{grid-template-columns:1fr}.shots{grid-template-columns:1fr}}
 @media(max-width:560px){.stats>div{min-width:0;flex:1 1 40%;padding:12px 14px}nav .links a:not(.btn){display:none}}
 </style>
@@ -88,7 +102,7 @@ footer a{color:var(--dim)}
   <nav>
     <a class="brand" href="./"><svg viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5 4.5 5.6v6.2c0 4.7 3.2 9 7.5 10.2 4.3-1.2 7.5-5.5 7.5-10.2V5.6z"/><path d="m9 12 2 2 4-4"/></svg>KWT<span>CyberWatch</span></a>
     <div class="links">
-      <a href="#features">Features</a><a href="#how">How it works</a><a href="#screens">Screens</a><a href="#selfhost">Self-host</a><a href="#legal">Legal</a>
+      <a href="#attacks">Attacks on Kuwait</a><a href="#features">Features</a><a href="#how">How it works</a><a href="#screens">Screens</a><a href="#selfhost">Self-host</a><a href="#legal">Legal</a>
       <a href="https://github.com/SiteQ8/KWTCyberWatch" target="_blank" rel="noopener">GitHub</a>
       <a class="btn" href="demo/">Open the console →</a>
     </div>
@@ -112,6 +126,18 @@ footer a{color:var(--dim)}
     </div>
     <div class="shot"><img src="docs/screenshots/02-dashboard.png" alt="KWTCyberWatch dashboard" loading="eager"></div>
   </header>
+
+  <section id="attacks">
+    <div class="atk-head">
+      <div>
+        <h2>Recent attacks on Kuwait <span class="tag">awareness</span></h2>
+        <p class="sub">Public claims of ransomware listings, data leaks and breaches involving Kuwaiti organisations, collected from public trackers and press. Every entry is an allegation by a threat actor or a tracker, not a confirmed incident.</p>
+      </div>
+      <a class="btn ghost" href="attacks.html">All records →</a>
+    </div>
+    <div class="atk" id="atk-list"><div class="line" style="color:var(--muted)">Loading the feed…</div></div>
+    <p class="atk-foot" id="atk-foot"></p>
+  </section>
 
   <section id="features">
     <h2>Built for analysts, not demos</h2>
@@ -192,5 +218,22 @@ docker compose up -d</pre>
     <span><a href="demo/">Console</a> · <a href="https://github.com/SiteQ8/KWTCyberWatch">GitHub</a> · <a href="https://github.com/SiteQ8/KWTCyberWatch/blob/main/CHANGELOG.md">Changelog</a> · <a href="https://github.com/SiteQ8/KWTCyberWatch/blob/main/SECURITY.md">Security policy</a></span>
   </footer>
 </div>
+<script>
+(async()=>{
+  const list=document.getElementById('atk-list'),foot=document.getElementById('atk-foot');
+  try{
+    const d=await (await fetch('feed/kuwait-attacks.json',{cache:'no-store'})).json();
+    const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    const items=d.items.slice(0,8);
+    list.innerHTML=items.map(i=>`<a class="item" href="${esc(i.url)}" target="_blank" rel="noopener nofollow">
+      <div class="meta"><span>${esc(i.date)}</span><span class="pill ${esc(i.kind)}">${esc(i.kind)}</span>${i.severity==='high'?'<span class="pill high">high</span>':''}${i.sectors.map(s=>`<span class="pill">${esc(s)}</span>`).join('')}</div>
+      <div class="victim">${esc(i.victim)}</div>
+      <div class="line">${i.actor?'Claimed by <b>'+esc(i.actor)+'</b> · ':''}via ${esc(i.source)}</div>
+    </a>`).join('');
+    const yrs=Object.entries(d.by_year).map(([y,n])=>`${y}: ${n}`).join(' · ');
+    foot.innerHTML=`${d.count} public records since 2022 (${yrs}). Updates itself several times a day. Updated ${esc(d.generated.slice(0,10))}. Wrong or fake entry? <a href="mailto:site@hotmail.com?subject=${encodeURIComponent('KWTCyberWatch attacks feed: report')}">Report it</a> · <a href="feed/kuwait-attacks.json">JSON feed</a>`;
+  }catch(e){list.innerHTML='<div class="line">The feed could not be loaded.</div>';}
+})();
+</script>
 </body>
 </html>

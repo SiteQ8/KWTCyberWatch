@@ -1,0 +1,54 @@
+name: Attacks on Kuwait feed
+
+# Pulls the public awareness feed built by the private Raqeeb watch and publishes
+# it to feed/ so the site can load it from its own origin. Needs the RAQEEB_TOKEN
+# secret (a GitHub token that can read SiteQ8/Raqeeb).
+
+on:
+  schedule:
+    - cron: "41 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: attacks-feed
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Fetch the feed from Raqeeb
+        env:
+          RAQEEB_TOKEN: ${{ secrets.RAQEEB_TOKEN }}
+        run: |
+          test -n "$RAQEEB_TOKEN" || { echo "RAQEEB_TOKEN is not set"; exit 1; }
+          curl -sSf -H "Authorization: Bearer $RAQEEB_TOKEN" \
+               -H "Accept: application/vnd.github.raw+json" \
+               -o feed/kuwait-attacks.json.new \
+               "https://api.github.com/repos/SiteQ8/Raqeeb/contents/public/kuwait-attacks.json?ref=main"
+          python3 -c "import json,sys; d=json.load(open('feed/kuwait-attacks.json.new')); assert d['count']>0 and d['items'], 'empty feed'; print(d['count'], 'records, generated', d['generated'])"
+          mv feed/kuwait-attacks.json.new feed/kuwait-attacks.json
+
+      - name: Publish
+        run: |
+          git config user.name "Ali AlEnezi"
+          git config user.email "site@hotmail.com"
+          git add feed/kuwait-attacks.json
+          if git diff --cached --quiet; then
+            echo "feed unchanged"
+            exit 0
+          fi
+          git commit -m "chore(feed): attacks on Kuwait $(date -u +'%Y-%m-%dT%H:%MZ') [skip ci]"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep 10
+          done
+          exit 1

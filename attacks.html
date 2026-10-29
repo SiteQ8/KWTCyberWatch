@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Public claims of cyber attacks, ransomware listings and data leaks involving Kuwait, collected from public trackers and press for awareness. Every entry is an allegation, not a confirmed incident.">
+<meta name="theme-color" content="#060a14">
+<meta property="og:title" content="Attacks on Kuwait — KWTCyberWatch">
+<meta property="og:description" content="Public claims of ransomware listings, data leaks and breaches involving Kuwaiti organisations, for awareness.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kwtcyberwatch.3li.info/attacks.html">
+<link rel="canonical" href="https://kwtcyberwatch.3li.info/attacks.html">
+<link rel="icon" href="demo/icon.svg" type="image/svg+xml">
+<title>Attacks on Kuwait — KWTCyberWatch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#060a14;--bg-deep:#0b1424;--card:#101c30;--border:#1c2f4d;--cyan:#00d4ff;--cyan-glow:#00d4ff30;--purple:#b388ff;--green:#00e676;--red:#ff3355;--orange:#ff8c00;--text:#e9eef7;--dim:#8c9db8;--muted:#5a6b86;--grad:linear-gradient(135deg,#00d4ff,#0090ff);--grid:#ffffff07;--radius:14px;color-scheme:dark}
+@media(prefers-color-scheme:light){:root{--bg:#eef2f8;--bg-deep:#fff;--card:#fff;--border:#d9e1ee;--cyan:#0077cc;--cyan-glow:#0077cc1f;--purple:#6b4fd8;--green:#0b9a55;--red:#d81b45;--orange:#c96a00;--text:#0f1b2d;--dim:#4d5d77;--muted:#7d8ca5;--grid:#0f1b2d08;color-scheme:light}}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--cyan);text-decoration:none}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(1100px 600px at 10% -10%,#0d2a52 0%,transparent 60%),radial-gradient(900px 500px at 100% 100%,#2a1a5a40 0%,transparent 60%),var(--bg)}
+.bg::after{content:'';position:absolute;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse at 50% 0%,#000 20%,transparent 70%)}
+@media(prefers-color-scheme:light){.bg{background:radial-gradient(1100px 600px at 10% -10%,#d6e8ff 0%,transparent 60%),radial-gradient(900px 500px at 100% 100%,#ece4ff 0%,transparent 60%),var(--bg)}}
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;letter-spacing:-.02em;color:var(--text)}
+.brand span{color:var(--cyan)}.brand svg{width:26px;height:26px}
+.links{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.links a{padding:8px 12px;border-radius:9px;font-size:.85rem;font-weight:600;color:var(--dim)}
+.links a:hover{color:var(--text);background:var(--card)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:10px;font-weight:700;font-size:.92rem;background:var(--grad);color:#fff;box-shadow:0 8px 24px var(--cyan-glow)}
+.btn.ghost{background:var(--card);color:var(--text);border:1px solid var(--border);box-shadow:none}
+header{padding:40px 0 20px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:99px;border:1px solid var(--border);background:var(--card);font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--dim);letter-spacing:.04em;text-transform:uppercase}
+h1{font-size:clamp(2rem,4.5vw,3.2rem);line-height:1.06;letter-spacing:-.035em;font-weight:800;margin:18px 0 14px}
+h1 .g{background:linear-gradient(90deg,var(--cyan),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{font-size:1.04rem;color:var(--dim);max-width:70ch}
+.stats{display:flex;flex-wrap:wrap;margin-top:26px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--card);width:fit-content;max-width:100%}
+.stats>div{display:flex;flex-direction:column;padding:14px 22px;border-right:1px solid var(--border);min-width:120px}
+.stats>div:last-child{border-right:none}
+.stats b{font-family:'JetBrains Mono',monospace;font-size:1.35rem}
+.stats span{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:26px 0 16px}
+.tools input,.tools select{font:inherit;font-size:.88rem;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);min-width:160px}
+.tools input{flex:1 1 220px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:7px 12px;border-radius:99px;border:1px solid var(--border);background:var(--card);color:var(--dim);font-size:.78rem;font-weight:600;cursor:pointer}
+.chip.on{color:var(--cyan);border-color:var(--cyan);background:var(--cyan-glow)}
+table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--card);font-size:.86rem}
+th,td{padding:12px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--border)}
+th{font-family:'JetBrains Mono',monospace;font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);background:var(--bg-deep);font-weight:600}
+tr:last-child td{border-bottom:none}
+td.date{font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--dim);white-space:nowrap}
+td.victim b{display:block;font-size:.92rem}
+td.victim small{display:block;color:var(--dim);font-size:.78rem;margin-top:4px;max-width:60ch}
+.pill{display:inline-block;padding:2px 8px;border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border:1px solid var(--border);color:var(--dim);margin:0 4px 4px 0}
+.pill.ransomware{color:var(--orange);border-color:#ff8c0055;background:#ff8c0014}
+.pill.leak,.pill.breach,.pill.stealer{color:var(--red);border-color:#ff335555;background:#ff335514}
+.pill.defacement,.pill.ddos{color:var(--purple);border-color:#b388ff55;background:#b388ff14}
+.pill.high{color:var(--red);border-color:#ff335555}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.report{display:inline-block;margin-top:6px;font-size:.72rem;color:var(--muted);border-bottom:1px dotted var(--muted)}
+.report:hover{color:var(--cyan);border-color:var(--cyan)}
+.contact{margin-top:12px}
+.note{margin-top:22px;padding:18px 20px;border:1px solid var(--border);border-radius:var(--radius);background:var(--card);font-size:.84rem;color:var(--dim)}
+.note h3{font-size:.98rem;color:var(--text);margin-bottom:6px}
+.ar{direction:rtl;text-align:right;margin-top:10px}
+footer{padding:36px 0 44px;margin-top:40px;border-top:1px solid var(--border);color:var(--muted);font-size:.8rem;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer a{color:var(--dim)}
+.only-m{display:none}
+@media(max-width:760px){th.hide,td.hide{display:none}.only-m{display:inline-block}nav .links a:not(.btn){display:none}.stats>div{min-width:0;flex:1 1 40%;padding:12px 14px}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="wrap">
+  <nav>
+    <a class="brand" href="./"><svg viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5 4.5 5.6v6.2c0 4.7 3.2 9 7.5 10.2 4.3-1.2 7.5-5.5 7.5-10.2V5.6z"/><path d="m9 12 2 2 4-4"/></svg>KWT<span>CyberWatch</span></a>
+    <div class="links">
+      <a href="./#features">Features</a><a href="./#how">How it works</a><a href="./#legal">Legal</a>
+      <a href="https://github.com/SiteQ8/KWTCyberWatch" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn" href="demo/">Open the console →</a>
+    </div>
+  </nav>
+
+  <header>
+    <div class="eyebrow">Awareness · public claims · updated automatically</div>
+    <h1>Attacks on <span class="g">Kuwait</span></h1>
+    <p class="lede">Ransomware listings, data leak sales and breach claims that name Kuwaiti organisations, collected from public trackers and press. Each row links to the public page it came from. Nothing here is a confirmed incident until the organisation or the authorities say so.</p>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <div class="tools">
+    <input id="q" type="search" placeholder="Search victim, actor, sector…" aria-label="Search">
+    <select id="year" aria-label="Year"><option value="">All years</option></select>
+    <div class="chips" id="kinds"></div>
+  </div>
+
+  <table>
+    <thead><tr><th>Date</th><th>Victim</th><th>Kind</th><th class="hide">Claimed by</th><th class="hide">Source</th></tr></thead>
+    <tbody id="rows"><tr><td colspan="5" class="empty">Loading the feed…</td></tr></tbody>
+  </table>
+
+  <div class="note">
+    <h3>How to read this list</h3>
+    <p>A leak-site listing or a forum post is a claim made by a criminal, and claims are sometimes inflated, recycled or false. Treat each entry as a reason to check, not as a fact. If your organisation appears here, verify through your own incident response process and notify the authorities and your regulator as required. Entries carry only what the public source states: the organisation named, the date, the actor and a link. No leaked data is hosted, copied or linked here.</p>
+    <p class="contact">The list updates itself several times a day from the public sources. If an entry is wrong, fake, resolved or about your organisation and you want it reviewed, use the report link on the row or write to <a href="mailto:site@hotmail.com">site@hotmail.com</a>.</p>
+    <p class="ar">كل سطر في هذه القائمة ادعاء منشور على موقع تسريب أو منتدى أو في الصحافة وليس حادثة مؤكدة، فإذا ظهرت جهتك هنا فتحقق عبر إجراءات الاستجابة للحوادث لديك وأبلغ الجهات المختصة حسب المتطلبات، ولا تُستضاف هنا أي بيانات مسربة ولا تُنسخ ولا يُربط إليها، وتتحدث القائمة تلقائياً عدة مرات في اليوم، وإذا وجدت سطراً خاطئاً أو مزيفاً فأبلغ عنه من رابط الإبلاغ في السطر أو راسل site@hotmail.com.</p>
+  </div>
+
+  <footer>
+    <span>© Ali AlEnezi (SiteQ8) · KWTCyberWatch is MIT licensed · <a href="https://github.com/SiteQ8/KWTCyberWatch/blob/main/DISCLAIMER.md">Disclaimer</a></span>
+    <span><a href="feed/kuwait-attacks.json">JSON feed</a> · <a href="./">Home</a> · <a href="demo/">Console</a> · <a href="https://github.com/SiteQ8/KWTCyberWatch">GitHub</a></span>
+  </footer>
+</div>
+<script>
+(async()=>{
+  const rows=document.getElementById('rows'),stats=document.getElementById('stats'),q=document.getElementById('q'),year=document.getElementById('year'),kinds=document.getElementById('kinds');
+  const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const report=i=>'mailto:site@hotmail.com?subject='+encodeURIComponent(`KWTCyberWatch attacks feed: report on ${i.victim} (${i.id})`)+'&body='+encodeURIComponent(`Record: ${i.victim}\nDate: ${i.date}\nSource: ${i.url}\n\nWhat is wrong (error, fake claim, resolved, other):\n`);
+  let d;
+  try{d=await (await fetch('feed/kuwait-attacks.json',{cache:'no-store'})).json();}
+  catch(e){rows.innerHTML='<tr><td colspan="5" class="empty">The feed could not be loaded.</td></tr>';return;}
+  const items=d.items;
+  const high=items.filter(i=>i.severity==='high').length;
+  const last90=items.filter(i=>(Date.now()-new Date(i.date))/864e5<=90).length;
+  stats.innerHTML=`<div><b>${d.count}</b><span>public claims</span></div><div><b>${high}</b><span>critical sectors</span></div><div><b>${last90}</b><span>last 90 days</span></div><div><b>${esc(d.generated.slice(0,10))}</b><span>updated</span></div>`;
+  Object.keys(d.by_year).sort().reverse().forEach(y=>{const o=document.createElement('option');o.value=y;o.textContent=`${y} (${d.by_year[y]})`;year.appendChild(o);});
+  const kindSet=[...new Set(items.map(i=>i.kind))];
+  let kind='';
+  kinds.innerHTML=`<button class="chip on" data-k="">All</button>`+kindSet.map(k=>`<button class="chip" data-k="${esc(k)}">${esc(k)} (${items.filter(i=>i.kind===k).length})</button>`).join('');
+  kinds.addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;kind=b.dataset.k;[...kinds.children].forEach(c=>c.classList.toggle('on',c===b));render();});
+  q.addEventListener('input',render);year.addEventListener('change',render);
+  function render(){
+    const s=q.value.trim().toLowerCase(),y=year.value;
+    const out=items.filter(i=>(!kind||i.kind===kind)&&(!y||i.date.startsWith(y))&&(!s||[i.victim,i.actor,i.sectors.join(' '),i.source,i.summary].join(' ').toLowerCase().includes(s)));
+    rows.innerHTML=out.length?out.map(i=>`<tr>
+      <td class="date">${esc(i.date)}</td>
+      <td class="victim"><b><a href="${esc(i.url)}" target="_blank" rel="noopener nofollow">${esc(i.victim)}</a></b>${i.sectors.length?i.sectors.map(s=>`<span class="pill">${esc(s)}</span>`).join(''):''}${i.summary?`<small>${esc(i.summary)}</small>`:''}<a class="report only-m" href="${report(i)}">Report error or fake</a></td>
+      <td><span class="pill ${esc(i.kind)}">${esc(i.kind)}</span>${i.severity==='high'?'<span class="pill high">high</span>':''}</td>
+      <td class="hide">${esc(i.actor)||'<span style="color:var(--muted)">unknown</span>'}</td>
+      <td class="hide">${esc(i.source)}<br><a class="report" href="${report(i)}">Report error or fake</a></td>
+    </tr>`).join(''):'<tr><td colspan="5" class="empty">Nothing matches.</td></tr>';
+  }
+  render();
+})();
+</script>
+</body>
+</html>
