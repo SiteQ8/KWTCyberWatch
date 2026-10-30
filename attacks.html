@@ -20,7 +20,7 @@
 :root{--ink:#0b1224;--paper:#eee8da;--quiet:#9aa3b4;--mute:#5f6a80;--sand:#d9b36a;--alarm:#ff5a4e;--amber:#f2a33a;--violet:#b9a6ff;--rule:#243049;color-scheme:dark}
 @media(prefers-color-scheme:light){:root{--ink:#f3efe4;--paper:#141a2a;--quiet:#4e5872;--mute:#7a8399;--sand:#8a6a1f;--alarm:#c8362b;--amber:#a86a0c;--violet:#5d49b8;--rule:#d3cbb6;color-scheme:light}}
 html{scroll-behavior:smooth}
-body{font-family:'Bricolage Grotesque',system-ui,sans-serif;background:var(--ink);color:var(--paper);line-height:1.5;-webkit-font-smoothing:antialiased;font-variation-settings:"opsz" 14}
+body{overflow-x:hidden;font-family:'Bricolage Grotesque',system-ui,sans-serif;background:var(--ink);color:var(--paper);line-height:1.5;-webkit-font-smoothing:antialiased;font-variation-settings:"opsz" 14}
 a{color:inherit}
 :focus-visible{outline:2px solid var(--sand);outline-offset:3px}
 .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
@@ -32,18 +32,34 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
 .navlinks a{text-decoration:none;color:var(--quiet)}
 .navlinks a:hover{color:var(--paper)}
 
-.lead{padding:52px 0 36px;max-width:880px}
+.mast{position:relative;margin:8px 0 0 calc(50% - 50vw);width:100vw;min-height:clamp(420px,52vw,620px);display:flex;align-items:flex-end;isolation:isolate;overflow:hidden}
+.mast .in{width:100%;max-width:1120px;margin:0 auto;padding:0 24px;position:relative}
+.mast img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%;z-index:-2}
+.mast::after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(11,18,36,.15) 0%,rgba(11,18,36,.55) 45%,var(--ink) 92%)}
+@media(prefers-color-scheme:light){.mast::after{background:linear-gradient(180deg,rgba(243,239,228,.05) 0%,rgba(243,239,228,.45) 45%,var(--ink) 92%)}.mast h1,.mast .latest{color:var(--paper)}}
+.lead{padding:140px 0 10px;max-width:880px}
 h1{font-size:clamp(2.1rem,5.2vw,4.4rem);line-height:1.02;letter-spacing:-.035em;font-weight:700;font-variation-settings:"opsz" 96;text-wrap:balance}
 h1 em{font-style:normal;color:var(--sand)}
-.latest{margin-top:22px;font-size:1.12rem;max-width:62ch;color:var(--quiet)}
+.latest{margin-top:20px;font-size:1.12rem;max-width:62ch;color:var(--quiet)}
 .latest b{color:var(--paper);font-weight:600}
 .latest a{color:var(--paper)}
+.credit{position:absolute;right:24px;bottom:4px;font-size:.74rem;color:var(--mute)}
 
-.band{position:relative;margin:34px 0 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-.band img{display:block;width:100%;height:clamp(180px,28vw,340px);object-fit:cover;object-position:center 60%}
-.band figcaption{position:absolute;right:16px;bottom:12px;font-size:.78rem;color:#fff;opacity:.7}
+.strip{margin-top:30px;padding-top:18px;border-top:1px solid var(--rule)}
+.strip .row-s{display:grid;grid-template-columns:repeat(var(--n),1fr);gap:2px;align-items:end;height:56px}
+.strip .m{position:relative;height:100%;display:flex;align-items:flex-end;background:none;border:0;padding:0;cursor:pointer}
+.strip .m i{display:block;width:100%;min-height:2px;background:var(--rule);border-radius:1px 1px 0 0}
+.strip .m.has i{background:var(--sand)}
+.strip .m.hi i{background:var(--alarm)}
+.strip .m.dim i{opacity:.3}
+.strip .m:hover i,.strip .m:focus-visible i{outline:1px solid var(--paper)}
+.strip .yrs{display:grid;grid-template-columns:repeat(var(--y),1fr);margin-top:8px}
+.strip .yrs button{font:inherit;font-size:.9rem;background:none;border:0;color:var(--quiet);text-align:left;padding:4px 0;cursor:pointer;border-top:2px solid transparent}
+.strip .yrs button.on{color:var(--paper);border-top-color:var(--sand)}
+.strip .yrs button small{color:var(--mute);margin-left:6px}
+.strip .hint{font-size:.84rem;color:var(--mute);margin-top:6px;min-height:1.3em}
 
-.tools{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 26px;padding:28px 0 8px;font-size:.95rem}
+.tools{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 26px;padding:22px 0 8px;font-size:.95rem}
 .tools input{font:inherit;font-size:1rem;padding:8px 0;border:0;border-bottom:1px solid var(--rule);background:transparent;color:var(--paper);min-width:260px;flex:1 1 260px;border-radius:0}
 .tools input::placeholder{color:var(--mute)}
 .tools input:focus{outline:none;border-bottom-color:var(--sand)}
@@ -67,7 +83,7 @@ h1 em{font-style:normal;color:var(--sand)}
 .row .what .k.ransomware{color:var(--amber)}
 .row .what .k.defacement,.row .what .k.ddos{color:var(--violet)}
 .row .what .crit{color:var(--alarm)}
-.row .src{grid-column:3;grid-row:1/3;text-align:right;font-size:.86rem;color:var(--mute);display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.row .src{grid-column:3;grid-row:1/3;text-align:right;font-size:.86rem;color:var(--mute);display:flex;flex-direction:column;gap:4px;align-items:flex-end}
 .row .src a{color:var(--mute);text-decoration:none;border-bottom:1px solid var(--rule)}
 .row .src a:hover{color:var(--paper);border-bottom-color:var(--paper)}
 .row .sum{grid-column:2;color:var(--mute);font-size:.9rem;max-width:68ch}
@@ -84,6 +100,7 @@ footer a{color:var(--quiet);text-decoration:none}
 footer a:hover{color:var(--paper)}
 
 @media(max-width:820px){
+  .mast{min-height:360px}.lead{padding-top:120px}.strip .row-s{height:40px}.strip .yrs button{font-size:.8rem}.strip .yrs button small{display:none}
   .year{grid-template-columns:1fr;gap:12px}
   .year h2{position:static;font-size:3rem}
   .year h2 small{display:inline;margin-left:12px}
@@ -103,15 +120,18 @@ footer a:hover{color:var(--paper)}
     <div class="navlinks"><a href="./#features">Features</a><a href="./#how">How it works</a><a href="https://github.com/SiteQ8/KWTCyberWatch" target="_blank" rel="noopener">GitHub</a><a href="demo/">Open the console</a></div>
   </nav>
 
-  <header class="lead">
-    <h1 id="h1">Loading the register of attack claims against Kuwaiti organisations.</h1>
-    <p class="latest" id="latest"></p>
-  </header>
+  <div class="mast">
+    <img src="docs/attacks-hero.jpg" alt="" aria-hidden="true">
+    <div class="in">
+      <header class="lead">
+        <h1 id="h1">Loading the register of attack claims against Kuwaiti organisations.</h1>
+        <p class="latest" id="latest"></p>
+      </header>
+      <span class="credit">Kuwait City, illustration</span>
+    </div>
+  </div>
 
-  <figure class="band">
-    <img src="docs/attacks-hero.jpg" alt="Kuwait City skyline at night with a faint radar sweep across the sky" loading="eager">
-    <figcaption>Kuwait City, generated illustration</figcaption>
-  </figure>
+  <div class="strip" id="strip" aria-label="Claims per month"></div>
 
   <div class="tools">
     <input id="q" type="search" placeholder="Find an organisation, a group or a sector" aria-label="Search the register">
@@ -154,20 +174,35 @@ footer a:hover{color:var(--paper)}
   h1.innerHTML=`<em>${d.count}</em> public claims of attacks on Kuwaiti organisations since ${esc(years[0])}.`;
   const l=items[0];
   if(l){latest.innerHTML=`The latest is <b>${esc(l.victim)}</b>, ${long(l.date)}: ${esc(KIND[l.kind]||l.kind)}${l.actor?` by ${esc(l.actor)}`:''}, reported by <a href="${esc(l.url)}" target="_blank" rel="noopener nofollow">${esc(l.source)}</a>. Register updated ${long(d.generated.slice(0,10))}.`;}
+  // month strip: one bar per month from the first year to now; red when a critical sector was hit
+  const strip=document.getElementById('strip');let year='';
+  const now=new Date();const y0=+years[0];const months=[];
+  for(let y=y0;y<=now.getFullYear();y++)for(let m=0;m<12;m++){if(y===now.getFullYear()&&m>now.getMonth())break;months.push({y,m,n:0,hi:0});}
+  items.forEach(i=>{const [y,m]=i.date.split('-').map(Number);const c=months.find(x=>x.y===y&&x.m===m-1);if(c){c.n++;if(i.severity==='high')c.hi++;}});
+  const max=Math.max(1,...months.map(x=>x.n));
+  const yrs=[...new Set(months.map(x=>x.y))];
+  strip.style.setProperty('--n',months.length);strip.style.setProperty('--y',yrs.length);
+  strip.innerHTML=`<div class="row-s">${months.map((x,k)=>`<button class="m${x.n?' has':''}${x.hi?' hi':''}" data-k="${k}" data-y="${x.y}" aria-label="${MON[x.m]} ${x.y}: ${x.n} ${x.n===1?'claim':'claims'}"><i style="height:${x.n?Math.max(14,Math.round(x.n/max*100)):4}%"></i></button>`).join('')}</div>
+    <div class="yrs">${yrs.map(y=>`<button data-y="${y}" class="${year===String(y)?'on':''}">${y}<small>${d.by_year[y]||0}</small></button>`).join('')}</div>
+    <p class="hint" id="hint">Each bar is a month. Red months include a critical sector. Pick a year to narrow the list.</p>`;
+  const hint=document.getElementById('hint');
+  strip.addEventListener('mouseover',e=>{const b=e.target.closest('.m');if(!b)return;const x=months[+b.dataset.k];hint.textContent=`${MON[x.m]} ${x.y}: ${x.n} ${x.n===1?'claim':'claims'}${x.hi?`, ${x.hi} in a critical sector`:''}.`;});
+  strip.addEventListener('mouseout',e=>{if(e.target.closest('.m'))hint.textContent='Each bar is a month. Red months include a critical sector. Pick a year to narrow the list.';});
+  strip.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const y=b.dataset.y;year=(year===y)?'':y;[...strip.querySelectorAll('.yrs button')].forEach(c=>c.classList.toggle('on',c.dataset.y===year));[...strip.querySelectorAll('.m')].forEach(c=>c.classList.toggle('dim',!!year&&c.dataset.y!==year));render();if(b.classList.contains('m'))document.getElementById('ledger').scrollIntoView({behavior:'smooth',block:'start'});});
   const kindSet=[...new Set(items.map(i=>i.kind))];let kind='';
   kinds.innerHTML=`<button class="on" data-k="">Everything<small>${items.length}</small></button>`+kindSet.map(k=>`<button data-k="${esc(k)}">${esc(k)}<small>${items.filter(i=>i.kind===k).length}</small></button>`).join('');
   kinds.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;kind=b.dataset.k;[...kinds.children].forEach(c=>c.classList.toggle('on',c===b));render();});
   q.addEventListener('input',render);
   function render(){
     const s=q.value.trim().toLowerCase();
-    const out=items.filter(i=>(!kind||i.kind===kind)&&(!s||[i.victim,i.actor,i.sectors.join(' '),i.source,i.summary].join(' ').toLowerCase().includes(s)));
-    if(!out.length){ledger.innerHTML='<p class="empty">Nothing matches. Clear the search or pick another kind.</p>';return;}
+    const out=items.filter(i=>(!kind||i.kind===kind)&&(!year||i.date.startsWith(year))&&(!s||[i.victim,i.actor,i.sectors.join(' '),i.source,i.summary].join(' ').toLowerCase().includes(s)));
+    if(!out.length){ledger.innerHTML='<p class="empty">Nothing matches. Clear the search, the year or the kind.</p>';return;}
     const byYear={};out.forEach(i=>{(byYear[i.date.slice(0,4)]=byYear[i.date.slice(0,4)]||[]).push(i);});
     ledger.innerHTML=Object.keys(byYear).sort().reverse().map(y=>`<section class="year"><h2>${y}<small>${byYear[y].length} ${byYear[y].length===1?'claim':'claims'}</small></h2><div class="rows">${byYear[y].map(i=>`
       <article class="row">
         <time datetime="${esc(i.date)}">${day(i.date)}</time>
         <a class="who" href="${esc(i.url)}" target="_blank" rel="noopener nofollow">${esc(i.victim)}</a>
-        <div class="src"><span>${esc(i.source)}</span><a href="${report(i)}">Report an error or a fake</a></div>
+        <div class="src"><span>${esc(i.source)}</span><a href="${report(i)}" title="Report an error or a fake claim">Report</a></div>
         <p class="what"><span class="k ${esc(i.kind)}">${esc(KIND[i.kind]||i.kind)}</span>${i.actor?`, claimed by ${esc(i.actor)}`:''}${i.sectors.length?`. ${esc(i.sectors.join(', '))}`:''}${i.severity==='high'?` <span class="crit">(critical sector)</span>`:''}</p>
         ${i.summary?`<p class="sum">${esc(i.summary)}</p>`:''}
       </article>`).join('')}</div></section>`).join('');
