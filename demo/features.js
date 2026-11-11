@@ -1,5 +1,5 @@
 /*
- * KWTCyberWatch dashboard — analyst features layered on top of app.js.
+ * KWTCyberWatch dashboard: analyst features layered on top of app.js.
  *
  *  - Command palette (Ctrl/Cmd+K): pages, brands, recent scans, open alerts and
  *    typed commands (scan / hunt / investigate / allowlist a domain).
