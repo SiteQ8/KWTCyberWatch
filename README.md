@@ -18,43 +18,43 @@
 
 ---
 
-## ✨ What's new in 2.5
+## What's new in 2.5
 
 - **Shard selection fixed**: both tailers now read every CT shard that new certificates can land in, not only the shard whose expiry window contains today. The old rule missed longer-lived certificates and, from October 2026, would have missed most 90-day ones too.
 - **Hosting platforms scored once**: a name on `pages.dev`, `workers.dev` or any other free platform no longer collects TLD points on top of the platform indicator.
 - **A leading `www` is neutral**: it no longer counts as an extra subdomain level.
 
-## ✨ What's new in 2.4
+## What's new in 2.4
 
 - **Static CT API logs** are tailed too (tiled `checkpoint` / `tile/data`), next to RFC 6962 logs.
 - **Deep match** runs the brand engine on every certificate, catching homoglyphs and typos with no keyword.
 - **Custom regex detection rules**, **alert consolidation** per domain and **auto-enrichment** (DNS + RDAP age) of new alerts.
 
-## ✨ What's new in 2.3
+## What's new in 2.3
 
-- **No more CertStream dependency** — the monitor and the browser console tail Certificate Transparency logs directly with their own DER parser, discover current log shards automatically and show per-log coverage. `main.py monitor` works without the `certstream` package.
-- **Watchtower** — automatic brand sweeps in the browser that resolve generated look-alikes and raise alerts.
+- **No more CertStream dependency**: the monitor and the browser console tail Certificate Transparency logs directly with their own DER parser, discover current log shards automatically and show per-log coverage. `main.py monitor` works without the `certstream` package.
+- **Watchtower**: automatic brand sweeps in the browser that resolve generated look-alikes and raise alerts.
 - **84 Kuwait keywords** including Arabic identifiers, merged into existing workspaces.
 
-## ✨ What's new in 2.2
+## What's new in 2.2
 
-- **Real browser console** — the detection engine runs in JavaScript with parity tests against Python; the GitHub Pages demo streams the live CertStream feed, resolves typosquats over DNS-over-HTTPS and enriches with crt.sh, RDAP and URLhaus. No backend, no sample data.
+- **Real browser console**: the detection engine runs in JavaScript with parity tests against Python; the GitHub Pages demo streams the live CertStream feed, resolves typosquats over DNS-over-HTTPS and enriches with crt.sh, RDAP and URLhaus. No backend, no sample data.
 
-## ✨ What's new in 2.1
+## What's new in 2.1
 
-- **Registrable-domain aware detection** — `login.nbk.com.kw`, `nbk.com.verify-login.tk` and `nbk-login.web.app` are all interpreted correctly thanks to a built-in public-suffix layer covering Kuwait, the GCC and free-hosting platforms.
-- **IDN homograph, mixed-script and Arabic support** — `nbк.com` (Cyrillic *k*) and `بيتك-تحديث.com` are detected; 26 Kuwaiti brands ship with Arabic keywords.
-- **Proactive typosquat watcher** — permutations of every protected brand are resolved on a schedule; a look-alike that goes live raises an alert *before* a certificate is ever issued.
-- **Alert lifecycle** — persisted alerts with `open → investigating → resolved / false_positive`, assignees, notes, history and one-click allowlisting.
-- **Threat intel that works out of the box** — OpenPhish and URLhaus need no key; VirusTotal, URLScan, PhishTank and Google Safe Browsing plug in with one.
-- **SIEM-ready outputs** — STIX 2.1 bundles, CSV exports, Syslog/CEF and Microsoft Teams channels, Prometheus metrics.
-- **Hardened API** — signed bearer tokens, roles, API keys, rate limiting, OpenAPI docs.
-- **A real browser dashboard** — the full detection engine is ported to JavaScript (parity-tested against Python), so the [live console](https://kwtcyberwatch.3li.info/demo/) scans for real, tails Certificate Transparency logs directly, resolves typosquats over DNS-over-HTTPS and enriches with crt.sh, RDAP and URLhaus. No backend, no sample data, no third-party feed.
+- **Registrable-domain aware detection**: `login.nbk.com.kw`, `nbk.com.verify-login.tk` and `nbk-login.web.app` are all interpreted correctly thanks to a built-in public-suffix layer covering Kuwait, the GCC and free-hosting platforms.
+- **IDN homograph, mixed-script and Arabic support**: `nbк.com` (Cyrillic *k*) and `بيتك-تحديث.com` are detected; 26 Kuwaiti brands ship with Arabic keywords.
+- **Proactive typosquat watcher**: permutations of every protected brand are resolved on a schedule; a look-alike that goes live raises an alert *before* a certificate is ever issued.
+- **Alert lifecycle**: persisted alerts with `open → investigating → resolved / false_positive`, assignees, notes, history and one-click allowlisting.
+- **Threat intel that works out of the box**: OpenPhish and URLhaus need no key; VirusTotal, URLScan, PhishTank and Google Safe Browsing plug in with one.
+- **SIEM-ready outputs**: STIX 2.1 bundles, CSV exports, Syslog/CEF and Microsoft Teams channels, Prometheus metrics.
+- **Hardened API**: signed bearer tokens, roles, API keys, rate limiting, OpenAPI docs.
+- **A real browser dashboard**: the full detection engine is ported to JavaScript (parity-tested against Python), so the [live console](https://kwtcyberwatch.3li.info/demo/) scans for real, tails Certificate Transparency logs directly, resolves typosquats over DNS-over-HTTPS and enriches with crt.sh, RDAP and URLhaus. No backend, no sample data, no third-party feed.
 - **400+ offline tests** and a green CI (lint + tests + Docker).
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 ### Landing page
 <p align="center">
@@ -103,13 +103,13 @@
 
 ---
 
-## 🎯 Features
+## Features
 
 ### Detection engine
-- **Domain parsing layer** — eTLD+1 extraction for `com.kw`, `gov.kw`, `edu.kw`, GCC/MENA and global second-level registries, plus 90+ free-hosting / tunnelling platforms (`web.app`, `github.io`, `pages.dev`, `ngrok-free.app`, `duckdns.org` …) that are both parsed as suffixes and flagged as an indicator.
-- **Phishing detector** — weighted layers for lure keywords (English and Arabic), brand impersonation, TLD risk tiers, structure (deep subdomains, hyphen/digit padding, embedded `-com`/`-gov` tokens, fake *ministry*/*gov* wording outside `gov.kw`), Shannon entropy, IDN/mixed-script analysis, free hosting and certificate context (free CA + wildcard). Every verdict explains itself (`explanation`, per-indicator weights, matched brands).
-- **Squatting analyzer** — typosquats (omission, transposition, repetition, insertion, keyboard, vowel swap, bitsquat), homoglyphs, leetspeak (`nbk0nline`), hyphenation (`k-net`), combo-squats (`knetpay`, `moi-fines`), TLD swaps and subdomain abuse. Edit-distance thresholds scale with brand length and short-brand matches require context, so `nbc.com`, `kibana.io`, `mohammed.com` and `pacific.com` stay clean.
-- **Permutation generator** — thousands of technique-tagged candidates per brand across configurable TLDs (`main.py permutations nbk.com --tlds com kw com.kw --resolve`).
+- **Domain parsing layer**: eTLD+1 extraction for `com.kw`, `gov.kw`, `edu.kw`, GCC/MENA and global second-level registries, plus 90+ free-hosting / tunnelling platforms (`web.app`, `github.io`, `pages.dev`, `ngrok-free.app`, `duckdns.org` …) that are both parsed as suffixes and flagged as an indicator.
+- **Phishing detector**: weighted layers for lure keywords (English and Arabic), brand impersonation, TLD risk tiers, structure (deep subdomains, hyphen/digit padding, embedded `-com`/`-gov` tokens, fake *ministry*/*gov* wording outside `gov.kw`), Shannon entropy, IDN/mixed-script analysis, free hosting and certificate context (free CA + wildcard). Every verdict explains itself (`explanation`, per-indicator weights, matched brands).
+- **Squatting analyzer**: typosquats (omission, transposition, repetition, insertion, keyboard, vowel swap, bitsquat), homoglyphs, leetspeak (`nbk0nline`), hyphenation (`k-net`), combo-squats (`knetpay`, `moi-fines`), TLD swaps and subdomain abuse. Edit-distance thresholds scale with brand length and short-brand matches require context, so `nbc.com`, `kibana.io`, `mohammed.com` and `pacific.com` stay clean.
+- **Permutation generator**: thousands of technique-tagged candidates per brand across configurable TLDs (`main.py permutations nbk.com --tlds com kw com.kw --resolve`).
 
 ### Brand protection
 - **26 built-in Kuwait profiles** with aliases, Arabic keywords, industry and priority:
@@ -122,8 +122,8 @@
   | Aviation, energy, markets, e-commerce | Kuwait Airways, Jazeera Airways, KNPC, KPC, Boursa Kuwait, Talabat |
 
 - **Custom profiles** via `brands:` in `config.yaml` (merge with or replace the defaults).
-- **Noise control** — legitimate brand infrastructure is never reported, one alert per (brand, domain) per dedupe window, and a strong match against one brand suppresses weak matches against others.
-- **Alert lifecycle** — persisted with severity, numeric risk score, status, assignee, notes and change history; resolving as `false_positive` can allowlist the domain in the same call.
+- **Noise control**: legitimate brand infrastructure is never reported, one alert per (brand, domain) per dedupe window, and a strong match against one brand suppresses weak matches against others.
+- **Alert lifecycle**: persisted with severity, numeric risk score, status, assignee, notes and change history; resolving as `false_positive` can allowlist the domain in the same call.
 
 ### Proactive typosquat watcher
 `main.py watch-squats` (or the `kwtcyberwatch-watcher` container) generates permutations of every protected brand, resolves them concurrently and records **sightings** with first/last seen, IPs and a triage status (`new`, `monitoring`, `takedown_requested`, `resolved`, `benign`). New sightings are pushed to the notification channels.
@@ -138,7 +138,7 @@
 | PhishTank | yes | community-verified phish |
 | URLScan.io | yes | historical scans and verdicts |
 
-Plus **RDAP** registration data (registrar, creation date, domain age, abuse contact), DNS records and TLS certificate details — `main.py scan <domain> --intel --enrich` or `GET /api/v1/enrich/<domain>`.
+Plus **RDAP** registration data (registrar, creation date, domain age, abuse contact), DNS records and TLS certificate details, `main.py scan <domain> --intel --enrich` or `GET /api/v1/enrich/<domain>`.
 
 ### Notifications
 | Channel | Notes |
@@ -160,32 +160,32 @@ Minimum severity, per-domain cooldown de-duplication and delivery statistics are
 The single-page dashboard in `demo/` is a **real client-side analyst console**, not a mock-up.
 Try it live at <https://kwtcyberwatch.3li.info/demo/> (project site: <https://kwtcyberwatch.3li.info/>).
 
-- **Browser-native detection engine** — `demo/engine.js` is a line-for-line port of the Python
+- **Browser-native detection engine**: `demo/engine.js` is a line-for-line port of the Python
   phishing detector, brand monitor and domain analyzer (26 Kuwaiti brand profiles, IDN/Arabic
   aware, permutation generator). Its data tables are generated from the Python source by
   `scripts/export_engine_data.py`, and `tests/test_js_engine.py` proves both engines return
   identical verdicts on a 90-domain corpus.
-- **Direct Certificate Transparency tailing** — the browser reads the public CT logs itself
+- **Direct Certificate Transparency tailing**: the browser reads the public CT logs itself
   (RFC 6962 `get-sth` / `get-entries`), parses every certificate with a built-in DER reader and
   scores each hostname the moment it is logged. No CertStream or other third-party feed is
   involved; logs are discovered from Google's log list with a built-in fallback and the feed
   page shows per-log state, rate and coverage. Both RFC 6962 and Static CT API (tiled) logs
   are supported, and a deep-match mode runs the brand engine on every hostname.
-- **Relay feed** — a scheduled GitHub Actions job runs the same tailer and publishes matches to
+- **Relay feed**: a scheduled GitHub Actions job runs the same tailer and publishes matches to
   the site, so the console shows real Kuwait certificates even if a browser cannot read a log.
-- **Watchtower** — a scheduled sweep that generates look-alikes of the protected brands,
+- **Watchtower**: a scheduled sweep that generates look-alikes of the protected brands,
   resolves them over DNS-over-HTTPS and records live ones as sightings with alerts.
-- **Real enrichment** — DNS via Google DNS-over-HTTPS, Certificate Transparency history via
+- **Real enrichment**: DNS via Google DNS-over-HTTPS, Certificate Transparency history via
   crt.sh, registration data via RDAP (`rdap.org`) and URLhaus reputation, all fetched directly
   from the browser.
-- **Typosquat Hunter** — generates permutations for any brand domain and resolves them live,
+- **Typosquat Hunter**: generates permutations for any brand domain and resolves them live,
   recording resolving look-alikes as **sightings** with triage status.
-- **Analyst console** — `Ctrl+K` command palette (scan / hunt / investigate / allowlist any
+- **Analyst console**: `Ctrl+K` command palette (scan / hunt / investigate / allowlist any
   domain, jump to brands, pages, alerts), an alert drawer with evidence, a character-level
   look-alike diff and Unicode inspector, notes, assignee, timeline and printable reports, bulk
   triage, sortable tables, sparklines, deep links (`#scan=…`, `#alert=…`) and a weekly HTML
   summary. Installable as a PWA and works offline once loaded.
-- **Alert lifecycle, history, analytics, STIX 2.1 export** — everything persists in IndexedDB,
+- **Alert lifecycle, history, analytics, STIX 2.1 export**: everything persists in IndexedDB,
   so the console keeps state between visits; settings (keywords, allowlist, custom brands) rebuild
   the engine on the fly, and the whole workspace can be exported/imported as JSON.
 - When served at `/` by `python main.py api` the dashboard also detects the backend and reports
@@ -193,10 +193,10 @@ Try it live at <https://kwtcyberwatch.3li.info/demo/> (project site: <https://kw
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Demo (no installation)
-Visit <https://kwtcyberwatch.3li.info/demo/> or open `demo/index.html` locally — the engine, feed and lookups all run in your browser.
+Visit <https://kwtcyberwatch.3li.info/demo/> or open `demo/index.html` locally, the engine, feed and lookups all run in your browser.
 
 ### Installation
 
@@ -259,7 +259,7 @@ Secrets are passed through `KCW_*` environment variables (see `docker-compose.ym
 
 ---
 
-## 🔌 REST API
+## REST API
 
 Base path `/api/v1`. Read endpoints are open by default (set `api.auth_required: true` to change that); mutating endpoints always need a **bearer token** from `/auth/login` or an `X-API-Key` header.
 
@@ -294,7 +294,7 @@ curl -X PATCH localhost:5000/api/v1/alerts/BA-1a2b3c4d5e \
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 `config.yaml` is fully documented. Resolution order: `--config PATH` → `$KCW_CONFIG` → `config.local.yaml` → `config.yaml`; `KCW_*` environment variables override everything.
 
@@ -331,7 +331,7 @@ api:
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 KWTCyberWatch/
@@ -374,7 +374,7 @@ KWTCyberWatch/
 
 ---
 
-## 🧪 Development
+## Development
 
 ```bash
 pip install -r requirements.txt
@@ -385,7 +385,7 @@ black --check src/ tests/ main.py
 
 ---
 
-## 🔐 Security
+## Security
 
 See [SECURITY.md](SECURITY.md) for vulnerability reporting and the security policy.
 
@@ -396,7 +396,7 @@ See [SECURITY.md](SECURITY.md) for vulnerability reporting and the security poli
 
 ---
 
-## ⚖️ Disclaimer
+## Disclaimer
 
 KWTCyberWatch produces **automated heuristic findings** from public data. A flagged domain is a
 candidate for review, not an accusation; verify independently before blocking, reporting or
@@ -404,7 +404,7 @@ attributing. Brand names are used for identification only. The software, the hos
 the published relay feed are provided as is, without warranty or liability. The console keeps all
 data in your browser and the site runs no tracking. Full text: [DISCLAIMER.md](DISCLAIMER.md).
 
-## 🤝 Contributing
+## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Areas needing help:
 - Additional Kuwait and GCC brand profiles (`brands:` in `config.yaml` is a great way to prototype)
@@ -415,19 +415,13 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Areas needing help:
 
 ---
 
-## 📄 License
+## License
 
-MIT License — see [LICENSE](LICENSE) for details.
+MIT License, see [LICENSE](LICENSE) for details.
 
 ---
 
-## 👨‍💻 Author
+## Author
 
 **Ali AlEnezi** ([@SiteQ8](https://github.com/SiteQ8))
 - Email: Site@hotmail.com
-
----
-
-<p align="center">
-  <sub>Built with ❤️ for Kuwait's cybersecurity community</sub>
-</p>
