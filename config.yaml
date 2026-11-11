@@ -123,11 +123,11 @@ api:
   host: "0.0.0.0"
   port: 5000
   debug: false
-  secret_key: "change-me-in-production"   # signs bearer tokens (KCW_API_SECRET)
+  secret_key: ""                          # signs bearer tokens (KCW_API_SECRET); empty = random key per process
   api_key: ""                             # optional static key for integrations (X-API-Key)
   auth_required: false                    # true = every endpoint needs a token / API key
-  admin_password: "admin"                 # KCW_ADMIN_PASSWORD
-  analyst_password: "analyst"             # KCW_ANALYST_PASSWORD
+  admin_password: ""                      # KCW_ADMIN_PASSWORD; empty = admin login disabled
+  analyst_password: ""                    # KCW_ANALYST_PASSWORD; empty = analyst login disabled
   token_ttl_seconds: 28800
   rate_limit: "100/hour"                  # per client IP, "" to disable
   max_bulk_domains: 100

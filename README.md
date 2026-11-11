@@ -389,7 +389,8 @@ black --check src/ tests/ main.py
 
 See [SECURITY.md](SECURITY.md) for vulnerability reporting and the security policy.
 
-- Change `api.secret_key` and `api.admin_password` before exposing the API (`main.py config --check` reminds you)
+- No default credentials: the admin and analyst logins stay disabled until `KCW_ADMIN_PASSWORD` and `KCW_ANALYST_PASSWORD` are set, and placeholder values such as `admin` are refused
+- Without `KCW_API_SECRET` tokens are signed with a random key that lasts for one process; set it to keep tokens across restarts and workers (`main.py config --check` reports both)
 - Automated dependency scanning via Dependabot, CodeQL analysis, Bandit and TruffleHog in CI
 - Tokens are HMAC-signed and expire; rate limiting and security headers are on by default
 

@@ -8,8 +8,8 @@ services:
       - ./data:/app/data
       - ./config.yaml:/app/config.yaml:ro
     environment:
-      - KCW_API_SECRET=${KCW_API_SECRET:-change-me}
-      - KCW_ADMIN_PASSWORD=${KCW_ADMIN_PASSWORD:-admin}
+      - KCW_API_SECRET=${KCW_API_SECRET:-}
+      - KCW_ADMIN_PASSWORD=${KCW_ADMIN_PASSWORD:-}
       - KCW_API_KEY=${KCW_API_KEY:-}
       - KCW_AUTH_REQUIRED=${KCW_AUTH_REQUIRED:-false}
       - KCW_VT_API_KEY=${KCW_VT_API_KEY:-}

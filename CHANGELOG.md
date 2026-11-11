@@ -5,6 +5,12 @@ All notable changes to KWTCyberWatch will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Security
+- **Placeholder credentials are no longer honoured.** The API used to start with the admin login `admin` / `admin`, the analyst login `analyst` / `analyst` and the token signing key `change-me-in-production`, and only logged a warning, so a deployment left on its defaults accepted a public password and tokens anyone could forge. Now an account whose password is empty or a published placeholder cannot sign in, and a missing or placeholder signing key is replaced by a random key that lasts for one process. `config.yaml` and `docker-compose.yml` ship with no credentials. Set `KCW_ADMIN_PASSWORD`, `KCW_ANALYST_PASSWORD` and `KCW_API_SECRET` to enable the logins and keep tokens across restarts.
+- The relay workflow passes its manual `seconds` input through an environment variable instead of expanding it inside the shell command.
+
 ## [2.5.0] - 2026-10-03
 
 ### Fixed
